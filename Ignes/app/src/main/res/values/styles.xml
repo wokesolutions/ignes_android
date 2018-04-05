@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Welcome application theme. -->
+    <style name="WelcomeTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#FFFF</item>
+        <item name="colorPrimaryDark">@color/colorIgnesPrimary</item>
+        <item name="colorAccent">@color/colorIgnesPrimary</item>
+    </style>
+
 </resources>

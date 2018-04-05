@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorIgnesPrimary">#AD363B</color>
     <color name="colorIgnesSecondary">#CA3110</color>
+    <color name="colorIgnesGreen">#3BAD36</color>
+    <color name="colorIgnesGreenII">#76AD36</color>
 </resources>
+

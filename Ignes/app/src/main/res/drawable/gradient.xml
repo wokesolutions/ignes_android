@@ -5,4 +5,7 @@
         android:startColor="@color/colorIgnesGreenII"
         android:endColor="@color/colorIgnesPrimary"
         android:angle="180"/>
+    <corners android:radius="10dp"/>
+    <size android:height="10dp"
+        android:width="150dp"/>
 </shape>

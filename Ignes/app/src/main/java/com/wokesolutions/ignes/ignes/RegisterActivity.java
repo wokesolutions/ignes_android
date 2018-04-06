@@ -1,8 +1,11 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethod;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
@@ -43,6 +46,9 @@ public class RegisterActivity extends AppCompatActivity {
         mEmail = (EditText) findViewById(R.id.register_email);
         mPassword = (EditText) findViewById(R.id.register_password);
         mPasswordConfirm = (EditText) findViewById(R.id.register_confirmation);
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mUsername, InputMethodManager.SHOW_IMPLICIT);
 
         mUsername_button.setOnClickListener(new OnClickListener() {
             @Override

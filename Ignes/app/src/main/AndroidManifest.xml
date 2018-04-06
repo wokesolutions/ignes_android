@@ -26,7 +26,11 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@style/WelcomeTheme" />
-        <activity android:name=".RegisterActivity"></activity>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/WelcomeTheme">
+        </activity>
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context=".LaunchActivity"
     android:background="@color/colorIgnesPrimary"
+    android:id="@+id/launcher_touch"
     android:weightSum="4"
     >
 
@@ -32,8 +33,14 @@
             <View
                 android:layout_width="220dp"
                 android:layout_height="10dp"
-                android:background="@drawable/gradient"
-                />
+                android:background="@drawable/gradient"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Touch anywhere to start"
+            android:paddingTop="20dp"
+            android:textColor="@color/backgroundColor"/>
 
 
     </LinearLayout>

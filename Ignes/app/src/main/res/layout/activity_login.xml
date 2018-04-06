@@ -41,8 +41,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/login_email"
+                    <EditText
+                        android:id="@+id/login_identification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/cellphone_e_mail_or_username"

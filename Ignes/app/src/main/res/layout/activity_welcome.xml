@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" CREATED BY "
+                android:text="@string/created_by"
                 android:textColor="#FFFFFF"
                 android:textSize="15dp" />
             <View

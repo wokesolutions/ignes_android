@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ignes</string>
+    <string name="created_by">CRIADO POR</string>
+    <string name="cellphone_e_mail_or_username">Telemóvel, e-mail ou nome de utilizador</string>
+    <string name="password">Senha</string>
+    <string name="sign_in">Entrar</string>
+    <string name="don_t_have_an_account">Não tem uma conta?</string>
+    <string name="create_a_new_one">Crie uma nova</string>
+    <string name="enter_without_an_account">Continuar sem conta</string>
+</resources>

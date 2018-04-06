@@ -1,14 +1,13 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.InputMethod;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -27,10 +26,14 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mPassword;
     private EditText mPasswordConfirm;
 
+    private TextView mJoinUsText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        Typeface tf = Typeface.createFromAsset(getAssets(), "/fonts/ps.tiff");
 
         mRegister_form = (View) findViewById(R.id.register_form);
         mRegister_username_form = (View) findViewById(R.id.register_username_form);
@@ -47,8 +50,9 @@ public class RegisterActivity extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.register_password);
         mPasswordConfirm = (EditText) findViewById(R.id.register_confirmation);
 
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(mUsername, InputMethodManager.SHOW_IMPLICIT);
+        mJoinUsText = (TextView) findViewById(R.id.joinus_text);
+
+        mJoinUsText.setTypeface(tf);
 
         mUsername_button.setOnClickListener(new OnClickListener() {
             @Override

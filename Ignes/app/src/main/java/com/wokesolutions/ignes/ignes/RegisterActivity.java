@@ -274,7 +274,7 @@ public class RegisterActivity extends AppCompatActivity {
                 credentials.put("user_username", mUsername);
                 credentials.put("user_email", mEmail);
                 credentials.put("user_password", mPasswordString);
-                credentials.put("user_confirmation", mConfirmation);
+                //credentials.put("user_confirmation", mConfirmation);
 
                 System.out.println("Credentials JSON to send:" + credentials);
 
@@ -297,7 +297,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (result != null) {
                 //showSucessfulRegister(true);
-                System.out.println("REGISTADO COM SUCESSO " + result);
+                System.out.println("RESPOSTA DO REGISTO " + result);
             } else {
                 mPassword.setError(getString(R.string.error_incorrect_password));
                 mPassword.requestFocus();

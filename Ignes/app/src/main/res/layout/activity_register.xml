@@ -4,35 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="15dp"
+    android:paddingHorizontal="10dp"
     android:weightSum="5"
     tools:context=".RegisterActivity">
 
-    <TextView
-        android:id="@+id/joinus_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Join Us"
-        android:textSize="70dp" />
-
     <LinearLayout
+        android:id="@+id/register_select_user_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingHorizontal="20dp"
-        android:layout_weight="4">
+        android:gravity="center|center_horizontal"
+        android:layout_weight="4"
+        android:visibility="visible">
 
         <Button
+            android:id="@+id/register_icon_citizen_button"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:background="@drawable/userimg"/>
 
         <Button
+            android:id="@+id/register_icon_worker_button"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:background="@drawable/wokerimg"/>
-
 
     </LinearLayout>
 
@@ -81,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:text="Code"
                 android:textColor="@color/colorIgnesPrimary"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/register_password_button"

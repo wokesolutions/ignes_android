@@ -45,11 +45,14 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mPasswordConfirm;
     private EditText mCode;
 
+    private String mUserRole=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
 
         mSelectUser_form = (View) findViewById(R.id.register_select_user_form);
         mRegister_form = (View) findViewById(R.id.register_form);
@@ -75,14 +78,18 @@ public class RegisterActivity extends AppCompatActivity {
         mCitizen_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mUserRole="User";
                 mCode_button.setVisibility(View.GONE);
                 initCitizen();
+
             }
+
         });
 
         mWorker_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mUserRole="Worker";
                 mCode_button.setVisibility(View.VISIBLE);
                 initCitizen();
                 mCode_button.setOnClickListener(new OnClickListener() {
@@ -91,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
                         changeVisibility("Code");
                     }
                 });
+
             }
         });
 
@@ -158,6 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             case "Code": {
                 mRegister_code_form.setVisibility(View.VISIBLE);
+
                 mRegister_username_form.setVisibility(View.GONE);
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
@@ -168,14 +177,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        //return true;
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        //return true;
         return password.length() > 4;
     }
 
@@ -198,6 +203,7 @@ public class RegisterActivity extends AppCompatActivity {
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
         String confirmation = mPasswordConfirm.getText().toString();
+        String role = mUserRole;
 
         boolean cancel = false;
         View focusView = null;

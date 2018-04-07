@@ -1,13 +1,27 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.app.Activity;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
 
+import org.json.JSONObject;
+
+import java.net.URL;
+
 public class RegisterActivity extends AppCompatActivity {
+
+    /**
+     * Keep track of the registration task to ensure we can cancel it if requested.
+     */
+    private UserRegisterTask mRegTask = null;
 
     private View mRegister_form;
     private View mSelectUser_form;
@@ -79,6 +93,13 @@ public class RegisterActivity extends AppCompatActivity {
                 });
             }
         });
+
+        mSignUp_button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptRegister();
+            }
+        });
     }
 
     private void initCitizen (){
@@ -144,6 +165,151 @@ public class RegisterActivity extends AppCompatActivity {
             break;
         }
 
+    }
+
+    private boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+        //return true;
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+        //TODO: Replace this with your own logic
+        //return true;
+        return password.length() > 4;
+    }
+
+    /**
+     * Attempts to register the account specified by the register form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual register attempt is made.
+     */
+    private void attemptRegister() {
+        if (mRegTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        mEmail.setError(null);
+        mPassword.setError(null);
+
+        // Store values at the time of the register attempt.
+        String username = mUsername.getText().toString();
+        String email = mEmail.getText().toString();
+        String password = mPassword.getText().toString();
+        String confirmation = mPasswordConfirm.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPassword.setError(getString(R.string.error_invalid_password));
+            focusView = mPassword;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmail.setError(getString(R.string.error_field_required));
+            focusView = mEmail;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmail.setError(getString(R.string.error_invalid_email));
+            focusView = mEmail;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt register and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user register attempt.
+           // showProgress(true);
+            mRegTask = new UserRegisterTask(username, email, password, confirmation);
+            mRegTask.execute((Void) null);
+        }
+    }
+
+    /**
+     * Represents an asynchronous registration task used to authenticate
+     * the user.
+     */
+    public class UserRegisterTask extends AsyncTask<Void, Void, String> {
+
+        private final String mUsername;
+        private final String mEmail;
+        private final String mPasswordString;
+        private final String mConfirmation;
+
+
+        UserRegisterTask(String username, String email, String password, String confirmation) {
+            mUsername = username;
+            mEmail = email;
+            mPasswordString = password;
+            mConfirmation = confirmation;
+        }
+
+        /**
+         * Cancel background network operation if we do not have network connectivity.
+         */
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                JSONObject credentials = new JSONObject();
+                credentials.put("user_username", mUsername);
+                credentials.put("user_email", mEmail);
+                credentials.put("user_password", mPasswordString);
+                credentials.put("user_confirmation", mConfirmation);
+
+                System.out.println("Credentials JSON to send:" + credentials);
+
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
+
+                String s = RequestsREST.doPOST(url, credentials);
+                System.out.println("Strrrrriiiing - " + s);
+                return s;
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mRegTask = null;
+            //showProgress(false);
+
+            if (result != null) {
+                //showSucessfulRegister(true);
+                System.out.println("REGISTADO COM SUCESSO " + result);
+            } else {
+                mPassword.setError(getString(R.string.error_incorrect_password));
+                mPassword.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mRegTask = null;
+            //showProgress(false);
+            //showSucessfulRegister(false);
+        }
     }
 
 

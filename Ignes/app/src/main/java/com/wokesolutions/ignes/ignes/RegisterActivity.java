@@ -25,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private View mRegister_form;
     private View mSelectUser_form;
-    private View mRegister_code_form;
+    private View mRegister_code_layout_form;
     private View mRegister_username_form;
     private View mRegister_email_form;
     private View mRegister_password_form;
@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mEmail_button;
     private Button mPassword_button;
     private Button mSignUp_button;
-    private Button mCode_button;
+    private Button mCode_next_button;
 
     private Button mCitizen_button;
     private Button mWorker_button;
@@ -59,9 +59,9 @@ public class RegisterActivity extends AppCompatActivity {
         mRegister_username_form = (View) findViewById(R.id.register_username_form);
         mRegister_email_form = (View) findViewById(R.id.register_email_form);
         mRegister_password_form = (View) findViewById(R.id.register_password_form);
-        mRegister_code_form = (View) findViewById(R.id.register_code_form);
+        mRegister_code_layout_form = (View) findViewById(R.id.register_code_layout_form);
 
-        mCode_button = (Button) findViewById(R.id.register_code_button);
+        mCode_next_button = (Button) findViewById(R.id.register_code_next_button);
         mCitizen_button = (Button) findViewById(R.id.register_icon_citizen_button);
         mWorker_button = (Button) findViewById(R.id.register_icon_worker_button);
         mUsername_button = (Button) findViewById(R.id.register_username_button);
@@ -79,9 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mUserRole="User";
-                mCode_button.setVisibility(View.GONE);
                 initCitizen();
-
             }
 
         });
@@ -90,22 +88,17 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mUserRole="Worker";
-                mCode_button.setVisibility(View.VISIBLE);
-                initCitizen();
-                mCode_button.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        changeVisibility("Code");
-                    }
-                });
+                mSelectUser_form.setVisibility(View.GONE);
+                mRegister_code_layout_form.setVisibility(View.VISIBLE);
 
             }
         });
 
-        mSignUp_button.setOnClickListener(new OnClickListener() {
+        mCode_next_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptRegister();
+                mRegister_code_layout_form.setVisibility(View.GONE);
+                initCitizen();
             }
         });
     }
@@ -113,6 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void initCitizen (){
 
         mSelectUser_form.setVisibility(View.GONE);
+        mRegister_code_layout_form.setVisibility(View.GONE);
         mRegister_form.setVisibility(View.VISIBLE);
 
         mUsername_button.setOnClickListener(new OnClickListener() {
@@ -133,6 +127,13 @@ public class RegisterActivity extends AppCompatActivity {
                 changeVisibility("Password");
             }
         });
+
+        mSignUp_button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptRegister();
+            }
+        });
     }
 
     private void changeVisibility(String option) {
@@ -140,9 +141,10 @@ public class RegisterActivity extends AppCompatActivity {
 
             case "Username": {
                 mRegister_username_form.setVisibility(View.VISIBLE );
+
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
-                mRegister_code_form.setVisibility(View.GONE);
+                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
 
@@ -151,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 mRegister_username_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
-                mRegister_code_form.setVisibility(View.GONE);
+                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
 
@@ -160,16 +162,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_username_form.setVisibility(View.GONE);
-                mRegister_code_form.setVisibility(View.GONE);
-            }
-            break;
-
-            case "Code": {
-                mRegister_code_form.setVisibility(View.VISIBLE);
-
-                mRegister_username_form.setVisibility(View.GONE);
-                mRegister_email_form.setVisibility(View.GONE);
-                mRegister_password_form.setVisibility(View.GONE);
+                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
         }
@@ -234,7 +227,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
            // showProgress(true);
-            mRegTask = new UserRegisterTask(username, email, password, confirmation);
+            mRegTask = new UserRegisterTask(username, email, password, confirmation, role);
             mRegTask.execute((Void) null);
         }
     }
@@ -249,13 +242,18 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPasswordString;
         private final String mConfirmation;
+        private final String mRole;
+        //TODO: private final String mCode;
 
 
-        UserRegisterTask(String username, String email, String password, String confirmation) {
+        UserRegisterTask(String username, String email, String password, String confirmation, String role /*,String code*/) {
             mUsername = username;
             mEmail = email;
             mPasswordString = password;
             mConfirmation = confirmation;
+            mRole = role;
+            //TODO: mCode = code
+
         }
 
         /**
@@ -276,19 +274,35 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
+                URL url=null;
                 JSONObject credentials = new JSONObject();
-                credentials.put("user_username", mUsername);
-                credentials.put("user_email", mEmail);
-                credentials.put("user_password", mPasswordString);
-                //credentials.put("user_confirmation", mConfirmation);
 
-                System.out.println("Credentials JSON to send:" + credentials);
+                if(mUserRole.equals("User")) {
 
+                    credentials.put("user_username", mUsername);
+                    credentials.put("user_email", mEmail);
+                    credentials.put("user_password", mPasswordString);
+                    //credentials.put("user_confirmation", mConfirmation);
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
+                    System.out.println("Credentials JSON to send:" + credentials);
+
+                    url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
+                }
+
+                else if(mUserRole.equals("Worker")){
+
+                    credentials.put("worker_username", mUsername);
+                    credentials.put("worker_email", mEmail);
+                    credentials.put("worker_password", mPasswordString);
+                    //credentials.put("user_confirmation", mConfirmation);
+
+                    System.out.println("Credentials JSON to send:" + credentials);
+
+                    url = new URL("https://hardy-scarab-200218.appspot.com/api/register/worker");
+                }
 
                 String s = RequestsREST.doPOST(url, credentials);
-                System.out.println("Strrrrriiiing - " + s);
+                System.out.println("Response from server - " + s);
                 return s;
             } catch (Exception e) {
                 return e.toString();

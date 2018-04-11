@@ -324,7 +324,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                 Map<String, List<String>> s = RequestsREST.doPOST(url, credentials);
 
-                return s.get("null").get(0);
+                System.out.println(s.keySet());
+                return "200 OK";
 
             } catch (Exception e) {
                 return e.toString();

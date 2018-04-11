@@ -9,17 +9,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by carlosdamasio on 14/03/17.
+ * Edited by WokeSolutions on 11/04/18.
  */
 
 public class RequestsREST {
-    
+
     public static String doGET(URL url) throws IOException {
-        
+
         InputStream stream = null;
         HttpURLConnection connection = null;
         String result = null;
@@ -56,15 +61,15 @@ public class RequestsREST {
             }
         }
         return result;
-        
     }
-    
-    public static String doPOST(URL url, JSONObject data) throws IOException {
-        
+
+    public static Map<String, List<String>> doPOST(URL url, JSONObject data) throws IOException {
+
         InputStream stream = null;
         OutputStream out = null;
         HttpURLConnection connection = null;
-        String result = null;
+        Map<String, List<String>> result = null;
+
         try {
             connection = (HttpURLConnection) url.openConnection();
             // Timeout for reading InputStream arbitrarily set to 10000ms.
@@ -77,8 +82,8 @@ public class RequestsREST {
             // is carrying an input (response) body.
             connection.setDoInput(true);
             connection.setChunkedStreamingMode(0);
-            connection.setRequestProperty("Accept","application/json");
-            connection.setRequestProperty("Content-type","application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-type", "application/json");
             // Open communications link (network traffic occurs here).
             out = new BufferedOutputStream(connection.getOutputStream());
             out.write(data.toString().getBytes());
@@ -91,7 +96,13 @@ public class RequestsREST {
             stream = connection.getInputStream();
             if (stream != null) {
                 // Converts Stream to String with max length of 1K.
-                result = readStream(stream, 1024);
+                result = connection.getHeaderFields();
+
+                List<String> temp = new ArrayList(1);
+                temp.add(readStream(stream, 1024));
+
+                System.out.println("DENTRO DO POST -> ");
+
             }
         } finally {
             // Close streams and disconnect HTTP connection.
@@ -100,9 +111,9 @@ public class RequestsREST {
             if (connection != null) connection.disconnect();
         }
         return result;
-        
+
     }
-    
+
     private static String readStream(InputStream stream, int maxLength) throws IOException {
         String result = null;
         // Read InputStream using the UTF-8 charset.
@@ -126,5 +137,5 @@ public class RequestsREST {
         }
         return result;
     }
-    
+
 }

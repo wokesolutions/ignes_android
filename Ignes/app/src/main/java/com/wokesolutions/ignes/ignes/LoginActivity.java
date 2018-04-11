@@ -4,10 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -33,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -51,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        context = this;
     }
 
     /**
@@ -97,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+
         if (mAuthTask != null) {
             return;
         }
@@ -218,12 +225,12 @@ public class LoginActivity extends AppCompatActivity {
                 credentials.put("username", mIdentification);
                 credentials.put("password", mPassword);
 
-                //TODO: find what identification method user chose
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/login");
 
-                String s = RequestsREST.doPOST(url, credentials);
-                System.out.println("Strrrrriiiing - " + s);
-                return s;
+                Map<String, List<String>> s = RequestsREST.doPOST(url, credentials);
+
+                return s.get("Authorization").get(0);
+
             } catch (Exception e) {
                 return e.toString();
             }
@@ -236,22 +243,12 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (result != null) {
-                JSONObject token = null;
-                try  {
-                    // We parse the result
-                    token = new JSONObject(result);
-                    Log.i("LoginActivity", token.toString());
-                    // TODO: store the token in the SharedPreferences
+                String token = result;
+                // We parse the result
+                Log.i("LoginActivity", token);
 
+                System.out.println("TOKEEEEEN: " + token);
 
-                    // TODO: call the main activity (to be implemented) with data in the intent
-                    //startActivity(new Intent(LoginActivity.this, placeholder.class));
-                    finish();
-
-                } catch (JSONException e) {
-                    // WRONG DATA SENT BY THE SERVER
-                    Log.e("Authentication",e.toString());
-                }
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

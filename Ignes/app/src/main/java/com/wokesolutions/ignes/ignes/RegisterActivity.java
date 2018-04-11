@@ -20,6 +20,8 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -53,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText mPasswordConfirm;
     private EditText mCode;
 
-    private String mUserRole=null;
+    private String mUserRole = null;
 
 
     @Override
@@ -86,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
         mCitizen_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUserRole="User";
+                mUserRole = "User";
                 initCitizen();
             }
 
@@ -95,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
         mWorker_button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUserRole="Worker";
+                mUserRole = "Worker";
                 mSelectUser_form.setVisibility(View.GONE);
                 mRegister_code_layout_form.setVisibility(View.VISIBLE);
 
@@ -110,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        context=this;
+        context = this;
 
         //tx = (TextView)findViewById(R.id.citizen_text);
         //ty = (TextView)findViewById(R.id.worker_text);
@@ -121,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
         //ty.setTypeface(custom_font);
     }
 
-    private void initCitizen (){
+    private void initCitizen() {
 
         mSelectUser_form.setVisibility(View.GONE);
         mRegister_code_layout_form.setVisibility(View.GONE);
@@ -160,7 +162,7 @@ public class RegisterActivity extends AppCompatActivity {
         switch (option) {
 
             case "Username": {
-                mRegister_username_form.setVisibility(View.VISIBLE );
+                mRegister_username_form.setVisibility(View.VISIBLE);
 
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
@@ -247,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
-           // showProgress(true);
+            // showProgress(true);
             mRegTask = new UserRegisterTask(username, email, password, confirmation, role, code);
             mRegTask.execute((Void) null);
         }
@@ -295,10 +297,10 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                URL url=null;
+                URL url = null;
                 JSONObject credentials = new JSONObject();
 
-                if(mUserRole.equals("User")) {
+                if (mUserRole.equals("User")) {
 
                     credentials.put("user_username", mUsername);
                     credentials.put("user_email", mEmail);
@@ -308,9 +310,7 @@ public class RegisterActivity extends AppCompatActivity {
                     System.out.println("Credentials JSON to send:" + credentials);
 
                     url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
-                }
-
-                else if(mUserRole.equals("Worker")){
+                } else if (mUserRole.equals("Worker")) {
 
                     credentials.put("worker_username", mUsername);
                     credentials.put("worker_email", mEmail);
@@ -322,9 +322,10 @@ public class RegisterActivity extends AppCompatActivity {
                     url = new URL("https://hardy-scarab-200218.appspot.com/api/register/worker");
                 }
 
-                String s = RequestsREST.doPOST(url, credentials);
-                System.out.println("Response from server - " + s);
-                return s;
+                Map<String, List<String>> s = RequestsREST.doPOST(url, credentials);
+
+                return s.get("null").get(0);
+
             } catch (Exception e) {
                 return e.toString();
             }
@@ -334,10 +335,8 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final String result) {
             mRegTask = null;
-            //showProgress(false);
 
             if (result != null) {
-                //showSucessfulRegister(true);
                 System.out.println("RESPOSTA DO REGISTO " + result);
             } else {
                 mPassword.setError(getString(R.string.error_incorrect_password));
@@ -348,8 +347,6 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mRegTask = null;
-            //showProgress(false);
-            //showSucessfulRegister(false);
         }
     }
 

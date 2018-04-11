@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -80,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+
             }
         });
 
@@ -247,7 +251,14 @@ public class LoginActivity extends AppCompatActivity {
                 // We parse the result
                 Log.i("LoginActivity", token);
 
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                Editor editor = shared.edit();
+
+                editor.putString("token", token);
+                editor.apply();
+
                 System.out.println("TOKEEEEEN: " + token);
+
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

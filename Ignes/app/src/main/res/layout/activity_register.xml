@@ -13,21 +13,51 @@
         android:id="@+id/register_select_user_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center|center_horizontal"
         android:layout_weight="4"
+        android:gravity="center|center_horizontal"
         android:visibility="visible">
 
-        <Button
-            android:id="@+id/register_icon_citizen_button"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/userimg"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/register_icon_worker_button"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/wokerimg"/>
+            <Button
+                android:id="@+id/register_icon_citizen_button"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/userimg" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/asap_bold"
+                android:gravity="center_horizontal"
+                android:text="Cidadão"
+                android:textSize="25dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/register_icon_worker_button"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/wokerimg" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/asap_bold"
+                android:gravity="center_horizontal"
+                android:text="Trabalhador"
+                android:textSize="25dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -35,18 +65,19 @@
         android:id="@+id/register_code_layout_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center|center_horizontal"
         android:layout_weight="4"
+        android:gravity="center|center_horizontal"
         android:orientation="vertical"
         android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:text="Insert Company Code"
             android:textSize="30dp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"/>
+            android:textStyle="bold" />
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -67,8 +98,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Next"
             android:background="@drawable/button"
+            android:text="Next"
             android:textColor="@color/backgroundColor"
             android:textStyle="bold" />
     </LinearLayout>

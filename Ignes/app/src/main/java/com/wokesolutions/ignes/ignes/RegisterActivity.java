@@ -1,6 +1,9 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -11,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -21,6 +26,9 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * Keep track of the registration task to ensure we can cancel it if requested.
      */
+    private Context context;
+    private TextView tx;
+    private TextView ty;
     private UserRegisterTask mRegTask = null;
 
     private View mRegister_form;
@@ -101,6 +109,16 @@ public class RegisterActivity extends AppCompatActivity {
                 initCitizen();
             }
         });
+
+        context=this;
+
+        //tx = (TextView)findViewById(R.id.citizen_text);
+        //ty = (TextView)findViewById(R.id.worker_text);
+
+        //Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/playlistscript.otf");
+
+        //tx.setTypeface(custom_font);
+        //ty.setTypeface(custom_font);
     }
 
     private void initCitizen (){
@@ -132,6 +150,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 attemptRegister();
+                Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
     }

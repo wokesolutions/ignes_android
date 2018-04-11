@@ -5,17 +5,18 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:orientation="vertical"
-    android:paddingHorizontal="10dp"
     android:weightSum="5"
     tools:context=".RegisterActivity">
 
     <LinearLayout
         android:id="@+id/register_select_user_form"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="4"
         android:gravity="center|center_horizontal"
-        android:visibility="visible">
+        android:background="@color/colorIgnesPrimary"
+        android:visibility="visible"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -26,15 +27,15 @@
                 android:id="@+id/register_icon_citizen_button"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:background="@drawable/userimg" />
+                android:background="@drawable/userimgwhite" />
 
-            <TextView
+            <!--<TextView
+                android:id="@+id/citizen_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/asap_bold"
                 android:gravity="center_horizontal"
                 android:text="Cidadão"
-                android:textSize="25dp" />
+                android:textSize="25dp" />-->
 
         </LinearLayout>
 
@@ -47,15 +48,16 @@
                 android:id="@+id/register_icon_worker_button"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:background="@drawable/wokerimg" />
+                android:background="@drawable/wokerimgwhite" />
 
-            <TextView
+            <!--<TextView
+                android:id="@+id/worker_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/asap_bold"
                 android:gravity="center_horizontal"
                 android:text="Trabalhador"
-                android:textSize="25dp" />
+                android:background="@drawable/button"
+                android:textSize="25dp" />-->
 
         </LinearLayout>
 
@@ -68,6 +70,7 @@
         android:layout_weight="4"
         android:gravity="center|center_horizontal"
         android:orientation="vertical"
+        android:paddingHorizontal="10dp"
         android:visibility="gone">
 
         <TextView
@@ -113,6 +116,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="40dp"
+        android:paddingHorizontal="10dp"
         android:visibility="gone">
 
         <ImageView

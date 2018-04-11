@@ -44,8 +44,6 @@ public class LoginActivity extends AppCompatActivity {
      * Keep track of the login task to ensure we can cancel it if requested.
      */
 
-    private Context context;
-
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -53,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private TextView tx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,14 +89,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-        context=this;
-
-        tx = (TextView)findViewById(R.id.FODAAAASSE);
-
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/playlistscript.otf");
-
-        tx.setTypeface(custom_font);
     }
 
     /**

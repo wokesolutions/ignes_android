@@ -197,6 +197,7 @@ public class RegisterActivity extends AppCompatActivity {
         String password = mPassword.getText().toString();
         String confirmation = mPasswordConfirm.getText().toString();
         String role = mUserRole;
+        String code = mCode.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -227,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
            // showProgress(true);
-            mRegTask = new UserRegisterTask(username, email, password, confirmation, role);
+            mRegTask = new UserRegisterTask(username, email, password, confirmation, role, code);
             mRegTask.execute((Void) null);
         }
     }
@@ -243,16 +244,16 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mPasswordString;
         private final String mConfirmation;
         private final String mRole;
-        //TODO: private final String mCode;
+        private final String mCode;
 
 
-        UserRegisterTask(String username, String email, String password, String confirmation, String role /*,String code*/) {
+        UserRegisterTask(String username, String email, String password, String confirmation, String role, String code) {
             mUsername = username;
             mEmail = email;
             mPasswordString = password;
             mConfirmation = confirmation;
             mRole = role;
-            //TODO: mCode = code
+            mCode = code;
 
         }
 
@@ -294,7 +295,7 @@ public class RegisterActivity extends AppCompatActivity {
                     credentials.put("worker_username", mUsername);
                     credentials.put("worker_email", mEmail);
                     credentials.put("worker_password", mPasswordString);
-                    //credentials.put("user_confirmation", mConfirmation);
+                    credentials.put("worker_code", mCode);
 
                     System.out.println("Credentials JSON to send:" + credentials);
 

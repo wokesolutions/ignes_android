@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,13 +30,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -83,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-                //startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+                //startActivity(new Intent(LoginActivity.this, MapActivity.class));
 
             }
         });
@@ -261,7 +257,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if (result.equals("OK")) {
 
-                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+                startActivity(new Intent(LoginActivity.this, MapActivity.class));
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

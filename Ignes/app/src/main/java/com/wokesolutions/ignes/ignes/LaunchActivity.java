@@ -10,13 +10,9 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
-
-import org.json.JSONObject;
 
 import java.net.URL;
 
@@ -108,7 +104,7 @@ public class LaunchActivity extends AppCompatActivity {
             if (result.equals("OK")) {
 
                 System.out.println("TOKEN É VALIDO");
-                startActivity(new Intent(LaunchActivity.this, WelcomeActivity.class));
+                startActivity(new Intent(LaunchActivity.this, MapActivity.class));
 
 
             } else {

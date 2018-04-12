@@ -23,7 +23,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestsREST {
 
-    public static String doGET(URL url) throws IOException {
+    public static String doGET(URL url, String token) throws IOException {
 
         InputStream stream = null;
         HttpURLConnection connection = null;
@@ -39,6 +39,9 @@ public class RequestsREST {
             // Already true by default but setting just in case; needs to be true since this request
             // is carrying an input (response) body.
             connection.setDoInput(true);
+            //Inserts token in an header for validation
+            if(token != null)
+                connection.setRequestProperty("Authorization", token);
             // Open communications link (network traffic occurs here).
             connection.connect();
             int responseCode = connection.getResponseCode();
@@ -63,7 +66,7 @@ public class RequestsREST {
         return result;
     }
 
-    public static HttpURLConnection doPOST(URL url, JSONObject data) throws IOException {
+    public static HttpURLConnection doPOST(URL url, JSONObject data, String token) throws IOException {
 
         InputStream stream = null;
         OutputStream out = null;
@@ -84,6 +87,9 @@ public class RequestsREST {
             connection.setChunkedStreamingMode(0);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-type", "application/json");
+            //Inserts token in an header for validation
+            if(token != null)
+                connection.setRequestProperty("Authorization", token);
             // Open communications link (network traffic occurs here).
             out = new BufferedOutputStream(connection.getOutputStream());
             out.write(data.toString().getBytes());

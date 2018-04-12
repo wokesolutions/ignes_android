@@ -323,7 +323,7 @@ public class RegisterActivity extends AppCompatActivity {
                     url = new URL("https://hardy-scarab-200218.appspot.com/api/register/worker");
                 }
 
-                HttpURLConnection s = RequestsREST.doPOST(url, credentials);
+                HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
 
                 return s.getResponseMessage();
 

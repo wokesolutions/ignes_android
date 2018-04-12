@@ -232,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/login");
 
-                HttpURLConnection s = RequestsREST.doPOST(url, credentials);
+                HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
 
                 if(s.getResponseMessage().equals("OK")) {
                     String token = s.getHeaderField("Authorization").toString();

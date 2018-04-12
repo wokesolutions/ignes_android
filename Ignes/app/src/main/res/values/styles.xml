@@ -15,9 +15,4 @@
         <item name="colorPrimaryDark">@color/colorIgnesPrimary</item>
         <item name="colorAccent">@color/colorIgnesPrimary</item>
     </style>
-
-    <style name="MenuTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:textSize">20dp</item>
-        <item name="listPreferredItemHeight">10dp</item>
-    </style>
 </resources>

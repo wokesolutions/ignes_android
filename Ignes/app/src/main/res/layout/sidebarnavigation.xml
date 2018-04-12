@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sidebar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:layout_marginEnd="-65dp"
+    android:layout_marginRight="-65dp"
+    android:background="@color/transColor"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/botao"
+        style="?android:textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button"
+        android:text="Profile"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
+    <Button
+        android:id="@+id/botao1"
+        style="?android:textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button"
+        android:text="Settings"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
+    <Button
+        android:id="@+id/botao2"
+        style="?android:textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button"
+        android:text="Log out"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
+</LinearLayout>

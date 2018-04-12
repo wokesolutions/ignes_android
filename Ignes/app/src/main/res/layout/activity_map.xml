@@ -4,28 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapActivity"
     android:id="@+id/drawerlayout_map">
+
+    <include layout="@layout/sidebarnavigation"/>
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-    <android.support.design.widget.NavigationView
-        android:theme="@style/MenuTheme"
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        app:menu="@menu/navigation_menu"
-        android:layout_gravity = "start"
-        android:background="@color/transColor">
-
-    </android.support.design.widget.NavigationView>
-
-
-
-
 
 </android.support.v4.widget.DrawerLayout>

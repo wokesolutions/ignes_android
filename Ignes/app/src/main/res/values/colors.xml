@@ -8,6 +8,6 @@
     <color name="colorIgnesSecondary">#CA3110</color>
     <color name="colorIgnesGreen">#3BAD36</color>
     <color name="colorIgnesGreenII">#76AD36</color>
-    <color name="transColor">#CCEEEEEE</color>
+    <color name="transColor"></color>
 </resources>
 

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -322,10 +323,9 @@ public class RegisterActivity extends AppCompatActivity {
                     url = new URL("https://hardy-scarab-200218.appspot.com/api/register/worker");
                 }
 
-                Map<String, List<String>> s = RequestsREST.doPOST(url, credentials);
+                HttpURLConnection s = RequestsREST.doPOST(url, credentials);
 
-                System.out.println(s.keySet());
-                return "200 OK";
+                return s.getResponseMessage();
 
             } catch (Exception e) {
                 return e.toString();

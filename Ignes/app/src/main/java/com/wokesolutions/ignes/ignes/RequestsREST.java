@@ -63,12 +63,12 @@ public class RequestsREST {
         return result;
     }
 
-    public static Map<String, List<String>> doPOST(URL url, JSONObject data) throws IOException {
+    public static HttpURLConnection doPOST(URL url, JSONObject data) throws IOException {
 
         InputStream stream = null;
         OutputStream out = null;
         HttpURLConnection connection = null;
-        Map<String, List<String>> result = null;
+        HttpURLConnection result = null;
 
         try {
             connection = (HttpURLConnection) url.openConnection();
@@ -96,12 +96,10 @@ public class RequestsREST {
             stream = connection.getInputStream();
             if (stream != null) {
                 // Converts Stream to String with max length of 1K.
-                result = connection.getHeaderFields();
+                result = connection/*.getHeaderFields()*/;
 
-                List<String> temp = new ArrayList(1);
-                temp.add(readStream(stream, 1024));
-
-                System.out.println("DENTRO DO POST -> ");
+               /* List<String> temp = new ArrayList(1);
+                temp.add(readStream(stream, 1024));*/
 
             }
         } finally {

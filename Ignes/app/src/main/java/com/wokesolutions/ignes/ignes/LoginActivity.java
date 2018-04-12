@@ -34,6 +34,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
+                //startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
 
             }
         });
@@ -231,9 +232,21 @@ public class LoginActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/login");
 
-                Map<String, List<String>> s = RequestsREST.doPOST(url, credentials);
+                HttpURLConnection s = RequestsREST.doPOST(url, credentials);
 
-                return s.get("Authorization").get(0);
+                if(s.getResponseMessage().equals("OK")) {
+                    String token = s.getHeaderField("Authorization").toString();
+
+                    SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                    Editor editor = shared.edit();
+
+                    editor.putString("token", token);
+                    editor.apply();
+
+                    System.out.println("TOKEEEEEN: " + token);
+                }
+
+                return s.getResponseMessage();
 
             } catch (Exception e) {
                 return e.toString();
@@ -246,23 +259,14 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
 
-            if (result != null) {
-                String token = result;
-                // We parse the result
-                Log.i("LoginActivity", token);
+            if (result.equals("OK")) {
 
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-                Editor editor = shared.edit();
-
-                editor.putString("token", token);
-                editor.apply();
-
-                System.out.println("TOKEEEEEN: " + token);
-
+                startActivity(new Intent(LoginActivity.this, WelcomeActivity.class));
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+                System.out.println(result);
             }
         }
 

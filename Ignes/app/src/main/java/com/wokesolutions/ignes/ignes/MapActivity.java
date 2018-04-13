@@ -51,6 +51,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ActionBarDrawerToggle mMenu;
     private Button mLoggout;
     private SharedPreferences sharedPref;
+    private Button mReport;
+    private Button mFilter;
 
     private SendLogoutTask mSendLogoutTask = null;
 
@@ -76,6 +78,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         menuButtons();
         /*---------------------------------------------------------------------------------*/
+        mReport = (Button) findViewById(R.id.reporticon);
+        mFilter = (Button) findViewById(R.id.filtericon);
 
         /*----- About Google Maps -----*/
         checkLocationPermission();
@@ -151,7 +155,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -200,10 +204,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
+        if(item.getItemId() == R.id.reporticon)
+            reportTask();
         if(item.getItemId() == R.id.filtericon)
-            System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRR");
+            filterTask();
         return super.onOptionsItemSelected(item);
     }
+
+    private void filterTask() {
+        mFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void reportTask() {
+        mReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
     /*--------------------------------------------------------------------------------*/
     public void sendLogoutTask(String token) {
         if (mSendLogoutTask != null) {

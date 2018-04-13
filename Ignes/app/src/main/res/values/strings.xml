@@ -17,9 +17,11 @@
     <string name="cellphone_e_mail_or_username">Cellphone, e-mail or username</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
+    <string name="touch_anywhere_to_start">Touch anywhere to start</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_a_new_one">Create a new one</string>
     <string name="enter_without_an_account">Continue without an account</string>
+
     <string name="title_activity_nav_bar">NavBarActivity</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -29,7 +31,8 @@
     <string name="action_settings">Settings</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="touch_anywhere_to_start">Touch anywhere to start</string>
+
+    <!-- Profile String -->
     <string name="welcome">Welcome,</string>
     <string name="points">Points:</string>
     <string name="insert_company_code">Insert company code</string>
@@ -37,6 +40,8 @@
     <string name="next">Next</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
+
+    <!-- Register form String -->
     <string name="username_register">Username</string>
     <string name="email_register">Email</string>
     <string name="confirm_password">Confirm Password</string>

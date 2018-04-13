@@ -47,6 +47,8 @@
 
         <activity android:name=".FeedActivity" />
 
+        <activity android:name=".ReportFormActivity"/>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

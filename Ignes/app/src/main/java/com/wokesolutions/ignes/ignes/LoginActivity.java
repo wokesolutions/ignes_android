@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-                //startActivity(new Intent(LoginActivity.this, MapActivity.class));
 
             }
         });

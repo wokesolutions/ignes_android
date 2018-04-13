@@ -205,7 +205,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (mMenu.onOptionsItemSelected(item))
             return true;
         if(item.getItemId() == R.id.reporticon)
-            reportTask();
+            startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
         if(item.getItemId() == R.id.filtericon)
             filterTask();
         return super.onOptionsItemSelected(item);
@@ -220,14 +220,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    private void reportTask() {
+    /*private void reportTask() {
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-    }
+    }*/
 
     /*--------------------------------------------------------------------------------*/
     public void sendLogoutTask(String token) {

@@ -39,11 +39,11 @@
 
         <activity
             android:name=".MapActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/WelcomeTheme" />
 
         <activity
-            android:name=".ProfileActivity"
-            android:label="Profile" />
+            android:name=".FeedActivity"
+            />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

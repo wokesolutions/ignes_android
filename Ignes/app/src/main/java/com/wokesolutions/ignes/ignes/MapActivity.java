@@ -13,9 +13,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,7 +29,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
+
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
@@ -37,13 +41,19 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
     private Button mLoggout;
     private SharedPreferences sharedPref;
 
+    private Toolbar myToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+         setSupportActionBar(myToolbar);
+
         /*----- About Menu Bar -----*/
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
@@ -51,6 +61,7 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ignesred);
 
         menuButtons();
         /*---------------------------------------------------------------------------------*/
@@ -169,6 +180,7 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (mMenu.onOptionsItemSelected(item))
             return true;
         return super.onOptionsItemSelected(item);

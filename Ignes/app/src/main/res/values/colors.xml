@@ -9,5 +9,6 @@
     <color name="colorIgnesGreen">#3BAD36</color>
     <color name="colorIgnesGreenII">#76AD36</color>
     <color name="transColor"></color>
+    <color name="background_material_light">#fafafa</color>
 </resources>
 

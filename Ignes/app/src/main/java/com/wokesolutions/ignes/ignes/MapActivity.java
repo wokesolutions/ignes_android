@@ -13,12 +13,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -29,14 +26,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
+
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-
+    private Button mLoggout;
+    private SharedPreferences sharedPref;
 
 
     @Override
@@ -44,6 +43,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        /*----- About Menu Bar -----*/
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
@@ -52,6 +52,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        menuButtons();
+        /*---------------------------------------------------------------------------------*/
+
+        /*----- About Google Maps -----*/
         checkLocationPermission();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -60,16 +64,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        /*----------------------------------------------------------------------------------*/
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(mMenu.onOptionsItemSelected(item))
-            return true;
-        return super.onOptionsItemSelected(item);
-    }
 
+    /*----- About Google Maps -----*/
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -81,8 +81,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 new AlertDialog.Builder(this)
                         .setTitle("Ignes Location Permission")
                         .setMessage("Location permissions are needed to access all aplication features.")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener()
-                        {
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
@@ -151,4 +150,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
         }
     }
+    /*------------------------------------------------------------------------------*/
+
+    /*----- About Menu Bar -----*/
+    private void menuButtons() {
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mLoggout = (Button) findViewById(R.id.botao_logout);
+        mLoggout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPref.edit().remove("token").commit();
+                startActivity(new Intent(MapActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mMenu.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
+    }
+    /*--------------------------------------------------------------------------------*/
 }

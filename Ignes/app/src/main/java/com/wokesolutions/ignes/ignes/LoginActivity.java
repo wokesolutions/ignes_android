@@ -231,7 +231,11 @@ public class LoginActivity extends AppCompatActivity {
                 HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
 
                 if(s.getResponseMessage().equals("OK")) {
+
+                    System.out.println("HEY" + s.getHeaderField("Authorization"));
+
                     String token = s.getHeaderField("Authorization").toString();
+
 
                     SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                     Editor editor = shared.edit();
@@ -239,7 +243,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("token", token);
                     editor.apply();
 
-                    System.out.println("TOKEEEEEN: " + token);
+                    System.out.println("TOKEN: " + token);
                 }
 
                 return s.getResponseMessage();
@@ -258,6 +262,7 @@ public class LoginActivity extends AppCompatActivity {
             if (result.equals("OK")) {
 
                 startActivity(new Intent(LoginActivity.this, MapActivity.class));
+                finish();
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

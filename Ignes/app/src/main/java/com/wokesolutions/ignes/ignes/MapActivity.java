@@ -1,18 +1,23 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,7 +31,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
@@ -36,6 +47,8 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
     private ActionBarDrawerToggle mMenu;
     private Button mLoggout;
     private SharedPreferences sharedPref;
+
+    private SendLogoutTask mSendLogoutTask = null;
 
 
     @Override
@@ -160,8 +173,9 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
         mLoggout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String token = sharedPref.getString("token", "");
                 sharedPref.edit().remove("token").commit();
-                startActivity(new Intent(MapActivity.this, LoginActivity.class));
+                sendLogoutTask(token);
                 finish();
             }
         });
@@ -174,4 +188,67 @@ public class MapActivity extends SideBarActivity implements OnMapReadyCallback {
         return super.onOptionsItemSelected(item);
     }
     /*--------------------------------------------------------------------------------*/
+    public void sendLogoutTask(String token) {
+        if (mSendLogoutTask != null) {
+            return;
+        }
+
+        // Kick off a background task to perform the token authentication attempt.
+        mSendLogoutTask = new SendLogoutTask(token);
+        mSendLogoutTask.execute((Void) null);
+    }
+    public class SendLogoutTask extends AsyncTask<Void, Void, String> {
+
+        private final String mToken;
+
+        SendLogoutTask(String token) {
+            mToken = token;
+        }
+
+        /**
+         * Cancel background network operation if we do not have network connectivity.
+         */
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/logout");
+
+                String s = RequestsREST.doGET(url, mToken);
+                //Assumes from this side that the response is ok
+                return s;
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mSendLogoutTask = null;
+
+                System.out.println("User Logged Out");
+                startActivity(new Intent(MapActivity.this, LoginActivity.class));
+                finish();
+        }
+
+        @Override
+        protected void onCancelled() {
+            mSendLogoutTask = null;
+
+        }
+    }
 }

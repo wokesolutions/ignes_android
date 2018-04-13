@@ -12,19 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        app:contentInsetRight="60dp"
+        app:contentInsetEnd="60dp"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-        <Button
-            android:layout_width="40dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ocorrenciared" />
-
-        <Button
-            android:layout_width="40dp"
-            android:layout_height="50dp"
-            android:background="@drawable/lupared" />
+        android:theme="@style/ActionBar">
 
     </android.support.v7.widget.Toolbar>
 

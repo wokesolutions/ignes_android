@@ -15,4 +15,9 @@
         <item name="colorPrimaryDark">@color/colorIgnesPrimary</item>
         <item name="colorAccent">@color/colorIgnesPrimary</item>
     </style>
+
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <!-- Customize your theme here. -->
+
+    </style>
 </resources>

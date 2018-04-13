@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Welcome, "
+                android:text="@string/welcome"
                 android:textColor="@color/colorIgnesPrimary"
                 android:textSize="25dp" />
 
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Pontos: "
+                android:text="@string/points"
                 android:textColor="#000"
                 android:textSize="15dp" />
 

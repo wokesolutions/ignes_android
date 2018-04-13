@@ -36,9 +36,6 @@ public class LaunchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 isTokenValid();
-                //startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-                //finish();
-
             }
         });
 
@@ -105,11 +102,13 @@ public class LaunchActivity extends AppCompatActivity {
 
                 System.out.println("TOKEN É VALIDO");
                 startActivity(new Intent(LaunchActivity.this, MapActivity.class));
+                finish();
 
 
             } else {
                 System.out.println("TOKEN INVÁLIDO");
                 startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+                finish();
             }
         }
 

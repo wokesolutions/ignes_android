@@ -1,7 +1,10 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -12,7 +15,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,22 +36,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
+    private SharedPreferences sharedPref;
 
     private LinearLayout mSidebar;
-    private Button botao;
+    private Button profile;
+    private Button logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
         mSidebar = (LinearLayout) findViewById(R.id.sidebar);
-        botao = (Button) findViewById(R.id.botao);
+        profile = (Button) findViewById(R.id.botao_profile);
+        logout = (Button) findViewById(R.id.botao_logout);
+
+        logout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPref.edit().remove("token").commit();
+                startActivity(new Intent(MapActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(mMenu);
-         mMenu.syncState();
+        mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         checkLocationPermission();

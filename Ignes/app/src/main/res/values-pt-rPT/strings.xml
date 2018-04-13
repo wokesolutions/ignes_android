@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ignes</string>
     <string name="created_by">CRIADO POR</string>
     <string name="cellphone_e_mail_or_username">Telemóvel, e-mail ou nome de utilizador</string>
     <string name="password">Senha</string>
@@ -8,5 +7,24 @@
     <string name="don_t_have_an_account">Não tem uma conta?</string>
     <string name="create_a_new_one">Crie uma nova</string>
     <string name="enter_without_an_account">Continuar sem conta</string>
-    <string name="open">Open</string>
+    <string name="welcome">Bem-vindo,</string>
+    <string name="points">Pontos:</string>
+    <string name="code">Código</string>
+    <string name="next">Seguinte</string>
+    <string name="username">Nome de utilizador</string>
+    <string name="email">Email</string>
+    <string name="username_register">Nome de utilizador</string>
+    <string name="email_register">Email</string>
+    <string name="confirm_password">Confirmar password</string>
+    <string name="sign_up">Registar</string>
+    <string name="close">Fechar</string>
+    <string name="open">Abrir</string>
+    <string name="touch_anywhere_to_start">Toque para começar</string>
+    <string name="insert_company_code">Insira o código da empresa</string>
+    <string name="action_settings">Definições</string>
+    <string name="error_invalid_password" translatable="false">Esta password é muito curta</string>
+    <string name="error_incorrect_password">Password incorrecta</string>
+    <string name="action_sign_in_short">Entrar</string>
+    <string name="log_out">Sair</string>
+    <string name="profile_navi">Perfil</string>
 </resources>

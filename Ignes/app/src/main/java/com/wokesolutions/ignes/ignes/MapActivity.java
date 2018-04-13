@@ -36,32 +36,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private SharedPreferences sharedPref;
 
-    private LinearLayout mSidebar;
-    private Button profile;
-    private Button logout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
-        mSidebar = (LinearLayout) findViewById(R.id.sidebar);
-        profile = (Button) findViewById(R.id.botao_profile);
-        logout = (Button) findViewById(R.id.botao_logout);
-
-        logout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedPref.edit().remove("token").commit();
-                startActivity(new Intent(MapActivity.this, LoginActivity.class));
-                finish();
-            }
-        });
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(mMenu);

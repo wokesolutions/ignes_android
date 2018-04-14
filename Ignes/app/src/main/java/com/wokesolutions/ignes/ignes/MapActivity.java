@@ -50,11 +50,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Button mLoggout;
-    private SharedPreferences sharedPref;
     private Button mReport;
     private Button mFilter;
-
-    private SendLogoutTask mSendLogoutTask = null;
 
 
     @Override
@@ -180,15 +177,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
-
-        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mLoggout = (Button) findViewById(R.id.botao_logout);
         mLoggout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String token = sharedPref.getString("token", "");
-                sharedPref.edit().remove("token").commit();
-                sendLogoutTask(token);
+                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
                 finish();
             }
         });
@@ -220,77 +213,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    /*private void reportTask() {
-        mReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-    }*/
-
     /*--------------------------------------------------------------------------------*/
-    public void sendLogoutTask(String token) {
-        if (mSendLogoutTask != null) {
-            return;
-        }
-
-        // Kick off a background task to perform the token authentication attempt.
-        mSendLogoutTask = new SendLogoutTask(token);
-        mSendLogoutTask.execute((Void) null);
-    }
-    public class SendLogoutTask extends AsyncTask<Void, Void, String> {
-
-        private final String mToken;
-
-        SendLogoutTask(String token) {
-            mToken = token;
-        }
-
-        /**
-         * Cancel background network operation if we do not have network connectivity.
-         */
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
-            }
-
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/logout");
-
-                String s = RequestsREST.doGET(url, mToken);
-                //Assumes from this side that the response is ok
-                return s;
-            } catch (Exception e) {
-                return e.toString();
-            }
-        }
-
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mSendLogoutTask = null;
-
-                System.out.println("User Logged Out");
-                startActivity(new Intent(MapActivity.this, LoginActivity.class));
-                finish();
-        }
-
-        @Override
-        protected void onCancelled() {
-            mSendLogoutTask = null;
-
-        }
-    }
 }

@@ -10,10 +10,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature
+    <!--<uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="true" />-->
 
     <application
         android:allowBackup="true"
@@ -22,7 +23,6 @@
         android:roundIcon="@mipmap/icon_app_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".LaunchActivity"
             android:theme="@style/WelcomeTheme">
@@ -32,37 +32,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:theme="@style/WelcomeTheme" />
-
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/WelcomeTheme" />
-
         <activity
             android:name=".MapActivity"
             android:theme="@style/WelcomeTheme" />
-
         <activity android:name=".FeedActivity" />
-
         <activity
             android:name=".ReportFormActivity"
-            android:theme="@style/WelcomeTheme"
             android:parentActivityName=".MapActivity"
-            />
-
+            android:theme="@style/WelcomeTheme" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-
+        <activity android:name=".LogoutActivity"></activity>
     </application>
 
 </manifest>

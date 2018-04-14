@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -25,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 
 public class ReportFormActivity extends AppCompatActivity {
@@ -34,13 +38,14 @@ public class ReportFormActivity extends AppCompatActivity {
     private Button mReport;
     private Button mFilter;
 
-    private int mRequestCode = 1;
+    private int mRequestCode;
 
     private Button mTitleButton;
     private Button mAddressButton;
     private Button mDescriptionButton;
     private Button mImageButton;
     private Button mUploadButton;
+    private Button mCameraButton;
     private Button mSubmitButton;
 
     private TextInputLayout mTitleForm;
@@ -52,6 +57,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private EditText mAddress;
     private EditText mDescription;
     private ImageView mImage;
+    private View mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +67,30 @@ public class ReportFormActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        mView = (View) findViewById(R.id.report_view);
+        mCameraButton = (Button) findViewById(R.id.report_camera_button);
+        mCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mImage.setVisibility(View.VISIBLE);
+                mView.setVisibility(View.VISIBLE);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                mRequestCode = 0;
+                if (intent.resolveActivity(getPackageManager()) != null)
+                    startActivityForResult(intent, mRequestCode);
+            }
+        });
         mUploadButton = (Button) findViewById(R.id.report_upload_button);
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (MediaStore.ACTION_IMAGE_CAPTURE);
-
-                if(intent.resolveActivity(getPackageManager())!=null)
-                    startActivityForResult(intent, mRequestCode);
+                mImage.setVisibility(View.VISIBLE);
+                mView.setVisibility(View.VISIBLE);
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                mRequestCode = 1;
+                if (pickPhoto.resolveActivity(getPackageManager()) != null)
+                    startActivityForResult(pickPhoto, mRequestCode);
             }
         });
 
@@ -107,16 +129,32 @@ public class ReportFormActivity extends AppCompatActivity {
 
     }
 
-    public void onActivityResult(int requestcode, int resultcode, Intent data){
-        if(requestcode == mRequestCode)
-            if(resultcode == RESULT_OK){
-            Bundle bundle = new Bundle();
-            bundle = data.getExtras();
-            Bitmap bmp;
-            bmp = (Bitmap) bundle.get("data");
-            mImage.setImageBitmap(bmp);
+    public void onActivityResult(int requestcode, int resultcode, Intent data) {
 
-            }
+        switch (requestcode) {
+            case 0:
+                if (resultcode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    Bitmap bmp;
+                    bmp = (Bitmap) bundle.get("data");
+                    mImage.setImageBitmap(bmp);
+                }
+                break;
+            case 1:
+                if (resultcode == RESULT_OK) {
+
+                    try {
+                        Uri imageUri = data.getData();
+                        InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                        mImage.setImageBitmap(bmp);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                break;
+        }
 
 
     }
@@ -180,6 +218,7 @@ public class ReportFormActivity extends AppCompatActivity {
             break;
         }
     }
+
     private void menuButtons() {
 
         mLoggout = (Button) findViewById(R.id.botao_logout);
@@ -198,14 +237,15 @@ public class ReportFormActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
-        if(item.getItemId() == R.id.reporticon)
-           // startActivity(new Intent(ReportFormActivity.this, ReportFormActivity.class));
-        if(item.getItemId() == R.id.filtericon)
-            filterTask();
+        if (item.getItemId() == R.id.reporticon)
+            // startActivity(new Intent(ReportFormActivity.this, ReportFormActivity.class));
+            if (item.getItemId() == R.id.filtericon)
+                filterTask();
         return super.onOptionsItemSelected(item);
     }
 

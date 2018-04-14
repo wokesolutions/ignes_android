@@ -47,7 +47,11 @@
 
         <activity android:name=".FeedActivity" />
 
-        <activity android:name=".ReportFormActivity"/>
+        <activity
+            android:name=".ReportFormActivity"
+            android:theme="@style/WelcomeTheme"
+            android:parentActivityName=".MapActivity"
+            />
 
 
         <meta-data

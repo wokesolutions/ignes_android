@@ -57,7 +57,6 @@ public class ReportFormActivity extends AppCompatActivity {
     private EditText mAddress;
     private EditText mDescription;
     private ImageView mImage;
-    private View mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +66,13 @@ public class ReportFormActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        mView = (View) findViewById(R.id.report_view);
+
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mImage.setVisibility(View.VISIBLE);
-                mView.setVisibility(View.VISIBLE);
+
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mRequestCode = 0;
                 if (intent.resolveActivity(getPackageManager()) != null)
@@ -85,7 +84,7 @@ public class ReportFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mImage.setVisibility(View.VISIBLE);
-                mView.setVisibility(View.VISIBLE);
+
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 mRequestCode = 1;
@@ -126,6 +125,17 @@ public class ReportFormActivity extends AppCompatActivity {
         menuButtons();
         mReport = (Button) findViewById(R.id.reporticon);
         mFilter = (Button) findViewById(R.id.filtericon);
+
+        mSubmitButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ReportFormActivity.this, MapActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Adress", mAddress.getText().toString());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
     }
 

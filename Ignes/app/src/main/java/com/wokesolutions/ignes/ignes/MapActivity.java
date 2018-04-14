@@ -1,10 +1,18 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -13,11 +21,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,9 +41,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
+
+import static android.widget.Toast.LENGTH_LONG;
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private int mRequestCode;
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
@@ -39,13 +65,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Button mLoggout;
     private Button mReport;
     private Button mFilter;
-
-
+    private List<Address> markers;
+    private Location mCurrentLocation;
+    private ImageView mImage;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        mCurrentLocation = null;
+        context=this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -55,7 +86,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-
+        markers = new LinkedList<Address>();
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -79,7 +110,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         /*----------------------------------------------------------------------------------*/
 
     }
-
 
     /*----- About Google Maps -----*/
     public boolean checkLocationPermission() {
@@ -128,7 +158,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -143,6 +172,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        if (markers != null)
+            for (Address adds : markers)
+                mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -155,12 +187,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
+                        mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
                     }
                 }
             });
         }
+    }
+
+    public void addMarkerFromLocation(Location loc) {
+        Geocoder coder = new Geocoder(this);
+        try {
+            List<Address> a = coder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+            Address x = a.get(0);
+            markers.add(x);
+            if (markers != null)
+                for (Address adds : markers)
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addMarker(String add) {
+        Geocoder coder = new Geocoder(this);
+        try {
+            List<Address> a = coder.getFromLocationName(add, 1);
+            Address loc = a.get(0);
+            markers.add(loc);
+            if (markers != null)
+                for (Address adds : markers)
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     /*------------------------------------------------------------------------------*/
 
@@ -182,25 +246,143 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
-        if(item.getItemId() == R.id.reporticon)
-            startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
-        if(item.getItemId() == R.id.filtericon)
+
+        if (item.getItemId() == R.id.reporticon) {
+            onReport();
+            return true;
+        }
+        //  startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
+        if (item.getItemId() == R.id.filtericon)
             filterTask();
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void filterTask() {
-        mFilter.setOnClickListener(new View.OnClickListener() {
+    public void onReport() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Report");
+        mBuilder.setIcon(R.drawable.ocorrenciared);
+        final AlertDialog alert = mBuilder.create();
+
+        LayoutInflater inflater = MapActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.minireportlayout, null);
+
+        mBuilder.setView(mView);
+        mBuilder.show();
+
+        final LinearLayout mInitialize = (LinearLayout) mView.findViewById(R.id.report_initialize_form);
+        final LinearLayout mReportForm = (LinearLayout) mView.findViewById(R.id.report_form);
+        final LinearLayout mFastForm = (LinearLayout) mView.findViewById(R.id.report_fast_form);
+        final LinearLayout mLongForm = (LinearLayout) mView.findViewById(R.id.report_long_form);
+        final CheckBox mCheckBox = (CheckBox) mView.findViewById(R.id.mini_checkbox);
+        final EditText mTitle = (EditText) mView.findViewById(R.id.mini_title);
+        final EditText mAddress = (EditText) mView.findViewById(R.id.mini_address);
+        final EditText mDescription = (EditText) mView.findViewById(R.id.mini_description);
+        Button mSubmit = (Button) mView.findViewById(R.id.mini_submit);
+        final Button mCameraButton = (Button) mView.findViewById(R.id.report_camera_button);
+        final Button mUploadButton = (Button) mView.findViewById(R.id.report_upload_button);
+        mImage = (ImageView) mView.findViewById(R.id.report_image);
+
+        mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!mAddress.getText().toString().isEmpty()) {
+                    addMarker(mAddress.getText().toString());
+                } else if (mCheckBox.isChecked() && mCurrentLocation != null) {
+                    addMarkerFromLocation(mCurrentLocation);
+                }
+                Toast.makeText(context, "Report registered", Toast.LENGTH_LONG).show();
+                //NAO CONSIGO SAIR DA PORCARIA DO ALERT!!!!!!!!!
+            }
+        });
 
+        //----FAST-----
+        Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
+        mFast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReportForm.setVisibility(View.VISIBLE);
+                mFastForm.setVisibility(View.VISIBLE);
+                mLongForm.setVisibility(View.GONE);
+                mInitialize.setVisibility(View.GONE);
+
+            }
+        });
+
+        //----LONG-----
+        Button mLong = (Button) mView.findViewById(R.id.report_long_button);
+        mLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReportForm.setVisibility(View.VISIBLE);
+                mFastForm.setVisibility(View.VISIBLE);
+                mLongForm.setVisibility(View.VISIBLE);
+                mInitialize.setVisibility(View.GONE);
+
+                mCameraButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mImage.setVisibility(View.VISIBLE);
+
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        mRequestCode = 0;
+                        if (intent.resolveActivity(getPackageManager()) != null)
+                            startActivityForResult(intent, mRequestCode);
+                    }
+                });
+                mUploadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mImage.setVisibility(View.VISIBLE);
+
+                        Intent intent = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        mRequestCode = 1;
+                        if (intent.resolveActivity(getPackageManager()) != null)
+                            startActivityForResult(intent, mRequestCode);
+                    }
+                });
             }
         });
     }
 
-    /*--------------------------------------------------------------------------------*/
+    public void onActivityResult(int requestcode, int resultcode, Intent data) {
+
+        switch (requestcode) {
+            case 0:
+                if (resultcode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    Bitmap bmp;
+                    bmp = (Bitmap) bundle.get("data");
+                    mImage.setImageBitmap(bmp);
+                }
+                break;
+            case 1:
+                if (resultcode == RESULT_OK) {
+
+                    try {
+                        Uri imageUri = data.getData();
+                        InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                        mImage.setImageBitmap(bmp);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                break;
+        }
+
+
+    }
+
+
+    private void filterTask() {
+    }
+
 }

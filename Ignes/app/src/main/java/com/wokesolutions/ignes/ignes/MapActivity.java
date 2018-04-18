@@ -185,7 +185,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void addMarkerFromLocation(Location loc) {
+        String add;
         Geocoder coder = new Geocoder(this);
+
         try {
             List<Address> a = coder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
             Address x = a.get(0);

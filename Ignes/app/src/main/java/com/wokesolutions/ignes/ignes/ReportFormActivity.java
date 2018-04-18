@@ -1,34 +1,29 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
-
 import android.support.v7.app.AppCompatActivity;
-
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -40,14 +35,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-
 public class ReportFormActivity extends AppCompatActivity {
 
-    private int mRequestCode;
+    private ReportTask mReportTask = null;
 
-    private LinearLayout mLongForm;
-    //private LinearLayout mShortForm;
-    private LinearLayout mMediumForm;
+    private Context context;
+
+    private int mRequestCode;
+    private int mGravity;
+
+    private byte[] byteArray;
+
+    private Bitmap mImage;
+
+    private String mReportType;
+
+    private Location mCurrentLocation;
+
+    private Geocoder mCoder;
 
     private Button mTitleButton;
     private Button mAddressButton;
@@ -56,39 +61,36 @@ public class ReportFormActivity extends AppCompatActivity {
     private Button mUploadButton;
     private Button mCameraButton;
     private Button mSubmitButton;
+
     private SeekBar mGravitySlider;
 
     private TextInputLayout mTitleForm;
     private TextInputLayout mAddressForm;
     private TextInputLayout mDescriptionForm;
-    //private LinearLayout mImageForm;
+
     private LinearLayout mReportLongImageForm;
+    private LinearLayout mMediumForm;
     private LinearLayout mSliderForm;
+    private LinearLayout mLongForm;
 
     private EditText mTitle;
     private EditText mAddress;
     private EditText mDescription;
-    private byte[] byteArray;
-   // private ImageView mImage;
-
-    private Bitmap mImage;
-
-    private String mReportType;
-    private Location mCurrentLocation;
-    private int mGravity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        context=this;
+
         Intent intent = getIntent();
         mReportType = intent.getExtras().getString("TYPE");
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
 
+        mCoder = new Geocoder(this);
 
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
-        //mShortForm = (LinearLayout) findViewById(R.id.report_short_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
 
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
@@ -98,12 +100,11 @@ public class ReportFormActivity extends AppCompatActivity {
                 openCamera();
             }
         });
+
         mUploadButton = (Button) findViewById(R.id.report_upload_button);
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mImage.setVisibility(View.VISIBLE);
-
                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 mRequestCode = 1;
@@ -122,14 +123,14 @@ public class ReportFormActivity extends AppCompatActivity {
         mTitleForm = (TextInputLayout) findViewById(R.id.report_title_form);
         mAddressForm = (TextInputLayout) findViewById(R.id.report_address_form);
         mDescriptionForm = (TextInputLayout) findViewById(R.id.report_description_form);
-        //mImageForm = (LinearLayout) findViewById(R.id.report_image_form);
         mReportLongImageForm = (LinearLayout) findViewById(R.id.report_long_image_form);
+        mSliderForm = (LinearLayout) findViewById(R.id.report_slider_form);
 
         mTitle = (EditText) findViewById(R.id.report_title);
         mAddress = (EditText) findViewById(R.id.report_address);
         mDescription = (EditText) findViewById(R.id.report_description);
 
-        mSliderForm = (LinearLayout) findViewById(R.id.report_slider_form);
+
         mGravitySlider = (SeekBar) findViewById(R.id.gravity_slider);
 
         mGravity = 0;
@@ -139,7 +140,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mGravitySlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mGravity = progress+1;
+                mGravity = progress + 1;
                 System.out.println(mGravity);
             }
 
@@ -153,23 +154,19 @@ public class ReportFormActivity extends AppCompatActivity {
 
             }
         });
-        //mImage = (ImageView) findViewById(R.id.report_image);
 
         showReportForm();
+
+        changeFormVisibility(mReportType);
 
         mSubmitButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ReportFormActivity.this, MapActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("Address", mAddress.getText().toString());
-                intent.putExtras(bundle);
-                startActivity(intent);
+                attemptReport();
+                mReportTask.execute((Void) null);
+                Toast.makeText(context, "Report sucessfully registered", Toast.LENGTH_LONG).show();
             }
         });
-
-        changeFormVisibility(mReportType);
-
     }
 
     public void onActivityResult(int requestcode, int resultcode, Intent data) {
@@ -203,33 +200,42 @@ public class ReportFormActivity extends AppCompatActivity {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-
                 }
                 break;
         }
+    }
 
+    private void openCamera() {
 
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mRequestCode = 0;
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivityForResult(intent, mRequestCode);
     }
 
     public void showReportForm() {
+
         mTitleButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeVisibility("Title");
             }
         });
+
         mAddressButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeVisibility("Address");
             }
         });
+
         mDescriptionButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeVisibility("Description");
             }
         });
+
         mImageButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,33 +246,33 @@ public class ReportFormActivity extends AppCompatActivity {
 
     public void changeVisibility(String option) {
         switch (option) {
+
             case "Title": {
                 mTitleForm.setVisibility(View.VISIBLE);
                 mAddressForm.setVisibility(View.GONE);
                 mDescriptionForm.setVisibility(View.GONE);
-                //mImageForm.setVisibility(View.GONE);
             }
             break;
+
             case "Address": {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.VISIBLE);
                 mDescriptionForm.setVisibility(View.GONE);
-                //mImageForm.setVisibility(View.GONE);
             }
             break;
+
             case "Description": {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.GONE);
                 mDescriptionForm.setVisibility(View.VISIBLE);
-                //mImageForm.setVisibility(View.GONE);
             }
             break;
+
             case "Image": {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.GONE);
                 mDescriptionForm.setVisibility(View.GONE);
                 mReportLongImageForm.setVisibility(View.VISIBLE);
-                //mImageForm.setVisibility(View.VISIBLE);
             }
             break;
         }
@@ -274,62 +280,77 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private void changeFormVisibility(String reportType) {
         switch (reportType) {
+
             case "fast": {
-                //mShortForm.setVisibility(View.VISIBLE);
                 mMediumForm.setVisibility(View.GONE);
                 mLongForm.setVisibility(View.GONE);
-                //mImageForm.setVisibility(View.VISIBLE);
                 mSliderForm.setVisibility(View.GONE);
                 openCamera();
             }
             break;
+
             case "medium": {
-                //mShortForm.setVisibility(View.GONE);
                 mMediumForm.setVisibility(View.VISIBLE);
                 mLongForm.setVisibility(View.GONE);
-                //mImageForm.setVisibility(View.VISIBLE);
                 mSliderForm.setVisibility(View.VISIBLE);
                 openCamera();
             }
             break;
+
             case "detailed": {
-                //mImageForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.VISIBLE);
             }
             break;
         }
     }
 
-    private void openCamera() {
-        //mImage.setVisibility(View.VISIBLE);
+    private String processCurrentLocation() {
+        String address = "";
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mRequestCode = 0;
-        if (intent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(intent, mRequestCode);
+        try {
+            List<Address> add = mCoder.getFromLocation(mCurrentLocation.getLatitude(),
+                    mCurrentLocation.getLongitude(), 1);
+
+            address = add.get(0).getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return address;
     }
 
+    private void attemptReport() {
+        String address;
+        byte[] image = byteArray;
+
+        if (mReportType == "long")
+            address = mAddress.getText().toString();
+        else
+            address = processCurrentLocation();
+
+        mReportTask = new ReportTask(address, image);
+
+    }
 
     /*--------------------------------------------------------------------------------*/
     public class ReportTask extends AsyncTask<Void, Void, String> {
 
+        byte[] mImage;
         String mAddress;
         double mLat;
         double mLng;
+        String base64;
 
         ReportTask(String address, byte[] img) {
-
+            mImage = img;
+            base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
             mAddress = address;
-
-            Geocoder coder = new Geocoder(ReportFormActivity.this);
             try {
-                List<Address> a = coder.getFromLocationName(mAddress, 1);
-                mLat=a.get(0).getLatitude();
-                mLng=a.get(0).getLongitude();
+                List<Address> addresses = mCoder.getFromLocationName(mAddress, 1);
+                mLat = addresses.get(0).getLatitude();
+                mLng = addresses.get(0).getLongitude();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         @Override
@@ -347,14 +368,14 @@ public class ReportFormActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                URL url = null;
                 JSONObject report = new JSONObject();
 
                 report.put("report_address", mAddress);
-                report.put("report_lat", "morada");
-                report.put("report_lng", "morada");
+                report.put("report_lat", mLat);
+                report.put("report_lng", mLng);
+                report.put("report_img", base64);
 
-                url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 
                 HttpURLConnection s = RequestsREST.doPOST(url, report, null);
 
@@ -366,8 +387,14 @@ public class ReportFormActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(final String result) {
+            mReportTask = null;
+
+            if (result != null) {
+                System.out.println("RESPOSTA DO REPORT " + result);
+            } else {
+                Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

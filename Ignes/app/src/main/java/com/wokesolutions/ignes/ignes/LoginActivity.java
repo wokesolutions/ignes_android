@@ -104,9 +104,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void attemptLogin() {
 
-        if (mAuthTask != null) {
-            return;
-        }
+
 
         // Reset errors.
         mIdentificationView.setError(null);

@@ -270,6 +270,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "fast");
+                i.putExtra("LOCATION", mCurrentLocation);
                 startActivity(i);
                 
             }
@@ -280,6 +281,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "medium");
+                i.putExtra("LOCATION", mCurrentLocation);
                 startActivity(i);
             }
         });

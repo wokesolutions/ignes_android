@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -340,6 +341,9 @@ public class ReportFormActivity extends AppCompatActivity {
         double mLng;
         String base64;
 
+        SharedPreferences prefs = context.getSharedPreferences("Shared",Context.MODE_PRIVATE);
+        String token = prefs.getString("token", null);
+
         ReportTask(String address, byte[] img) {
             mImage = img;
             base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
@@ -377,7 +381,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 
-                HttpURLConnection s = RequestsREST.doPOST(url, report, null);
+                HttpURLConnection s = RequestsREST.doPOST(url, report, token);
 
                 return s.getResponseMessage();
 

@@ -57,6 +57,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ImageView mImage;
     private Context context;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,7 +244,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             onReport();
             return true;
         }
-        //  startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
         if (item.getItemId() == R.id.filtericon)
             filterTask();
 
@@ -268,7 +268,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mFast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
+                Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
+                i.putExtra("TYPE", "fast");
+                startActivity(i);
                 
             }
         });
@@ -276,7 +278,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMedium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, ReportFormActivity.class));
+                Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
+                i.putExtra("TYPE", "medium");
+                startActivity(i);
             }
         });
 
@@ -285,6 +289,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //reportType.putString("Type", "long");
+                Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
+                i.putExtra("TYPE", "long");
+                startActivity(i);
 
 
             }

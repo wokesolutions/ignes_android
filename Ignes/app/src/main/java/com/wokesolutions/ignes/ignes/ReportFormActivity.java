@@ -28,7 +28,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private int mRequestCode;
 
     private LinearLayout mLongForm;
-    private LinearLayout mShortForm;
+    //private LinearLayout mShortForm;
     private LinearLayout mMediumForm;
 
     private Button mTitleButton;
@@ -43,31 +43,32 @@ public class ReportFormActivity extends AppCompatActivity {
     private TextInputLayout mAddressForm;
     private TextInputLayout mDescriptionForm;
     private LinearLayout mImageForm;
+    private LinearLayout mReportLongImageForm;
 
     private EditText mTitle;
     private EditText mAddress;
     private EditText mDescription;
     private ImageView mImage;
 
+    private String mReportType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        Intent intent = getIntent();
+        mReportType = intent.getExtras().getString("TYPE");
+
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
-        mShortForm = (LinearLayout) findViewById(R.id.report_short_form);
+        //mShortForm = (LinearLayout) findViewById(R.id.report_short_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
 
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mImage.setVisibility(View.VISIBLE);
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mRequestCode = 0;
-                if (intent.resolveActivity(getPackageManager()) != null)
-                    startActivityForResult(intent, mRequestCode);
+                openCamera();
             }
         });
         mUploadButton = (Button) findViewById(R.id.report_upload_button);
@@ -95,6 +96,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mAddressForm = (TextInputLayout) findViewById(R.id.report_address_form);
         mDescriptionForm = (TextInputLayout) findViewById(R.id.report_description_form);
         mImageForm = (LinearLayout) findViewById(R.id.report_image_form);
+        mReportLongImageForm = (LinearLayout) findViewById(R.id.report_long_image_form);
 
         mTitle = (EditText) findViewById(R.id.report_title);
         mAddress = (EditText) findViewById(R.id.report_address);
@@ -113,6 +115,8 @@ public class ReportFormActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        changeFormVisibility(mReportType);
 
     }
 
@@ -200,10 +204,42 @@ public class ReportFormActivity extends AppCompatActivity {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.GONE);
                 mDescriptionForm.setVisibility(View.GONE);
+                mReportLongImageForm.setVisibility(View.VISIBLE);
                 mImageForm.setVisibility(View.VISIBLE);
             }
             break;
         }
+    }
+
+    private void changeFormVisibility(String reportType) {
+        switch (reportType) {
+            case "fast": {
+                //mShortForm.setVisibility(View.VISIBLE);
+                mMediumForm.setVisibility(View.GONE);
+                mLongForm.setVisibility(View.GONE);
+                openCamera();
+            }
+            break;
+            case "medium": {
+                //mShortForm.setVisibility(View.GONE);
+                mMediumForm.setVisibility(View.VISIBLE);
+                mLongForm.setVisibility(View.GONE);
+            }
+            break;
+            case "detailed": {
+                mImageForm.setVisibility(View.GONE);
+            }
+            break;
+        }
+    }
+
+    private void openCamera() {
+        mImage.setVisibility(View.VISIBLE);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mRequestCode = 0;
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivityForResult(intent, mRequestCode);
     }
     /*--------------------------------------------------------------------------------*/
 }

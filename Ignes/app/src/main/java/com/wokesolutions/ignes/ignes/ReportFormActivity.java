@@ -1,25 +1,17 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
 import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,16 +21,15 @@ import android.view.View.OnClickListener;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URL;
+
 
 public class ReportFormActivity extends AppCompatActivity {
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mMenu;
-    private Button mLoggout;
-    private Button mReport;
-    private Button mFilter;
 
     private int mRequestCode;
+
+    private LinearLayout mLongForm;
+    private LinearLayout mShortForm;
+    private LinearLayout mMediumForm;
 
     private Button mTitleButton;
     private Button mAddressButton;
@@ -63,9 +54,9 @@ public class ReportFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
+        mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
+        mShortForm = (LinearLayout) findViewById(R.id.report_short_form);
+        mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
 
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
@@ -112,26 +103,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
         showReportForm();
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
-
-        mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-
-        mDrawerLayout.addDrawerListener(mMenu);
-        mMenu.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ignesred);
-
-
-        menuButtons();
-        mReport = (Button) findViewById(R.id.reporticon);
-        mFilter = (Button) findViewById(R.id.filtericon);
-
         mSubmitButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ReportFormActivity.this, MapActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("Adress", mAddress.getText().toString());
+                bundle.putString("Address", mAddress.getText().toString());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -228,45 +205,5 @@ public class ReportFormActivity extends AppCompatActivity {
             break;
         }
     }
-
-    private void menuButtons() {
-
-        mLoggout = (Button) findViewById(R.id.botao_logout);
-        mLoggout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ReportFormActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mMenu.onOptionsItemSelected(item))
-            return true;
-        if (item.getItemId() == R.id.reporticon)
-            // startActivity(new Intent(ReportFormActivity.this, ReportFormActivity.class));
-            if (item.getItemId() == R.id.filtericon)
-                filterTask();
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void filterTask() {
-        mFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-    }
-
     /*--------------------------------------------------------------------------------*/
 }

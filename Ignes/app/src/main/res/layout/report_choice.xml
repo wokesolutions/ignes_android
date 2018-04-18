@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center">
+
+        <Button
+            android:id="@+id/report_fast_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/button"
+            android:text="Quick"
+            android:textColor="@color/backgroundColor" />
+
+        <Button
+            android:id="@+id/report_medium_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/button"
+            android:text="Simple"
+            android:textColor="@color/backgroundColor" />
+
+        <Button
+            android:id="@+id/report_long_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:text="Detailed"
+            android:textColor="@color/backgroundColor" />
+
+</LinearLayout>

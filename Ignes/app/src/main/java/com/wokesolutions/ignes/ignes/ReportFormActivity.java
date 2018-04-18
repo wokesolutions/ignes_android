@@ -217,6 +217,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 //mShortForm.setVisibility(View.VISIBLE);
                 mMediumForm.setVisibility(View.GONE);
                 mLongForm.setVisibility(View.GONE);
+                mImageForm.setVisibility(View.VISIBLE);
                 openCamera();
             }
             break;
@@ -224,6 +225,8 @@ public class ReportFormActivity extends AppCompatActivity {
                 //mShortForm.setVisibility(View.GONE);
                 mMediumForm.setVisibility(View.VISIBLE);
                 mLongForm.setVisibility(View.GONE);
+                mImageForm.setVisibility(View.VISIBLE);
+                openCamera();
             }
             break;
             case "detailed": {

@@ -216,13 +216,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Report");
         mBuilder.setIcon(R.drawable.ocorrenciared);
-        final AlertDialog alert = mBuilder.create();
+
 
         LayoutInflater inflater = MapActivity.this.getLayoutInflater();
         final View mView = inflater.inflate(R.layout.report_choice, null);
-
         mBuilder.setView(mView);
-        mBuilder.show();
+        final AlertDialog alert = mBuilder.create();
+
+        alert.show();
 
 
         //----FAST-----
@@ -233,6 +234,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "fast");
                 i.putExtra("LOCATION", mCurrentLocation);
+                alert.dismiss();
                 startActivity(i);
 
             }
@@ -244,6 +246,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "medium");
                 i.putExtra("LOCATION", mCurrentLocation);
+                alert.dismiss();
                 startActivity(i);
             }
         });
@@ -256,6 +259,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //reportType.putString("Type", "long");
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "long");
+                alert.dismiss();
                 startActivity(i);
 
 

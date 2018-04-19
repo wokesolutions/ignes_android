@@ -38,6 +38,8 @@ import java.util.List;
 
 public class ReportFormActivity extends AppCompatActivity {
 
+    private String BAD_REQUEST = "java.io.IOException: HTTP error code: 400";
+
     private ReportTask mReportTask = null;
 
     private Context context;
@@ -166,9 +168,6 @@ public class ReportFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 attemptReport();
-                mReportTask.execute((Void) null);
-                Toast.makeText(context, "Report sucessfully registered", Toast.LENGTH_LONG).show();
-                finish();
             }
         });
     }
@@ -337,6 +336,7 @@ public class ReportFormActivity extends AppCompatActivity {
             address = processCurrentLocation();
 
         mReportTask = new ReportTask(address, image, description, title, gravity);
+        mReportTask.execute((Void) null);
 
     }
 
@@ -431,9 +431,11 @@ public class ReportFormActivity extends AppCompatActivity {
         protected void onPostExecute(final String result) {
             mReportTask = null;
 
-            if (result != null) {
+            if (result.equals("200")) {
                 System.out.println("RESPOSTA DO REPORT " + result);
-            } else {
+                Toast.makeText(context, "Report successfully registered", Toast.LENGTH_LONG).show();
+                finish();
+            } else if(result.equals(BAD_REQUEST)){
                 Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();
             }
         }

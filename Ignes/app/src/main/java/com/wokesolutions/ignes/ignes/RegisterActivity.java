@@ -222,7 +222,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Check for a valid password, if the user entered one.
         if(TextUtils.isEmpty(password)) {
-            mPassword.setError("This field is required");
+            mPassword.setError(getString(R.string.error_field_required));
             focusView = mPassword;
             cancel = true;
         }
@@ -233,7 +233,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else if (!passwordEqualsConfirmation(password, confirmation)) {
             mPasswordConfirm.setError("Must be equal to password");
-            focusView = mPassword;
+            focusView = mPasswordConfirm;
             cancel = true;
         }
 
@@ -248,6 +248,13 @@ public class RegisterActivity extends AppCompatActivity {
             focusView = mEmail;
             cancel = true;
             changeVisibility("Email");
+        }
+        // Check for a valid username.
+        if (TextUtils.isEmpty(username)) {
+            mUsername.setError(getString(R.string.error_field_required));
+            focusView = mUsername;
+            cancel = true;
+            changeVisibility("Username");
         }
 
         if (cancel) {

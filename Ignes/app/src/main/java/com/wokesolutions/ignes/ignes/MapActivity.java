@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -35,13 +33,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
-
-    private int mRequestCode;
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
@@ -64,7 +59,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         mCurrentLocation = null;
-        context=this;
+        context = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -122,7 +117,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         })
                         .create()
                         .show();
-
 
             } else {
                 // No explanation needed, we can request the permission.
@@ -184,40 +178,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public void addMarkerFromLocation(Location loc) {
-        String add;
-        Geocoder coder = new Geocoder(this);
-
-        try {
-            List<Address> a = coder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-            Address x = a.get(0);
-            markers.add(x);
-            if (markers != null)
-                for (Address adds : markers)
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addMarker(String add) {
-        Geocoder coder = new Geocoder(this);
-        try {
-            List<Address> a = coder.getFromLocationName(add, 1);
-            Address loc = a.get(0);
-            markers.add(loc);
-            if (markers != null)
-                for (Address adds : markers)
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-    /*------------------------------------------------------------------------------*/
-
     /*----- About Menu Bar -----*/
     private void menuButtons() {
         mLoggout = (Button) findViewById(R.id.botao_logout);
@@ -274,7 +234,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("TYPE", "fast");
                 i.putExtra("LOCATION", mCurrentLocation);
                 startActivity(i);
-                
+
             }
         });
         Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);

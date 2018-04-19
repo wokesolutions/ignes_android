@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.zip.Deflater;
 
 public class ReportFormActivity extends AppCompatActivity {
 
@@ -181,7 +182,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     mImage = (Bitmap) bundle.get("data");
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
                     mImage.recycle();
                 }
@@ -194,8 +195,9 @@ public class ReportFormActivity extends AppCompatActivity {
                         InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         mImage = BitmapFactory.decodeStream(imageStream);
 
+
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        System.out.println("QUE BOLEEAN DEEEEEU?!: "+mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
                         byteArray = stream.toByteArray();
                         mImage.recycle();
                     } catch (FileNotFoundException e) {
@@ -259,6 +261,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.VISIBLE);
                 mDescriptionForm.setVisibility(View.GONE);
+                mReportLongImageForm.setVisibility(View.GONE);
             }
             break;
 
@@ -266,6 +269,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 mTitleForm.setVisibility(View.GONE);
                 mAddressForm.setVisibility(View.GONE);
                 mDescriptionForm.setVisibility(View.VISIBLE);
+                mReportLongImageForm.setVisibility(View.GONE);
             }
             break;
 
@@ -322,6 +326,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private void attemptReport() {
         String address;
         byte[] image = byteArray;
+        System.out.println("HHHHHHHHHHEEEEEEEEEEEEEEY: "+ byteArray.length);
         String description = mDescription.getText().toString();
         String title = "";
         int gravity = mGravity;
@@ -340,6 +345,35 @@ public class ReportFormActivity extends AppCompatActivity {
 
     }
 
+    /*private void deflateImage() {
+        try {
+            // Encode a String into bytes
+            byte[] input = byteArray;
+
+            // Compress the bytes
+            byte[] output = new byte[100];
+            Deflater compresser = new Deflater();
+            compresser.setInput(input);
+            compresser.finish();
+            int compressedDataLength = compresser.deflate(output);
+            compresser.end();
+
+            // Decompress the bytes
+            Inflater decompresser = new Inflater();
+            decompresser.setInput(output, 0, compressedDataLength);
+            byte[] result = new byte[100];
+            int resultLength = decompresser.inflate(result);
+            decompresser.end();
+
+            // Decode the bytes into a String
+            //String outputString = new String(result, 0, resultLength, "UTF-8");
+        } catch(java.io.UnsupportedEncodingException ex) {
+            // handle
+        } catch (java.util.zip.DataFormatException ex) {
+            // handle
+        }
+    }*/
+
     /*--------------------------------------------------------------------------------*/
     public class ReportTask extends AsyncTask<Void, Void, String> {
 
@@ -347,7 +381,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String mAddress;
         double mLat;
         double mLng;
-        //String base64;
+        String base64;
         String mDescription;
         int mGravity;
         String mTitle;
@@ -357,17 +391,20 @@ public class ReportFormActivity extends AppCompatActivity {
 
         ReportTask(String address, byte[] img, String description, String title, int gravity) {
             mImage = img;
-            //base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
+            base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
+
             mAddress = address;
             mDescription = description;
             mTitle = title;
             mGravity = gravity;
-            try {
-                List<Address> addresses = mCoder.getFromLocationName(mAddress, 1);
-                mLat = addresses.get(0).getLatitude();
-                mLng = addresses.get(0).getLongitude();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(!mReportType.equals("long")) {
+                try {
+                    List<Address> addresses = mCoder.getFromLocationName(mAddress, 1);
+                    mLat = addresses.get(0).getLatitude();
+                    mLng = addresses.get(0).getLongitude();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -394,26 +431,26 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", mImage);
+                    report.put("report_img", base64);
 
                 } else if (mReportType.equals("medium")) {
 
                     report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", mImage);
+                    report.put("report_img", base64);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
 
                 } else if (mReportType.equals("detailed")) {
 
-                    report.put("report_address", mAddress);
-                    report.put("report_lat", mLat);
-                    report.put("report_lng", mLng);
-                    report.put("report_img", mImage);
-                    report.put("report_title", mTitle);
-                    report.put("report_gravity", mGravity);
-                    report.put("report_description", mDescription);
+                    report.put("report_address", "Amadora");
+                    report.put("report_lat", 38.5);
+                    report.put("report_lng", -9.5);
+                    report.put("report_img", base64);
+                    report.put("report_title", "titulo");
+                    report.put("report_gravity", 5);
+                    report.put("report_description", "epah que grande merda");
                 }
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");

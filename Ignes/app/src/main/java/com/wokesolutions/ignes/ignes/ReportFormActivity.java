@@ -75,6 +75,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private LinearLayout mLongForm;
 
     private EditText mTitle;
+    private EditText mMediumTitle;
     private EditText mAddress;
     private EditText mDescription;
 
@@ -128,6 +129,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mSliderForm = (LinearLayout) findViewById(R.id.report_slider_form);
 
         mTitle = (EditText) findViewById(R.id.report_title);
+        mMediumTitle = (EditText) findViewById(R.id.report_medium_title);
         mAddress = (EditText) findViewById(R.id.report_address);
         mDescription = (EditText) findViewById(R.id.report_description);
 
@@ -322,12 +324,16 @@ public class ReportFormActivity extends AppCompatActivity {
         String address;
         byte[] image = byteArray;
         String description = mDescription.getText().toString();
-        String title = mTitle.getText().toString();
+        String title = "";
         int gravity = mGravity;
 
-        if (mReportType == "long")
+        if (mReportType.equals("long")) {
             address = mAddress.getText().toString();
-        else
+            title = mTitle.getText().toString();
+        } else if (mReportType.equals("medium")) {
+            address = processCurrentLocation();
+            title = mMediumTitle.getText().toString();
+        } else
             address = processCurrentLocation();
 
         mReportTask = new ReportTask(address, image, description, title, gravity);
@@ -341,7 +347,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String mAddress;
         double mLat;
         double mLng;
-        String base64;
+        //String base64;
         String mDescription;
         int mGravity;
         String mTitle;
@@ -351,7 +357,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
         ReportTask(String address, byte[] img, String description, String title, int gravity) {
             mImage = img;
-            base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
+            //base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
             mAddress = address;
             mDescription = description;
             mTitle = title;
@@ -388,14 +394,14 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
+                    report.put("report_img", mImage);
 
                 } else if (mReportType.equals("medium")) {
 
                     report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
+                    report.put("report_img", mImage);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
 
@@ -404,7 +410,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
+                    report.put("report_img", mImage);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);

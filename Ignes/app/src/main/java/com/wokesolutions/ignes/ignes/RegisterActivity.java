@@ -115,13 +115,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         context = this;
 
-        //tx = (TextView)findViewById(R.id.citizen_text);
-        //ty = (TextView)findViewById(R.id.worker_text);
-
-        //Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/playlistscript.otf");
-
-        //tx.setTypeface(custom_font);
-        //ty.setTypeface(custom_font);
     }
 
     private void initCitizen() {
@@ -153,8 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 attemptRegister();
-                Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
     }
@@ -197,7 +188,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return password.length() > 5;
+    }
+
+    private boolean passwordEqualsConfirmation(String password, String confirmation) {
+        return password.equals(confirmation);
     }
 
     /**
@@ -226,8 +221,18 @@ public class RegisterActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if(TextUtils.isEmpty(password)) {
+            mPassword.setError("This field is required");
+            focusView = mPassword;
+            cancel = true;
+        }
+        else if (!isPasswordValid(password)) {
             mPassword.setError(getString(R.string.error_invalid_password));
+            focusView = mPassword;
+            cancel = true;
+        }
+        else if (!passwordEqualsConfirmation(password, confirmation)) {
+            mPasswordConfirm.setError("Must be equal to password");
             focusView = mPassword;
             cancel = true;
         }
@@ -237,10 +242,12 @@ public class RegisterActivity extends AppCompatActivity {
             mEmail.setError(getString(R.string.error_field_required));
             focusView = mEmail;
             cancel = true;
+            changeVisibility("Email");
         } else if (!isEmailValid(email)) {
             mEmail.setError(getString(R.string.error_invalid_email));
             focusView = mEmail;
             cancel = true;
+            changeVisibility("Email");
         }
 
         if (cancel) {
@@ -340,6 +347,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (result != null) {
                 System.out.println("RESPOSTA DO REGISTO " + result);
+                Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             } else {
                 mPassword.setError(getString(R.string.error_incorrect_password));
                 mPassword.requestFocus();

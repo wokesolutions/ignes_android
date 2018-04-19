@@ -311,6 +311,7 @@ public class RegisterActivity extends AppCompatActivity {
                     System.out.println("Credentials JSON to send:" + credentials);
 
                     url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
+
                 } else if (mUserRole.equals("Worker")) {
 
                     credentials.put("worker_username", mUsername);

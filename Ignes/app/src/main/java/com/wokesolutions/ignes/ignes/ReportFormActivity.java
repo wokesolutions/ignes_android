@@ -83,7 +83,7 @@ public class ReportFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        context=this;
+        context = this;
 
         Intent intent = getIntent();
         mReportType = intent.getExtras().getString("TYPE");
@@ -166,6 +166,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 attemptReport();
                 mReportTask.execute((Void) null);
                 Toast.makeText(context, "Report sucessfully registered", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
     }
@@ -182,7 +183,6 @@ public class ReportFormActivity extends AppCompatActivity {
                     mImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byteArray = stream.toByteArray();
                     mImage.recycle();
-                    //mImage.setImageBitmap(bmp);
                 }
                 break;
             case 1:
@@ -197,7 +197,6 @@ public class ReportFormActivity extends AppCompatActivity {
                         mImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byteArray = stream.toByteArray();
                         mImage.recycle();
-                        //mImage.setImageBitmap(bmp);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -322,13 +321,16 @@ public class ReportFormActivity extends AppCompatActivity {
     private void attemptReport() {
         String address;
         byte[] image = byteArray;
+        String description = mDescription.getText().toString();
+        String title = mTitle.getText().toString();
+        int gravity = mGravity;
 
         if (mReportType == "long")
             address = mAddress.getText().toString();
         else
             address = processCurrentLocation();
 
-        mReportTask = new ReportTask(address, image);
+        mReportTask = new ReportTask(address, image, description, title, gravity);
 
     }
 
@@ -340,14 +342,20 @@ public class ReportFormActivity extends AppCompatActivity {
         double mLat;
         double mLng;
         String base64;
+        String mDescription;
+        int mGravity;
+        String mTitle;
 
-        SharedPreferences prefs = context.getSharedPreferences("Shared",Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(String address, byte[] img) {
+        ReportTask(String address, byte[] img, String description, String title, int gravity) {
             mImage = img;
             base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
             mAddress = address;
+            mDescription = description;
+            mTitle = title;
+            mGravity = gravity;
             try {
                 List<Address> addresses = mCoder.getFromLocationName(mAddress, 1);
                 mLat = addresses.get(0).getLatitude();
@@ -372,12 +380,35 @@ public class ReportFormActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... voids) {
             try {
+
                 JSONObject report = new JSONObject();
 
-                report.put("report_address", mAddress);
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_img", base64);
+                if (mReportType.equals("fast")) {
+
+                    report.put("report_address", mAddress);
+                    report.put("report_lat", mLat);
+                    report.put("report_lng", mLng);
+                    report.put("report_img", base64);
+
+                } else if (mReportType.equals("medium")) {
+
+                    report.put("report_address", mAddress);
+                    report.put("report_lat", mLat);
+                    report.put("report_lng", mLng);
+                    report.put("report_img", base64);
+                    report.put("report_title", mTitle);
+                    report.put("report_gravity", mGravity);
+
+                } else if (mReportType.equals("detailed")) {
+
+                    report.put("report_address", mAddress);
+                    report.put("report_lat", mLat);
+                    report.put("report_lng", mLng);
+                    report.put("report_img", base64);
+                    report.put("report_title", mTitle);
+                    report.put("report_gravity", mGravity);
+                    report.put("report_description", mDescription);
+                }
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 

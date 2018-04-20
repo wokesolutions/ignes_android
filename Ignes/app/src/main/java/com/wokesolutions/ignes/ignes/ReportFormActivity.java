@@ -380,7 +380,6 @@ public class ReportFormActivity extends AppCompatActivity {
             mReportTask = null;
             System.out.println("RESPOSTA DO REPORT " + result);
             if (result.equals("OK")) {
-
                 Toast.makeText(context, "Report successfully registered", Toast.LENGTH_LONG).show();
                 finish();
             } else if (result.equals(BAD_REQUEST)) {

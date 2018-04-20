@@ -2,9 +2,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:paddingVertical="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
-    android:paddingHorizontal="10dp">
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="@dimen/activity_horizontal_margin">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -18,8 +18,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
 
             <LinearLayout
@@ -170,7 +170,7 @@
                 android:id="@+id/report_image"
                 android:layout_width="100dp"
                 android:layout_height="200dp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/report_slider_form"
@@ -184,17 +184,46 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rank report gravity"
                     android:gravity="center"
+                    android:text="Rank report gravity"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textSize="17dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3"
+                        android:textSize="17dp"
+                        android:gravity="right"
+                        android:textStyle="bold"
+                        android:layout_centerInParent="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5"
+                        android:textSize="17dp"
+                        android:gravity="right"
+                        android:textStyle="bold"
+                        android:layout_alignParentRight="true"/>
+                </RelativeLayout>
+
                 <SeekBar
                     android:id="@+id/gravity_slider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/gradientmenu" />
+                    android:layout_height="wrap_content" />
                 <!-- <ImageView
                      android:id="@+id/report_image"
                      android:layout_width="100dp"

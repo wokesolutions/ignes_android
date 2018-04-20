@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -30,24 +29,24 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+
+    // Declare a variable for the cluster manager.
+    private ClusterManager<MyItem> mClusterManager;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Button mLoggout;
     private Button mReport;
     private Button mFilter;
-    private List<Address> markers;
     private Location mCurrentLocation;
     private ImageView mImage;
     private Context context;
@@ -69,7 +68,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
 
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        markers = new LinkedList<Address>();
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,7 +92,55 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+
+
     /*----- About Google Maps -----*/
+
+    private void setUpCluster(LatLng latLng) {
+        // Position the map.
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems(latLng);
+    }
+    private void addItems(LatLng latLng) {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = latLng.latitude;
+        double lng = latLng.longitude;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            MyItem offsetItem = new MyItem(lat, lng);
+            mClusterManager.addItem(offsetItem);
+        }
+    }
+
+    public class MyItem implements ClusterItem {
+        private final LatLng mPosition;
+
+        public MyItem(double lat, double lng) {
+            mPosition = new LatLng(lat, lng);
+        }
+
+        @Override
+        public LatLng getPosition() {
+            return mPosition;
+        }
+    }
+
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -154,13 +200,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        if (markers != null)
-            for (Address adds : markers)
-                mMap.addMarker(new MarkerOptions().position(new LatLng(adds.getLatitude(), adds.getLongitude())));
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
 
         } else {
             mMap.setMyLocationEnabled(true);
@@ -172,10 +213,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                        setUpCluster(loc);
                     }
                 }
             });
         }
+
     }
 
     /*----- About Menu Bar -----*/
@@ -269,5 +312,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void filterTask() {
     }
+
+
 
 }

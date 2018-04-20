@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
@@ -35,7 +34,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.zip.Deflater;
 
 public class ReportFormActivity extends AppCompatActivity {
 
@@ -58,21 +56,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private Geocoder mCoder;
 
-    private Button mTitleButton;
-    private Button mAddressButton;
-    private Button mDescriptionButton;
-    private Button mImageButton;
     private Button mUploadButton;
     private Button mCameraButton;
     private Button mSubmitButton;
 
     private SeekBar mGravitySlider;
 
-    private TextInputLayout mTitleForm;
-    private TextInputLayout mAddressForm;
-    private TextInputLayout mDescriptionForm;
-
-    private LinearLayout mReportLongImageForm;
     private LinearLayout mMediumForm;
     private LinearLayout mSliderForm;
     private LinearLayout mLongForm;
@@ -118,17 +107,8 @@ public class ReportFormActivity extends AppCompatActivity {
             }
         });
 
-        mTitleButton = (Button) findViewById(R.id.report_title_button);
-        mAddressButton = (Button) findViewById(R.id.report_address_button);
-        mDescriptionButton = (Button) findViewById(R.id.report_description_button);
-        mImageButton = (Button) findViewById(R.id.report_image_button);
         mUploadButton = (Button) findViewById(R.id.report_upload_button);
         mSubmitButton = (Button) findViewById(R.id.report_submit_button);
-
-        mTitleForm = (TextInputLayout) findViewById(R.id.report_title_form);
-        mAddressForm = (TextInputLayout) findViewById(R.id.report_address_form);
-        mDescriptionForm = (TextInputLayout) findViewById(R.id.report_description_form);
-        mReportLongImageForm = (LinearLayout) findViewById(R.id.report_long_image_form);
         mSliderForm = (LinearLayout) findViewById(R.id.report_slider_form);
 
         mTitle = (EditText) findViewById(R.id.report_title);
@@ -160,9 +140,6 @@ public class ReportFormActivity extends AppCompatActivity {
 
             }
         });
-
-        showReportForm();
-
         changeFormVisibility(mReportType);
 
         mSubmitButton.setOnClickListener(new OnClickListener() {
@@ -197,7 +174,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        System.out.println("QUE BOLEEAN DEEEEEU?!: "+mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
+                        System.out.println("QUE BOLEEAN DEEEEEU?!: " + mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
                         byteArray = stream.toByteArray();
                         mImage.recycle();
                     } catch (FileNotFoundException e) {
@@ -215,74 +192,6 @@ public class ReportFormActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivityForResult(intent, mRequestCode);
     }
-
-    public void showReportForm() {
-
-        mTitleButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeVisibility("Title");
-            }
-        });
-
-        mAddressButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeVisibility("Address");
-            }
-        });
-
-        mDescriptionButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeVisibility("Description");
-            }
-        });
-
-        mImageButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeVisibility("Image");
-            }
-        });
-    }
-
-    public void changeVisibility(String option) {
-        switch (option) {
-
-            case "Title": {
-                mTitleForm.setVisibility(View.VISIBLE);
-                mAddressForm.setVisibility(View.GONE);
-                mDescriptionForm.setVisibility(View.GONE);
-            }
-            break;
-
-            case "Address": {
-                mTitleForm.setVisibility(View.GONE);
-                mAddressForm.setVisibility(View.VISIBLE);
-                mDescriptionForm.setVisibility(View.GONE);
-                mReportLongImageForm.setVisibility(View.GONE);
-            }
-            break;
-
-            case "Description": {
-                mTitleForm.setVisibility(View.GONE);
-                mAddressForm.setVisibility(View.GONE);
-                mDescriptionForm.setVisibility(View.VISIBLE);
-                mReportLongImageForm.setVisibility(View.GONE);
-            }
-            break;
-
-            case "Image": {
-                mTitleForm.setVisibility(View.GONE);
-                mAddressForm.setVisibility(View.GONE);
-                mDescriptionForm.setVisibility(View.GONE);
-                mReportLongImageForm.setVisibility(View.VISIBLE);
-            }
-            break;
-        }
-    }
-
     private void changeFormVisibility(String reportType) {
         switch (reportType) {
 
@@ -309,76 +218,46 @@ public class ReportFormActivity extends AppCompatActivity {
         }
     }
 
-    private String processCurrentLocation() {
-        String address = "";
-
-        try {
-            List<Address> add = mCoder.getFromLocation(mCurrentLocation.getLatitude(),
-                    mCurrentLocation.getLongitude(), 1);
-
-            address = add.get(0).getAddressLine(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return address;
-    }
-
     private void attemptReport() {
-        String address;
         byte[] image = byteArray;
-        System.out.println("HHHHHHHHHHEEEEEEEEEEEEEEY: "+ byteArray.length);
-        String description = mDescription.getText().toString();
+        String description = "";
         String title = "";
-        int gravity = mGravity;
+        double lat = 0;
+        double lng = 0;
+        int gravity = -1;
 
         if (mReportType.equals("long")) {
-            address = mAddress.getText().toString();
+
+            String address = mAddress.getText().toString();
+            try {
+                List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                lat = addresses.get(0).getLatitude();
+                lng = addresses.get(0).getLongitude();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             title = mTitle.getText().toString();
+            description = mDescription.getText().toString();
+
         } else if (mReportType.equals("medium")) {
-            address = processCurrentLocation();
+
+            lat = mCurrentLocation.getLatitude();
+            lng = mCurrentLocation.getLongitude();
             title = mMediumTitle.getText().toString();
-        } else
-            address = processCurrentLocation();
 
-        mReportTask = new ReportTask(address, image, description, title, gravity);
+        } else if (mReportType.equals("fast")) {
+
+            lat = mCurrentLocation.getLatitude();
+            lng = mCurrentLocation.getLongitude();
+        }
+
+        mReportTask = new ReportTask(image, description, title, gravity, lat, lng);
         mReportTask.execute((Void) null);
-
     }
 
-    /*private void deflateImage() {
-        try {
-            // Encode a String into bytes
-            byte[] input = byteArray;
-
-            // Compress the bytes
-            byte[] output = new byte[100];
-            Deflater compresser = new Deflater();
-            compresser.setInput(input);
-            compresser.finish();
-            int compressedDataLength = compresser.deflate(output);
-            compresser.end();
-
-            // Decompress the bytes
-            Inflater decompresser = new Inflater();
-            decompresser.setInput(output, 0, compressedDataLength);
-            byte[] result = new byte[100];
-            int resultLength = decompresser.inflate(result);
-            decompresser.end();
-
-            // Decode the bytes into a String
-            //String outputString = new String(result, 0, resultLength, "UTF-8");
-        } catch(java.io.UnsupportedEncodingException ex) {
-            // handle
-        } catch (java.util.zip.DataFormatException ex) {
-            // handle
-        }
-    }*/
-
-    /*--------------------------------------------------------------------------------*/
     public class ReportTask extends AsyncTask<Void, Void, String> {
 
         byte[] mImage;
-        String mAddress;
         double mLat;
         double mLng;
         String base64;
@@ -389,23 +268,14 @@ public class ReportFormActivity extends AppCompatActivity {
         SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(String address, byte[] img, String description, String title, int gravity) {
+        ReportTask(byte[] img, String description, String title, int gravity, double lat, double lng) {
             mImage = img;
             base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
-
-            mAddress = address;
+            mLat = lat;
+            mLng = lng;
             mDescription = description;
             mTitle = title;
             mGravity = gravity;
-            if(!mReportType.equals("long")) {
-                try {
-                    List<Address> addresses = mCoder.getFromLocationName(mAddress, 1);
-                    mLat = addresses.get(0).getLatitude();
-                    mLng = addresses.get(0).getLongitude();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         @Override
@@ -428,14 +298,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
                 if (mReportType.equals("fast")) {
 
-                    report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
 
                 } else if (mReportType.equals("medium")) {
 
-                    report.put("report_address", mAddress);
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
@@ -444,13 +312,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
                 } else if (mReportType.equals("detailed")) {
 
-                    report.put("report_address", "Amadora");
-                    report.put("report_lat", 38.5);
-                    report.put("report_lng", -9.5);
+                    report.put("report_lat", mLat);
+                    report.put("report_lng", mLng);
                     report.put("report_img", base64);
-                    report.put("report_title", "titulo");
-                    report.put("report_gravity", 5);
-                    report.put("report_description", "epah que grande merda");
+                    report.put("report_title", mTitle);
+                    report.put("report_gravity", mGravity);
+                    report.put("report_description", mDescription);
                 }
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
@@ -467,12 +334,12 @@ public class ReportFormActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final String result) {
             mReportTask = null;
+            System.out.println("RESPOSTA DO REPORT " + result);
+            if (result.equals("OK")) {
 
-            if (result.equals("200")) {
-                System.out.println("RESPOSTA DO REPORT " + result);
                 Toast.makeText(context, "Report successfully registered", Toast.LENGTH_LONG).show();
                 finish();
-            } else if(result.equals(BAD_REQUEST)){
+            } else if (result.equals(BAD_REQUEST)) {
                 Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();
             }
         }

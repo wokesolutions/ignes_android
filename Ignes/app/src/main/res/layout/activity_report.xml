@@ -2,203 +2,218 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:paddingVertical="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:paddingHorizontal="10dp">
 
-    <LinearLayout
-        android:id="@+id/report_long_form"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/ocorrenciared" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/report_title_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:text="Title"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/report_title_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible">
 
-            <EditText
-                android:id="@+id/report_title"
+            <LinearLayout
+                android:id="@+id/report_long_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title(*)"
-                android:backgroundTint="@android:color/transparent"
-                android:singleLine="true" />
+                android:gravity="center_horizontal|center"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/report_title_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:visibility="visible">
+
+                    <EditText
+                        android:id="@+id/report_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorIgnesPrimary"
+                        android:singleLine="true" />
 
 
-        </android.support.design.widget.TextInputLayout>
+                </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/report_address_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="Address"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/report_address_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/report_address_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <AutoCompleteTextView
-                android:id="@+id/report_address"
+                    <AutoCompleteTextView
+                        android:id="@+id/report_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorIgnesPrimary"
+                        android:inputType="textMultiLine" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/report_description_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/report_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorIgnesPrimary"
+                        android:inputType="textMultiLine" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
-                android:backgroundTint="@android:color/transparent"
-                android:inputType="textMultiLine" />
+                android:gravity="center"
+                android:text="Image"
+                android:textColor="@color/colorIgnesPrimary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
-        </android.support.design.widget.TextInputLayout>
-
-        <Button
-            android:id="@+id/report_description_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="Description"
-            android:background="@drawable/button"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/report_description_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <EditText
-                android:id="@+id/report_description"
+            <LinearLayout
+                android:id="@+id/report_long_image_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
-                android:backgroundTint="@android:color/transparent"
-                android:inputType="textMultiLine" />
+                android:gravity="center_horizontal">
 
-        </android.support.design.widget.TextInputLayout>
+                <Button
+                    android:id="@+id/report_camera_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Camera"
+                    android:textColor="#000000" />
 
-        <Button
-            android:id="@+id/report_image_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:text="Image"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
-    </LinearLayout>
+                <Button
+                    android:id="@+id/report_upload_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload"
+                    android:textColor="#000000" />
 
-    <LinearLayout
-        android:id="@+id/report_long_image_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:visibility="gone">
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/report_camera_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Camera"
-            android:textColor="#000000" />
-
-        <Button
-            android:id="@+id/report_upload_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload"
-            android:textColor="#000000" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/report_medium_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textColor="@color/colorIgnesPrimary"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible">
-
-            <EditText
-                android:id="@+id/report_medium_title"
+            <LinearLayout
+                android:id="@+id/report_medium_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title"
-                android:backgroundTint="@android:color/transparent"
-                android:singleLine="true" />
+                android:gravity="center_horizontal|center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        </android.support.design.widget.TextInputLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/report_image_medium"
-            android:layout_width="100dp"
-            android:layout_height="200dp" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
 
-    </LinearLayout>
+                    <EditText
+                        android:id="@+id/report_medium_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorIgnesPrimary"
+                        android:singleLine="true" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/report_image_medium"
+                    android:layout_width="100dp"
+                    android:layout_height="200dp" />
+
+            </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/report_slider_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:orientation="vertical"
-        android:visibility="visible">
+            <LinearLayout
+                android:id="@+id/report_slider_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:gravity="center_horizontal|center"
+                android:orientation="vertical"
+                android:visibility="visible">
 
-        <SeekBar
-            android:id="@+id/gravity_slider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/gradientmenu" />
-       <!-- <ImageView
-            android:id="@+id/report_image"
-            android:layout_width="100dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true" />-->
-    </LinearLayout>
-        <Button
-            android:id="@+id/report_submit_button"
-            style="?android:textAppearanceSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:background="@drawable/button"
-            android:text="Submit"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rank report gravity"
+                    android:gravity="center"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <SeekBar
+                    android:id="@+id/gravity_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/gradientmenu" />
+                <!-- <ImageView
+                     android:id="@+id/report_image"
+                     android:layout_width="100dp"
+                     android:layout_height="200dp"
+                     android:layout_centerInParent="true" />-->
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/report_submit_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:background="@drawable/button"
+                android:text="Submit"
+                android:textColor="@color/backgroundColor"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

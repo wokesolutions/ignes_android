@@ -164,13 +164,13 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <ImageView
-                    android:id="@+id/report_image_medium"
-                    android:layout_width="100dp"
-                    android:layout_height="200dp" />
-
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/report_image"
+                android:layout_width="100dp"
+                android:layout_height="200dp"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/report_slider_form"

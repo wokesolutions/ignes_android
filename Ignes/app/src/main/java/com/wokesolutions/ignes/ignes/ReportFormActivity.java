@@ -20,6 +20,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
@@ -71,6 +72,8 @@ public class ReportFormActivity extends AppCompatActivity {
     private EditText mAddress;
     private EditText mDescription;
 
+    private ImageView mImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +119,8 @@ public class ReportFormActivity extends AppCompatActivity {
         mAddress = (EditText) findViewById(R.id.report_address);
         mDescription = (EditText) findViewById(R.id.report_description);
 
+        mImageView = (ImageView) findViewById(R.id.report_image);
+
 
         mGravitySlider = (SeekBar) findViewById(R.id.gravity_slider);
 
@@ -157,7 +162,8 @@ public class ReportFormActivity extends AppCompatActivity {
                 if (resultcode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     mImage = (Bitmap) bundle.get("data");
-
+                    mImageView.setVisibility(View.VISIBLE);
+                    mImageView.setImageBitmap(mImage);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
@@ -171,8 +177,8 @@ public class ReportFormActivity extends AppCompatActivity {
                         Uri imageUri = data.getData();
                         InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         mImage = BitmapFactory.decodeStream(imageStream);
-
-
+                        mImageView.setVisibility(View.VISIBLE);
+                        mImageView.setImageBitmap(mImage);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         System.out.println("QUE BOLEEAN DEEEEEU?!: " + mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
                         byteArray = stream.toByteArray();
@@ -192,6 +198,7 @@ public class ReportFormActivity extends AppCompatActivity {
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivityForResult(intent, mRequestCode);
     }
+
     private void changeFormVisibility(String reportType) {
         switch (reportType) {
 

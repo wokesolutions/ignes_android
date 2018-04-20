@@ -1,11 +1,16 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -14,6 +19,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -33,14 +40,23 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
     // Declare a variable for the cluster manager.
     private ClusterManager<MyItem> mClusterManager;
+
+    private MapTask mMapTask = null;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -92,8 +108,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-
-
     /*----- About Google Maps -----*/
 
     private void setUpCluster(LatLng latLng) {
@@ -112,6 +126,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Add cluster items (markers) to the cluster manager.
         addItems(latLng);
     }
+
     private void addItems(LatLng latLng) {
 
         // Set some lat/lng coordinates to start with.
@@ -125,19 +140,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             lng = lng + offset;
             MyItem offsetItem = new MyItem(lat, lng);
             mClusterManager.addItem(offsetItem);
-        }
-    }
-
-    public class MyItem implements ClusterItem {
-        private final LatLng mPosition;
-
-        public MyItem(double lat, double lng) {
-            mPosition = new LatLng(lat, lng);
-        }
-
-        @Override
-        public LatLng getPosition() {
-            return mPosition;
         }
     }
 
@@ -313,6 +315,74 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void filterTask() {
     }
 
+    public class MyItem implements ClusterItem {
+        private final LatLng mPosition;
+
+        public MyItem(double lat, double lng) {
+            mPosition = new LatLng(lat, lng);
+        }
+
+        @Override
+        public LatLng getPosition() {
+            return mPosition;
+        }
+    }
+
+    public class MapTask extends AsyncTask<Void, Void, String> {
+
+        double mLat;
+        double mLng;
+        int mRadius;
+
+        MapTask(double lat, double lng, int radius) {
+            mLat = lat;
+            mLng = lng;
+            mRadius = radius;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/getwhithinradius?"
+                + "lat=" + mLat + "&" + "lng" + mLng  + "&" + "radius" + mRadius);
+
+                String s = RequestsREST.doGET(url, null);
+
+                return s;
+
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mMapTask = null;
+
+            System.out.println("RESPOSTA DO REPORT " + result);
+
+            if (result.equals("OK")) {
+                System.out.println("MAP LOADED");
+
+            } else if (result.equals(SERVER_ERROR)) {
+                System.out.println("ERRO NO MAP LOADED");
+            }
+        }
+    }
 
 
 }

@@ -167,7 +167,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
-                    mImage.recycle();
+                    //mImage.recycle();
                 }
                 break;
             case 1:
@@ -182,7 +182,7 @@ public class ReportFormActivity extends AppCompatActivity {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         System.out.println("QUE BOLEEAN DEEEEEU?!: " + mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
                         byteArray = stream.toByteArray();
-                        mImage.recycle();
+                        //mImage.recycle();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -229,17 +229,22 @@ public class ReportFormActivity extends AppCompatActivity {
         byte[] image = byteArray;
         String description = "";
         String title = "";
+        String locality = "";
+        String city = "";
+        String address = "";
         double lat = 0;
         double lng = 0;
-        int gravity = -1;
+        int gravity = 0;
 
         if (mReportType.equals("long")) {
 
-            String address = mAddress.getText().toString();
+            address = mAddress.getText().toString();
             try {
                 List<Address> addresses = mCoder.getFromLocationName(address, 1);
                 lat = addresses.get(0).getLatitude();
                 lng = addresses.get(0).getLongitude();
+                city = addresses.get(0).getLocality();
+                locality = addresses.get(0).getSubLocality();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -248,17 +253,34 @@ public class ReportFormActivity extends AppCompatActivity {
 
         } else if (mReportType.equals("medium")) {
 
+            try {
+                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                address = addresses.get(0).getAddressLine(0);
+                city = addresses.get(0).getLocality();
+                locality = addresses.get(0).getSubLocality();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             lat = mCurrentLocation.getLatitude();
             lng = mCurrentLocation.getLongitude();
             title = mMediumTitle.getText().toString();
 
         } else if (mReportType.equals("fast")) {
 
+            try {
+                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                address = addresses.get(0).getAddressLine(0);
+                city = addresses.get(0).getLocality();
+                locality = addresses.get(0).getSubLocality();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             lat = mCurrentLocation.getLatitude();
             lng = mCurrentLocation.getLongitude();
         }
 
-        mReportTask = new ReportTask(image, description, title, gravity, lat, lng);
+        mReportTask = new ReportTask(image, description, title, city, address, locality, gravity, lat, lng);
         mReportTask.execute((Void) null);
     }
 
@@ -271,17 +293,23 @@ public class ReportFormActivity extends AppCompatActivity {
         String mDescription;
         int mGravity;
         String mTitle;
+        String mCity;
+        String mAddress;
+        String mLocality;
 
         SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(byte[] img, String description, String title, int gravity, double lat, double lng) {
+        ReportTask(byte[] img, String description, String title, String city, String address, String locality, int gravity, double lat, double lng) {
             mImage = img;
             base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
             mLat = lat;
             mLng = lng;
             mDescription = description;
             mTitle = title;
+            mCity = city;
+            mAddress = address;
+            mLocality = locality;
             mGravity = gravity;
         }
 
@@ -308,6 +336,9 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
+                    report.put("report_address", mAddress);
+                    report.put("report_city", mCity);
+                    report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("medium")) {
 
@@ -316,6 +347,9 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_img", base64);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
+                    report.put("report_address", mAddress);
+                    report.put("report_city", mCity);
+                    report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("detailed")) {
 
@@ -325,6 +359,9 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);
+                    report.put("report_address", mAddress);
+                    report.put("report_city", mCity);
+                    report.put("report_locality", mLocality);
                 }
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");

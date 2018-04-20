@@ -360,6 +360,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/getwhithinradius?"
                 + "lat=" + mLat + "&" + "lng" + mLng  + "&" + "radius" + mRadius);
 
+                System.out.println("URL PARA O PEDIDO DE MARKERS: "+url);
+
                 String s = RequestsREST.doGET(url, null);
 
                 return s;

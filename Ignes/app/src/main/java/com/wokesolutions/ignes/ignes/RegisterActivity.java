@@ -34,6 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView ty;
     private UserRegisterTask mRegTask = null;
 
+    private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
+
     private View mRegister_form;
     private View mSelectUser_form;
     private View mRegister_code_layout_form;
@@ -352,11 +354,13 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(final String result) {
             mRegTask = null;
 
-            if (result != null) {
-                System.out.println("RESPOSTA DO REGISTO " + result);
+            System.out.println("RESPOSTA DO REGISTO " + result);
+            if (!result.equals("OK")) {
+
                 Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             } else {
+                Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
                 mPassword.setError(getString(R.string.error_incorrect_password));
                 mPassword.requestFocus();
             }

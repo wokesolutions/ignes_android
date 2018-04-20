@@ -15,6 +15,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
@@ -66,6 +68,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private LinearLayout mMediumForm;
     private LinearLayout mSliderForm;
     private LinearLayout mLongForm;
+    private LinearLayout mSelectImage;
 
     private EditText mTitle;
     private EditText mMediumTitle;
@@ -89,6 +92,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
+        mSelectImage = (LinearLayout) findViewById(R.id.report_long_image_form);
 
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +167,11 @@ public class ReportFormActivity extends AppCompatActivity {
                     Bundle bundle = data.getExtras();
                     mImage = (Bitmap) bundle.get("data");
                     mImageView.setVisibility(View.VISIBLE);
-                    mImageView.setImageBitmap(mImage);
+
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
+                    roundedBitmap.setCircular(true);
+
+                    mImageView.setImageDrawable(roundedBitmap);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
@@ -178,7 +186,12 @@ public class ReportFormActivity extends AppCompatActivity {
                         InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         mImage = BitmapFactory.decodeStream(imageStream);
                         mImageView.setVisibility(View.VISIBLE);
-                        mImageView.setImageBitmap(mImage);
+
+                        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
+                        roundedBitmap.setCircular(true);
+
+                        mImageView.setImageDrawable(roundedBitmap);
+
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         System.out.println("QUE BOLEEAN DEEEEEU?!: " + mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
                         byteArray = stream.toByteArray();
@@ -206,6 +219,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 mMediumForm.setVisibility(View.GONE);
                 mLongForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.GONE);
+                mSelectImage.setVisibility(View.GONE);
                 openCamera();
             }
             break;
@@ -214,12 +228,13 @@ public class ReportFormActivity extends AppCompatActivity {
                 mMediumForm.setVisibility(View.VISIBLE);
                 mLongForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.VISIBLE);
-                openCamera();
+                mSelectImage.setVisibility(View.VISIBLE);
             }
             break;
 
             case "detailed": {
                 mSliderForm.setVisibility(View.VISIBLE);
+                mSelectImage.setVisibility(View.VISIBLE);
             }
             break;
         }

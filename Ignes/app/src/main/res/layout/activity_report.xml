@@ -114,7 +114,8 @@
                 android:id="@+id/report_long_image_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
+                android:gravity="center_horizontal"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/report_camera_button"
@@ -168,7 +169,7 @@
 
             <ImageView
                 android:id="@+id/report_image"
-                android:layout_width="100dp"
+                android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:visibility="gone" />
 

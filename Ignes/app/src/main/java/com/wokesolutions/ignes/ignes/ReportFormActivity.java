@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,6 +64,8 @@ public class ReportFormActivity extends AppCompatActivity {
     private Button mCameraButton;
     private Button mSubmitButton;
 
+    private CheckBox mCheckBox;
+
     private SeekBar mGravitySlider;
 
     private LinearLayout mMediumForm;
@@ -93,6 +96,17 @@ public class ReportFormActivity extends AppCompatActivity {
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
         mSelectImage = (LinearLayout) findViewById(R.id.report_long_image_form);
+
+        mCheckBox = (CheckBox) findViewById(R.id.report_checkbox);
+
+        mCheckBox.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(((CheckBox) v).isChecked()) {
+
+                }
+            }
+        });
 
         mCameraButton = (Button) findViewById(R.id.report_camera_button);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
@@ -249,7 +263,7 @@ public class ReportFormActivity extends AppCompatActivity {
         double lng = 0;
         int gravity = 0;
 
-        if (mReportType.equals("long")) {
+        if (mReportType.equals("detailed")) {
 
             address = mAddress.getText().toString();
             try {
@@ -365,7 +379,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
 
-                } else if (mReportType.equals("detailed")) {
+                } else if (mReportType.equals("long")) {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
@@ -378,6 +392,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_locality", mLocality);
                 }
 
+                System.out.println("REPORT JSON: " + report);
                 System.out.println("ADDRESS DO DETAILED: "+ mAddress +"Localidade e cidade "+ mLocality +" " + mDistrict);
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");

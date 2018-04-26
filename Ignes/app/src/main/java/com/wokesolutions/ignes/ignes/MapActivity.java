@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -28,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -49,6 +52,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
@@ -65,6 +69,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ClusterManager<MyItem> mClusterManager;
 
     private MapTask mMapTask = null;
+    private Geocoder mCoder;
 
     private List<MyItem> mReportList;
 
@@ -82,6 +87,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        mCoder = new Geocoder(this);
 
         mCurrentLocation = null;
         mReportList = new LinkedList<MyItem>();
@@ -122,7 +129,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setUpCluster(LatLng latLng) {
         // Position the map.
-         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
        // System.out.print("ahdgfhjsgdzfjhsgdhfdjs" + latLng);
 
         // Initialize the manager with the context and the map.
@@ -151,7 +158,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         System.out.println("ON RESUMEE!");
         if(mCurrentLocation != null) {
-            mMapTask = new MapTask(mCurrentLocation.getAltitude(), mCurrentLocation.getLongitude(), 10000);
+            mMapTask = new MapTask(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 10000);
             mMapTask.execute((Void) null);
         }
     }
@@ -321,7 +328,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 //reportType.putString("Type", "long");
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
-                i.putExtra("TYPE", "long");
+                i.putExtra("TYPE", "detailed");
                 alert.dismiss();
                 startActivity(i);
 
@@ -330,6 +337,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void filterTask() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Search");
+        mBuilder.setIcon(R.drawable.lupared);
+
+        LayoutInflater inflater = MapActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.map_filter, null);
+        mBuilder.setView(mView);
+        final AlertDialog alert = mBuilder.create();
+
+        alert.show();
+
+        //----SEARCH-----
+        final EditText mSearchText = (EditText) mView.findViewById(R.id.search_location_text);
+
+        Button mSearch = (Button) mView.findViewById(R.id.search_filters_button);
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String address = mSearchText.getText().toString();
+                System.out.println(address);
+
+                try {
+                    List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                    double lat = addresses.get(0).getLatitude();
+                    double lng = addresses.get(0).getLongitude();
+                    mMapTask = new MapTask(lat, lng, 10000);
+                    mMapTask.execute((Void) null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     public class MyItem implements ClusterItem {

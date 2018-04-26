@@ -122,7 +122,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setUpCluster(LatLng latLng) {
         // Position the map.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+       // System.out.print("ahdgfhjsgdzfjhsgdhfdjs" + latLng);
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
@@ -393,6 +394,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println(result);
 
             try {
+                List<MyItem> temp = new LinkedList<MyItem>();
+
                 JSONArray jsonarray = new JSONArray(result);
 
                 for (int i = 0; i < jsonarray.length(); i++) {
@@ -403,11 +406,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     System.out.println(lat + "sfsdfdsxdsf "+lgn);
                     MyItem report = new MyItem(lat, lgn);
 
-                    if(!mReportList.contains(report))
-                    mReportList.add(report);
+                    if(!temp.contains(report))
+                        temp.add(report);
                 }
-                System.out.println("AKI" + mReportList.size());
+                mReportList = temp;
+
                 setUpCluster(new LatLng(mLat,mLng));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

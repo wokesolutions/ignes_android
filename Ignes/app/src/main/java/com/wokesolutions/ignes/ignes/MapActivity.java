@@ -244,7 +244,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    System.out.println("LOCALIZANDO VOCÊ");
                     LatLng loc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
                     return true;

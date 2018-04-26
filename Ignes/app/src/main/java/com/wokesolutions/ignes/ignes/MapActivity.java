@@ -144,6 +144,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        System.out.println("ON RESUMEE!");
+        if(mCurrentLocation != null) {
+            mMapTask = new MapTask(mCurrentLocation.getAltitude(), mCurrentLocation.getLongitude(), 10000);
+            mMapTask.execute((Void) null);
+        }
+    }
+
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -284,8 +295,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 alert.dismiss();
                 startActivity(i);
 
-                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
-                mMapTask.execute((Void) null);
+
 
 
             }
@@ -299,8 +309,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("LOCATION", mCurrentLocation);
                 alert.dismiss();
                 startActivity(i);
-                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
-                mMapTask.execute((Void) null);
+
             }
         });
 
@@ -314,8 +323,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("TYPE", "long");
                 alert.dismiss();
                 startActivity(i);
-                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
-                mMapTask.execute((Void) null);
 
             }
         });

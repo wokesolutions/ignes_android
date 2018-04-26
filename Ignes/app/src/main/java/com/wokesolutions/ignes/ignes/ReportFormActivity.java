@@ -243,7 +243,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String description = "";
         String title = "";
         String locality = "";
-        String city = "";
+        String district = "";
         String address = "";
         double lat = 0;
         double lng = 0;
@@ -253,10 +253,11 @@ public class ReportFormActivity extends AppCompatActivity {
 
             address = mAddress.getText().toString();
             try {
+                System.out.println("MORADA DENTRO DO LONG: "+address);
                 List<Address> addresses = mCoder.getFromLocationName(address, 1);
                 lat = addresses.get(0).getLatitude();
                 lng = addresses.get(0).getLongitude();
-                city = addresses.get(0).getLocality();
+                district = addresses.get(0).getLocality();
                 locality = addresses.get(0).getSubLocality();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -269,7 +270,7 @@ public class ReportFormActivity extends AppCompatActivity {
             try {
                 List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
                 address = addresses.get(0).getAddressLine(0);
-                city = addresses.get(0).getLocality();
+                district = addresses.get(0).getAdminArea();
                 locality = addresses.get(0).getSubLocality();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -283,7 +284,7 @@ public class ReportFormActivity extends AppCompatActivity {
             try {
                 List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
                 address = addresses.get(0).getAddressLine(0);
-                city = addresses.get(0).getLocality();
+                district = addresses.get(0).getLocality();
                 locality = addresses.get(0).getSubLocality();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -293,7 +294,7 @@ public class ReportFormActivity extends AppCompatActivity {
             lng = mCurrentLocation.getLongitude();
         }
 
-        mReportTask = new ReportTask(image, description, title, city, address, locality, gravity, lat, lng);
+        mReportTask = new ReportTask(image, description, title, district, address, locality, gravity, lat, lng);
         mReportTask.execute((Void) null);
     }
 
@@ -306,21 +307,21 @@ public class ReportFormActivity extends AppCompatActivity {
         String mDescription;
         int mGravity;
         String mTitle;
-        String mCity;
+        String mDistrict;
         String mAddress;
         String mLocality;
 
         SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(byte[] img, String description, String title, String city, String address, String locality, int gravity, double lat, double lng) {
+        ReportTask(byte[] img, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
             mImage = img;
             base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
             mLat = lat;
             mLng = lng;
             mDescription = description;
             mTitle = title;
-            mCity = city;
+            mDistrict = district;
             mAddress = address;
             mLocality = locality;
             mGravity = gravity;
@@ -350,7 +351,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
                     report.put("report_address", mAddress);
-                    report.put("report_city", mCity);
+                    report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("medium")) {
@@ -361,7 +362,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_address", mAddress);
-                    report.put("report_city", mCity);
+                    report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("detailed")) {
@@ -373,9 +374,11 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);
                     report.put("report_address", mAddress);
-                    report.put("report_city", mCity);
+                    report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
                 }
+
+                System.out.println("ADDRESS DO DETAILED: "+ mAddress +"Localidade e cidade"+ mLocality + mDistrict);
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 

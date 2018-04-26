@@ -66,12 +66,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
 
     // Declare a variable for the cluster manager.
-    private ClusterManager<MyItem> mClusterManager;
+    private ClusterManager<MarkerClass> mClusterManager;
 
     private MapTask mMapTask = null;
     private Geocoder mCoder;
 
-    private List<MyItem> mReportList;
+    private List<MarkerClass> mReportList;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -91,7 +91,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this);
 
         mCurrentLocation = null;
-        mReportList = new LinkedList<MyItem>();
+        mReportList = new LinkedList<MarkerClass>();
         context = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -134,7 +134,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        mClusterManager = new ClusterManager<MarkerClass>(this, mMap);
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -147,7 +147,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Add ten cluster items in close proximity, for purposes of this example.
         for (int i = 0; i < mReportList.size(); i++) {
-            System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).mPosition);
+            System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
         }
     }
@@ -383,19 +383,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    public class MyItem implements ClusterItem {
-        private final LatLng mPosition;
-
-        public MyItem(double lat, double lng) {
-            mPosition = new LatLng(lat, lng);
-        }
-
-        @Override
-        public LatLng getPosition() {
-            return mPosition;
-        }
-    }
-
     public class MapTask extends AsyncTask<Void, Void, String> {
 
         double mLat;
@@ -445,7 +432,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println(result);
 
             try {
-                List<MyItem> temp = new LinkedList<MyItem>();
+                List<MarkerClass> temp = new LinkedList<MarkerClass>();
 
                 JSONArray jsonarray = new JSONArray(result);
 
@@ -455,7 +442,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     double lgn = Double.parseDouble(jsonobject.getString("report_lng"));
 
                     System.out.println(lat + "sfsdfdsxdsf "+lgn);
-                    MyItem report = new MyItem(lat, lgn);
+                    MarkerClass report = new MarkerClass(lat, lgn);
 
                     if(!temp.contains(report))
                         temp.add(report);

@@ -228,13 +228,11 @@ public class ReportFormActivity extends AppCompatActivity {
                 mMediumForm.setVisibility(View.VISIBLE);
                 mLongForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.VISIBLE);
-                mSelectImage.setVisibility(View.VISIBLE);
             }
             break;
 
             case "detailed": {
                 mSliderForm.setVisibility(View.VISIBLE);
-                mSelectImage.setVisibility(View.VISIBLE);
             }
             break;
         }

@@ -78,6 +78,13 @@ public class ReportFormActivity extends AppCompatActivity {
     private EditText mAddress;
     private EditText mDescription;
 
+    String address;
+    String district;
+    String locality;
+    double lat;
+    double lng;
+
+
     private ImageView mImageView;
 
     @Override
@@ -90,8 +97,20 @@ public class ReportFormActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mReportType = intent.getExtras().getString("TYPE");
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
-
         mCoder = new Geocoder(this);
+
+        try {
+            List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+            address = addresses.get(0).getAddressLine(0);
+            district = addresses.get(0).getAdminArea();
+            locality = addresses.get(0).getSubLocality();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        lat = mCurrentLocation.getLatitude();
+        lng = mCurrentLocation.getLongitude();
+
+
 
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
@@ -103,8 +122,9 @@ public class ReportFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(((CheckBox) v).isChecked()) {
-
-                }
+                    mAddress.setText(address);
+                } else
+                    mAddress.setText("");
             }
         });
 
@@ -256,56 +276,36 @@ public class ReportFormActivity extends AppCompatActivity {
         byte[] image = byteArray;
         String description = "";
         String title = "";
-        String locality = "";
-        String district = "";
-        String address = "";
-        double lat = 0;
-        double lng = 0;
+        String locality = this.locality;
+        String district = this.district;
+        String address = this.address;
+        double lat = this.lat;
+        double lng = this.lng;
         int gravity = 0;
 
         if (mReportType.equals("detailed")) {
-
-            address = mAddress.getText().toString();
-            try {
-                System.out.println("MORADA DENTRO DO LONG: "+address);
-                List<Address> addresses = mCoder.getFromLocationName(address, 1);
-                lat = addresses.get(0).getLatitude();
-                lng = addresses.get(0).getLongitude();
-                district = addresses.get(0).getLocality();
-                locality = addresses.get(0).getSubLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(!mCheckBox.isChecked()) {
+                address = mAddress.getText().toString();
+                try {
+                    System.out.println("MORADA DENTRO DO LONG: " + address);
+                    List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                    lat = addresses.get(0).getLatitude();
+                    lng = addresses.get(0).getLongitude();
+                    district = addresses.get(0).getLocality();
+                    locality = addresses.get(0).getSubLocality();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             title = mTitle.getText().toString();
             description = mDescription.getText().toString();
 
         } else if (mReportType.equals("medium")) {
 
-            try {
-                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
-                address = addresses.get(0).getAddressLine(0);
-                district = addresses.get(0).getAdminArea();
-                locality = addresses.get(0).getSubLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            lat = mCurrentLocation.getLatitude();
-            lng = mCurrentLocation.getLongitude();
             title = mMediumTitle.getText().toString();
 
         } else if (mReportType.equals("fast")) {
 
-            try {
-                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
-                address = addresses.get(0).getAddressLine(0);
-                district = addresses.get(0).getLocality();
-                locality = addresses.get(0).getSubLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            lat = mCurrentLocation.getLatitude();
-            lng = mCurrentLocation.getLongitude();
         }
 
         mReportTask = new ReportTask(image, description, title, district, address, locality, gravity, lat, lng);
@@ -379,7 +379,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
 
-                } else if (mReportType.equals("long")) {
+                } else if (mReportType.equals("detailed")) {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);

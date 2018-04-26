@@ -241,7 +241,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
         }
-
     }
 
     /*----- About Menu Bar -----*/
@@ -329,6 +328,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //reportType.putString("Type", "long");
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "detailed");
+                i.putExtra("LOCATION", mCurrentLocation);
                 alert.dismiss();
                 startActivity(i);
 

@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -30,20 +32,26 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -57,6 +65,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ClusterManager<MyItem> mClusterManager;
 
     private MapTask mMapTask = null;
+
+    private List<MyItem> mReportList;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -74,6 +84,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         mCurrentLocation = null;
+        mReportList = new LinkedList<MyItem>();
         context = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -105,7 +116,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         /*----------------------------------------------------------------------------------*/
-
     }
 
     /*----- About Google Maps -----*/
@@ -124,22 +134,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        addItems(latLng);
-    }
+        System.out.println("TAMANHO DA LISTA" + mReportList.size());
 
-    private void addItems(LatLng latLng) {
-
-        // Set some lat/lng coordinates to start with.
-        double lat = latLng.latitude;
-        double lng = latLng.longitude;
 
         // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < 10; i++) {
-            double offset = i / 60d;
-            lat = lat + offset;
-            lng = lng + offset;
-            MyItem offsetItem = new MyItem(lat, lng);
-            mClusterManager.addItem(offsetItem);
+        for (int i = 0; i < mReportList.size(); i++) {
+            System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).mPosition);
+            mClusterManager.addItem(mReportList.get(i));
         }
     }
 
@@ -215,7 +216,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-                        setUpCluster(loc);
+                        mMapTask = new MapTask(loc.latitude,loc.longitude, 10000);
+                        mMapTask.execute((Void) null);
                     }
                 }
             });
@@ -282,6 +284,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 alert.dismiss();
                 startActivity(i);
 
+                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
+                mMapTask.execute((Void) null);
+
+
             }
         });
         Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);
@@ -293,6 +299,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("LOCATION", mCurrentLocation);
                 alert.dismiss();
                 startActivity(i);
+                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
+                mMapTask.execute((Void) null);
             }
         });
 
@@ -306,7 +314,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("TYPE", "long");
                 alert.dismiss();
                 startActivity(i);
-
+                mMapTask = new MapTask(mCurrentLocation.getAltitude(),mCurrentLocation.getLongitude(), 10000);
+                mMapTask.execute((Void) null);
 
             }
         });
@@ -357,14 +366,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected String doInBackground(Void... voids) {
             try {
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/getwhithinradius?"
-                + "lat=" + mLat + "&" + "lng" + mLng  + "&" + "radius" + mRadius);
-
-                System.out.println("URL PARA O PEDIDO DE MARKERS: "+url);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+                        + "lat=" + mLat + "&" + "lng=" + mLng + "&" + "radius=" + mRadius);
 
                 String s = RequestsREST.doGET(url, null);
 
                 return s;
+
 
             } catch (Exception e) {
                 return e.toString();
@@ -375,14 +383,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected void onPostExecute(final String result) {
             mMapTask = null;
 
-            System.out.println("RESPOSTA DO REPORT " + result);
+            System.out.println(result);
+
+            try {
+                JSONArray jsonarray = new JSONArray(result);
+
+                for (int i = 0; i < jsonarray.length(); i++) {
+                    JSONObject jsonobject = jsonarray.getJSONObject(i);
+                    double lat = Double.parseDouble(jsonobject.getString("report_lat"));
+                    double lgn = Double.parseDouble(jsonobject.getString("report_lng"));
+
+                    System.out.println(lat + "sfsdfdsxdsf "+lgn);
+                    MyItem report = new MyItem(lat, lgn);
+
+                    if(!mReportList.contains(report))
+                    mReportList.add(report);
+                }
+                System.out.println("AKI" + mReportList.size());
+                setUpCluster(new LatLng(mLat,mLng));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             if (result.equals("OK")) {
+
+
                 System.out.println("MAP LOADED");
 
             } else if (result.equals(SERVER_ERROR)) {
                 System.out.println("ERRO NO MAP LOADED");
             }
+
+
         }
     }
 

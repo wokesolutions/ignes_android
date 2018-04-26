@@ -378,7 +378,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_locality", mLocality);
                 }
 
-                System.out.println("ADDRESS DO DETAILED: "+ mAddress +"Localidade e cidade"+ mLocality + mDistrict);
+                System.out.println("ADDRESS DO DETAILED: "+ mAddress +"Localidade e cidade "+ mLocality +" " + mDistrict);
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 

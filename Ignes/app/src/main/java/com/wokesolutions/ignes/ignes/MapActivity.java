@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -52,7 +53,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
@@ -73,6 +79,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private List<MarkerClass> mReportList;
 
+    private LocationManager mManager;
+
+    private boolean mGps;
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Button mLoggout;
@@ -81,6 +91,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location mCurrentLocation;
     private ImageView mImage;
     private Context context;
+
+    private boolean ola;
 
 
     @Override
@@ -122,6 +134,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+
+
         /*----------------------------------------------------------------------------------*/
     }
 
@@ -130,7 +148,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setUpCluster(LatLng latLng) {
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-       // System.out.print("ahdgfhjsgdzfjhsgdhfdjs" + latLng);
+        // System.out.print("ahdgfhjsgdzfjhsgdhfdjs" + latLng);
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
@@ -150,6 +168,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
         }
+
     }
 
     @Override
@@ -157,10 +176,81 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onResume();
 
         System.out.println("ON RESUMEE!");
-        if(mCurrentLocation != null) {
+        if (mCurrentLocation != null) {
             mMapTask = new MapTask(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 10000);
             mMapTask.execute((Void) null);
+
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        mGps=true;
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                        mGps=false;
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void writeToFile(String data,Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("myfile", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            System.out.println("File write failed: " + e.toString());
+        }
+    }
+
+    private void readFromFile(Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("myfile");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.toString());
+        } catch (IOException e) {
+            System.out.println("Can not read file: " + e.toString());
+        }
+
+        System.out.println(ret);
     }
 
     public boolean checkLocationPermission() {
@@ -224,7 +314,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
         } else {
             mMap.setMyLocationEnabled(true);
 
@@ -235,23 +324,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-                        mMapTask = new MapTask(loc.latitude,loc.longitude, 10000);
+                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000);
                         mMapTask.execute((Void) null);
                     }
                 }
             });
 
-            mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                @Override
-                public boolean onMyLocationButtonClick() {
-                    LatLng loc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-                    return true;
-                }
-            });
+
+            if(!mGps){
+                buildAlertMessageNoGps();
+                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+                        recreate();
+                        return true;
+                    }
+                });
+
+            }
+            else {
+                mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+                        LatLng loc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                        return true;
+                    }
+                });
+            }
         }
     }
-
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
@@ -311,8 +413,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 i.putExtra("LOCATION", mCurrentLocation);
                 alert.dismiss();
                 startActivity(i);
-
-
 
 
             }
@@ -440,15 +540,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     double lat = Double.parseDouble(jsonobject.getString("report_lat"));
                     double lgn = Double.parseDouble(jsonobject.getString("report_lng"));
 
-                    System.out.println(lat + "sfsdfdsxdsf "+lgn);
+                    System.out.println(lat + "sfsdfdsxdsf " + lgn);
                     MarkerClass report = new MarkerClass(lat, lgn);
 
-                    if(!temp.contains(report))
+                    if (!temp.contains(report))
                         temp.add(report);
                 }
                 mReportList = temp;
 
-                setUpCluster(new LatLng(mLat,mLng));
+                setUpCluster(new LatLng(mLat, mLng));
 
             } catch (JSONException e) {
                 e.printStackTrace();

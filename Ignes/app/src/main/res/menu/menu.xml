@@ -12,6 +12,11 @@
         android:icon="@drawable/ocorrenciared"
         android:title="Filter"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/refreshicon"
+        android:icon="@drawable/refresh"
+        android:title="Filter"
+        app:showAsAction="always" />
 
 
 </menu>

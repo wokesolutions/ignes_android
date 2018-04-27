@@ -487,8 +487,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         double mLat;
         double mLng;
         int mRadius;
+        String mLocality;
 
         MapTask(double lat, double lng, int radius) {
+
+            try {
+                List<Address> addresses = mCoder.getFromLocation(lat, lng,1);
+                mLocality = addresses.get(0).getLocality();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             mLat = lat;
             mLng = lng;
             mRadius = radius;
@@ -511,8 +520,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected String doInBackground(Void... voids) {
             try {
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
-                        + "lat=" + mLat + "&" + "lng=" + mLng + "&" + "radius=" + mRadius);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getinlocation?"
+                        + "location="+mLocality);
 
                 String s = RequestsREST.doGET(url, null);
 
@@ -528,7 +537,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected void onPostExecute(final String result) {
             mMapTask = null;
 
-            System.out.println(result);
+            System.out.println("RESPOSTA DO POSTEXECUTE "+result);
 
             try {
                 List<MarkerClass> temp = new LinkedList<MarkerClass>();
@@ -549,6 +558,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mReportList = temp;
 
                 setUpCluster(new LatLng(mLat, mLng));
+
+                writeToFile(result,context);
 
             } catch (JSONException e) {
                 e.printStackTrace();

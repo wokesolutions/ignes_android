@@ -103,7 +103,9 @@ public class ReportFormActivity extends AppCompatActivity {
             List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
             address = addresses.get(0).getAddressLine(0);
             district = addresses.get(0).getAdminArea();
-            locality = addresses.get(0).getSubLocality();
+            locality = addresses.get(0).getLocality();
+
+            System.out.println("SUBADMIN "+ addresses.get(0).getSubAdminArea());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -291,8 +293,8 @@ public class ReportFormActivity extends AppCompatActivity {
                     List<Address> addresses = mCoder.getFromLocationName(address, 1);
                     lat = addresses.get(0).getLatitude();
                     lng = addresses.get(0).getLongitude();
-                    district = addresses.get(0).getLocality();
-                    locality = addresses.get(0).getSubLocality();
+                    district = addresses.get(0).getAdminArea();
+                    locality = addresses.get(0).getLocality();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

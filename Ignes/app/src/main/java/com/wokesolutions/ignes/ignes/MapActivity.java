@@ -78,6 +78,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int GPS_ACTIVITY = 2;
     private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
     private String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
+    private String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -483,8 +484,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "detailed");
 
-                if(mCurrentLocation!=null)
-                i.putExtra("LOCATION", mCurrentLocation);
+                if (mCurrentLocation != null)
+                    i.putExtra("LOCATION", mCurrentLocation);
 
                 alert.dismiss();
                 startActivity(i);
@@ -678,8 +679,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("SERVER ERROR");
 
             } else if (result.equals(NO_CONTENT_ERROR)) {
+
                 Toast.makeText(context, "No reports to show in this area", Toast.LENGTH_LONG).show();
                 System.out.println("NADA A MOSTRAR NA ZONA");
+
+            } else if (result.equals(NOT_FOUND_ERROR)) {
+
+                Toast.makeText(context, "Can't connect to server", Toast.LENGTH_LONG).show();
+                System.out.println("NOT FOUND ERROR");
+                
             } else {
 
                 setMarkers(result, mLat, mLng);

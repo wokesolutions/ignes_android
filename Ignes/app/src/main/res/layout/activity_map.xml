@@ -34,8 +34,6 @@
 
         <include layout="@layout/sidebarnavigation" />
 
-        <include layout="@layout/activity_sidefeed" />
-
     </android.support.v4.widget.DrawerLayout>
 
 

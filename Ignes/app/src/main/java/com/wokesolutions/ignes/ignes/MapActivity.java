@@ -65,6 +65,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -88,7 +89,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapTask mMapTask = null;
     private Geocoder mCoder;
 
-    private List<MarkerClass> mReportList;
+    public static ArrayList<MarkerClass> mReportList;
 
     private LocationManager mManager;
 
@@ -96,12 +97,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private Button mLoggout;
+    private Button mLoggoutButton;
+    private Button mFeedButton;
+
     private Button mReport;
     private Button mFilter;
     private Location mCurrentLocation;
     private ImageView mImage;
     private Context context;
+    private FeedActivity feedActivity;
 
     private boolean ola;
 
@@ -118,7 +122,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this, Locale.getDefault());
 
         mCurrentLocation = null;
-        mReportList = new LinkedList<MarkerClass>();
+        mReportList = new ArrayList<>();
         context = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -153,8 +157,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-
-
         /*----------------------------------------------------------------------------------*/
     }
 
@@ -182,6 +184,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
             mClusterManager.setRenderer(new OwnIconRendered(context, mMap, mClusterManager));
+           // feedActivity.addMarker(mReportList.get(i));
         }
 
     }
@@ -208,7 +211,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setMarkers(String markers, double lat, double lng) {
         try {
-            List<MarkerClass> temp = new LinkedList<MarkerClass>();
+            ArrayList<MarkerClass> temp = new ArrayList<>();
 
             JSONArray jsonarray = new JSONArray(markers);
 
@@ -229,6 +232,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mReportList = temp;
 
             setUpCluster(new LatLng(lat, lng));
+
+
 
 
         } catch (JSONException e) {
@@ -398,15 +403,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
-        mLoggout = (Button) findViewById(R.id.botao_logout);
-        mLoggout.setOnClickListener(new View.OnClickListener() {
+        mLoggoutButton = (Button) findViewById(R.id.botao_logout);
+        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MapActivity.this, LogoutActivity.class));
                 finish();
             }
         });
+
+        mFeedButton = (Button) findViewById(R.id.menu_button_feed);
+        mFeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, FeedActivity.class));
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -414,6 +428,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

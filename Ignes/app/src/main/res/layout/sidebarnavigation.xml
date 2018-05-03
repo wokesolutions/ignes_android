@@ -8,15 +8,15 @@
     android:layout_marginEnd="-65dp"
     android:layout_marginRight="-65dp"
     android:paddingHorizontal="50dp"
-    android:background="@color/colorIgnesPrimary"
+    android:background="@color/backgroundColor"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:src="@drawable/igneswhite"/>
-
+    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
+        
     <Button
         android:id="@+id/botao_profile"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -25,8 +25,9 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="@string/profile_navi"
-        android:textColor="@color/backgroundColor"
+        android:textColor="@color/colorIgnesPrimary"
         android:textStyle="bold" />
+</LinearLayout>
 <View
     android:layout_width="match_parent"
     android:layout_height="2dp"
@@ -41,7 +42,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="Feed"
-        android:textColor="@color/backgroundColor"
+        android:textColor="@color/colorIgnesPrimary"
         android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
@@ -56,7 +57,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="About"
-        android:textColor="@color/backgroundColor"
+        android:textColor="@color/colorIgnesPrimary"
         android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
@@ -71,7 +72,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="@string/action_settings"
-        android:textColor="@color/backgroundColor"
+        android:textColor="@color/colorIgnesPrimary"
         android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
@@ -86,6 +87,6 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/quicksand_bold"
         android:text="@string/log_out"
-        android:textColor="@color/backgroundColor"
+        android:textColor="@color/colorIgnesPrimary"
         android:textStyle="bold" />
 </LinearLayout>

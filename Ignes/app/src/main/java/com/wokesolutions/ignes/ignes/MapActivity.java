@@ -562,7 +562,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         dlg.dismiss(); // when the task active then close the dialog
                         t.cancel();// also just top the timer thread, otherwise, you may receive a crash report
                     }
-                }, 2500); // after 2 second (or 2000 miliseconds), the task will be active.
+                }, 3000); // after 3 second (or 3000 miliseconds), the task will be active.
                 dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
@@ -600,10 +600,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 try {
                     List<Address> addresses = mCoder.getFromLocationName(address, 1);
-                    double lat = addresses.get(0).getLatitude();
-                    double lng = addresses.get(0).getLongitude();
-                    mMapTask = new MapTask(lat, lng, 10000);
-                    mMapTask.execute((Void) null);
+                    if(addresses.size() > 0) {
+                        double lat = addresses.get(0).getLatitude();
+                        double lng = addresses.get(0).getLongitude();
+                        mMapTask = new MapTask(lat, lng, 10000);
+                        mMapTask.execute((Void) null);
+                    } else
+                        Toast.makeText(context, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -702,7 +705,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 Toast.makeText(context, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("NOT FOUND ERROR");
-                
+
             } else {
 
                 setMarkers(result, mLat, mLng);

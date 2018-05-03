@@ -20,7 +20,17 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
+                android:text="Create a new USER account"
+                android:textColor="@color/backgroundColor"
+                android:textSize="17sp" />
 
             <Button
                 android:id="@+id/register_icon_citizen_button"
@@ -33,7 +43,16 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
+                android:text="or"
+                android:textColor="@color/backgroundColor"
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/register_icon_worker_button"
@@ -41,14 +60,15 @@
                 android:layout_height="150dp"
                 android:background="@drawable/wokerimgwhite" />
 
-            <!--<TextView
-                android:id="@+id/worker_text"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:gravity="center_horizontal"
-                android:text="Trabalhador"
-                android:background="@drawable/button"
-                android:textSize="25dp" />-->
+                android:text="Create a WORKER account using the \n code provided by tour company"
+                android:textColor="@color/backgroundColor"
+                android:textSize="15sp" />
+
 
         </LinearLayout>
 
@@ -106,8 +126,8 @@
         android:layout_weight="4"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="40dp"
         android:paddingHorizontal="10dp"
+        android:paddingTop="40dp"
         android:visibility="gone">
 
         <ImageView

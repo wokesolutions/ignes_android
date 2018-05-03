@@ -35,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     private UserRegisterTask mRegTask = null;
 
     private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
+    private String CONFLICT_ERROR = "java.io.IOException: HTTP error code: 409";
 
     private View mRegister_form;
     private View mSelectUser_form;
@@ -223,17 +224,15 @@ public class RegisterActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if(TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             mPassword.setError(getString(R.string.error_field_required));
             focusView = mPassword;
             cancel = true;
-        }
-        else if (!isPasswordValid(password)) {
+        } else if (!isPasswordValid(password)) {
             mPassword.setError(getString(R.string.error_invalid_password));
             focusView = mPassword;
             cancel = true;
-        }
-        else if (!passwordEqualsConfirmation(password, confirmation)) {
+        } else if (!passwordEqualsConfirmation(password, confirmation)) {
             mPasswordConfirm.setError("Must be equal to password");
             focusView = mPasswordConfirm;
             cancel = true;
@@ -278,7 +277,7 @@ public class RegisterActivity extends AppCompatActivity {
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, String> {
 
-        private final String mUsername;
+        private final String mUsernameString;
         private final String mEmail;
         private final String mPasswordString;
         private final String mConfirmation;
@@ -287,7 +286,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         UserRegisterTask(String username, String email, String password, String confirmation, String role, String code) {
-            mUsername = username;
+            mUsernameString = username;
             mEmail = email;
             mPasswordString = password;
             mConfirmation = confirmation;
@@ -319,10 +318,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (mUserRole.equals("User")) {
 
-                    credentials.put("user_username", mUsername);
+                    credentials.put("user_username", mUsernameString);
                     credentials.put("user_email", mEmail);
                     credentials.put("user_password", mPasswordString);
-                    //credentials.put("user_confirmation", mConfirmation);
 
                     System.out.println("Credentials JSON to send:" + credentials);
 
@@ -330,7 +328,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 } else if (mUserRole.equals("Worker")) {
 
-                    credentials.put("worker_username", mUsername);
+                    credentials.put("worker_username", mUsernameString);
                     credentials.put("worker_email", mEmail);
                     credentials.put("worker_password", mPasswordString);
                     credentials.put("worker_code", mCode);
@@ -355,14 +353,20 @@ public class RegisterActivity extends AppCompatActivity {
             mRegTask = null;
 
             System.out.println("RESPOSTA DO REGISTO " + result);
-            if (!result.equals("OK")) {
+            if (result.equals("OK")) {
 
                 Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+
+            } else if (result.equals(CONFLICT_ERROR)) {
+
+                Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
+                changeVisibility("Username");
+                mUsername.setError("Choose a different username");
+                mUsername.requestFocus();
+
             } else {
                 Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
-                mPassword.setError(getString(R.string.error_incorrect_password));
-                mPassword.requestFocus();
             }
         }
 

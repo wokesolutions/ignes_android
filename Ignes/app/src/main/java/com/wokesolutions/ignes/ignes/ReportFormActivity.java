@@ -105,7 +105,6 @@ public class ReportFormActivity extends AppCompatActivity {
             district = addresses.get(0).getAdminArea();
             locality = addresses.get(0).getLocality();
 
-            System.out.println("SUBADMIN "+ addresses.get(0).getSubAdminArea());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -414,6 +413,7 @@ public class ReportFormActivity extends AppCompatActivity {
             System.out.println("RESPOSTA DO REPORT " + result);
             if (result.equals("OK")) {
                 Toast.makeText(context, "Report successfully registered", Toast.LENGTH_LONG).show();
+                setResult(Activity.RESULT_OK, new Intent());
                 finish();
             } else if (result.equals(BAD_REQUEST)) {
                 Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();

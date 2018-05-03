@@ -233,7 +233,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     String token = s.getHeaderField("Authorization").toString();
 
-
                     SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                     Editor editor = shared.edit();
 

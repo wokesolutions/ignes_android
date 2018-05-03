@@ -99,20 +99,6 @@ public class ReportFormActivity extends AppCompatActivity {
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
         mCoder = new Geocoder(this);
 
-        try {
-            List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
-            address = addresses.get(0).getAddressLine(0);
-            district = addresses.get(0).getAdminArea();
-            locality = addresses.get(0).getLocality();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        lat = mCurrentLocation.getLatitude();
-        lng = mCurrentLocation.getLongitude();
-
-
-
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
         mSelectImage = (LinearLayout) findViewById(R.id.report_long_image_form);
@@ -192,6 +178,23 @@ public class ReportFormActivity extends AppCompatActivity {
                 attemptReport();
             }
         });
+
+        if(mCurrentLocation!=null) {
+            try {
+                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                address = addresses.get(0).getAddressLine(0);
+                district = addresses.get(0).getAdminArea();
+                locality = addresses.get(0).getLocality();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            lat = mCurrentLocation.getLatitude();
+            lng = mCurrentLocation.getLongitude();
+        }
+        else
+            mCheckBox.setVisibility(View.INVISIBLE);
+
     }
 
     public void onActivityResult(int requestcode, int resultcode, Intent data) {

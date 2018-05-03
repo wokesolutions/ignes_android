@@ -184,23 +184,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
     }
-   class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
 
-        public OwnIconRendered(Context context, GoogleMap map,
-                               ClusterManager<MarkerClass> clusterManager) {
-            super(context, map, clusterManager);
-        }
-
-        @Override
-        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
-          //  markerOptions.icon(item.getIcon());
-           // markerOptions.snippet(item.getSnippet());
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
-
-            super.onBeforeClusterItemRendered(item, markerOptions);
-        }
-    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -236,7 +220,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String date = jsonobject.getString("report_creationtime");
                 String name = jsonobject.getString("report_username");
 
-                MarkerClass report = new MarkerClass(latitude, longitude, status,address,date,name);
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name);
 
                 if (!temp.contains(report))
                     temp.add(report);
@@ -250,7 +234,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
     }
-
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -458,36 +441,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         final AlertDialog alert = mBuilder.create();
 
         alert.show();
+        if (mCurrentLocation != null) {
+            //----FAST-----
+            Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
+            mFast.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
+                    i.putExtra("TYPE", "fast");
+                    i.putExtra("LOCATION", mCurrentLocation);
+                    alert.dismiss();
+                    startActivity(i);
 
 
-        //----FAST-----
-        Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
-        mFast.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
-                i.putExtra("TYPE", "fast");
-                i.putExtra("LOCATION", mCurrentLocation);
-                alert.dismiss();
-                startActivity(i);
+                }
+            });
 
+            Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);
+            mMedium.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
+                    i.putExtra("TYPE", "medium");
+                    i.putExtra("LOCATION", mCurrentLocation);
+                    alert.dismiss();
+                    //startActivity(i);
+                    startActivityForResult(i, REPORT_ACTIVITY);
 
-            }
-        });
-        Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);
-        mMedium.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
-                i.putExtra("TYPE", "medium");
-                i.putExtra("LOCATION", mCurrentLocation);
-                alert.dismiss();
-                //startActivity(i);
-                startActivityForResult(i, REPORT_ACTIVITY);
+                }
+            });
+        } else {
+            Toast.makeText(context, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
 
-            }
-        });
-
+        }
         //----LONG-----
         Button mLong = (Button) mView.findViewById(R.id.report_long_button);
         mLong.setOnClickListener(new View.OnClickListener() {
@@ -496,12 +482,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //reportType.putString("Type", "long");
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "detailed");
+
+                if(mCurrentLocation!=null)
                 i.putExtra("LOCATION", mCurrentLocation);
+
                 alert.dismiss();
                 startActivity(i);
 
             }
         });
+
     }
 
     @Override
@@ -604,6 +594,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             }
         });
+    }
+
+    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<MarkerClass> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
+            //  markerOptions.icon(item.getIcon());
+            // markerOptions.snippet(item.getSnippet());
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
     }
 
     public class MapTask extends AsyncTask<Void, Void, String> {

@@ -15,9 +15,11 @@
         android:id="@+id/search_filters_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button"
         android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@drawable/button"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Search"
-        android:textColor="@color/backgroundColor" />
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
 
 </LinearLayout>

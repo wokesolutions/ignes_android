@@ -8,9 +8,14 @@
     android:layout_marginEnd="-65dp"
     android:layout_marginRight="-65dp"
     android:paddingHorizontal="50dp"
-    android:background="@color/backgroundColor"
+    android:background="@color/colorIgnesPrimary"
     android:orientation="vertical"
     android:gravity="center_horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:src="@drawable/igneswhite"/>
 
     <Button
         android:id="@+id/botao_profile"
@@ -18,12 +23,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="@string/profile_navi"
-        android:textColor="#000000"/>
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
 <View
     android:layout_width="match_parent"
     android:layout_height="2dp"
-    android:background="@color/colorIgnesPrimary"/>
+    android:background="#000000"/>
 
 
     <Button
@@ -32,12 +39,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="Feed"
-        android:textColor="#000000"/>
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorIgnesPrimary"/>
+        android:background="#000000"/>
 
     <Button
         android:id="@+id/botao3"
@@ -45,12 +54,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="About"
-        android:textColor="#000000"/>
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorIgnesPrimary"/>
+        android:background="#000000"/>
 
     <Button
         android:id="@+id/botao1"
@@ -58,12 +69,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="@string/action_settings"
-        android:textColor="#000000"/>
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorIgnesPrimary"/>
+        android:background="#000000"/>
 
     <Button
         android:id="@+id/botao_logout"
@@ -71,6 +84,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:fontFamily="@font/quicksand_bold"
         android:text="@string/log_out"
-        android:textColor="#000000"/>
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
 </LinearLayout>

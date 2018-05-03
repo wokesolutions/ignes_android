@@ -10,8 +10,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
             android:text="Quick"
-            android:textColor="@color/backgroundColor" />
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/report_medium_button"
@@ -19,16 +21,20 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
             android:text="Simple"
-            android:textColor="@color/backgroundColor" />
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/report_long_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
             android:text="Detailed"
-            android:textColor="@color/backgroundColor" />
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
 
 </LinearLayout>

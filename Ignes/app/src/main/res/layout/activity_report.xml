@@ -33,6 +33,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="Title"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="20dp"
@@ -58,6 +59,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="Address"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="20dp"
@@ -81,11 +83,13 @@
                     android:id="@+id/report_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use my current location"/>
+                    android:fontFamily="@font/quicksand_bold"
+                    android:text="Use my current location" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="Description"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="20dp"
@@ -110,6 +114,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:gravity="center"
                 android:text="Image"
                 android:textColor="@color/colorIgnesPrimary"
@@ -128,6 +133,7 @@
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="Camera"
                     android:textColor="#000000" />
 
@@ -136,6 +142,7 @@
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="Upload"
                     android:textColor="#000000" />
 
@@ -191,6 +198,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:gravity="center"
                     android:text="Rank report gravity"
                     android:textColor="@color/colorIgnesPrimary"
@@ -204,6 +212,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_bold"
                         android:text="1"
                         android:textSize="17dp"
                         android:textStyle="bold" />
@@ -211,20 +220,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:gravity="right"
                         android:text="3"
                         android:textSize="17dp"
-                        android:gravity="right"
-                        android:textStyle="bold"
-                        android:layout_centerInParent="true"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:gravity="right"
                         android:text="5"
                         android:textSize="17dp"
-                        android:gravity="right"
-                        android:textStyle="bold"
-                        android:layout_alignParentRight="true"/>
+                        android:textStyle="bold" />
                 </RelativeLayout>
 
                 <SeekBar
@@ -245,6 +256,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:background="@drawable/button"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="Submit"
                 android:textColor="@color/backgroundColor"
                 android:textStyle="bold" />

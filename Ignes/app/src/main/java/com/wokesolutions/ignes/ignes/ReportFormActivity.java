@@ -32,16 +32,23 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class ReportFormActivity extends AppCompatActivity {
 
     private String BAD_REQUEST = "java.io.IOException: HTTP error code: 400";
+    private final int REQUEST_IMAGE_CAPTURE = 0;
 
     private ReportTask mReportTask = null;
 
@@ -52,6 +59,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private byte[] byteArray;
 
+    private String mCurrentPhotoPath;
     private Bitmap mImage;
 
     private String mReportType;
@@ -197,11 +205,23 @@ public class ReportFormActivity extends AppCompatActivity {
 
     }
 
-    public void onActivityResult(int requestcode, int resultcode, Intent data) {
+    private File createImageFile() throws IOException {
+        //Unique filename to prevent name collision
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imgFileName = "IGNES_" + timeStamp + "_";
+        File storageDir = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+        File image = File.createTempFile(imgFileName,".jpg", storageDir);
 
-        switch (requestcode) {
-            case 0:
-                if (resultcode == RESULT_OK) {
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     mImage = (Bitmap) bundle.get("data");
                     mImageView.setVisibility(View.VISIBLE);
@@ -217,7 +237,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 }
                 break;
             case 1:
-                if (resultcode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
 
                     try {
                         Uri imageUri = data.getData();
@@ -245,9 +265,8 @@ public class ReportFormActivity extends AppCompatActivity {
     private void openCamera() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mRequestCode = 0;
         if (intent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(intent, mRequestCode);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
     private void changeFormVisibility(String reportType) {

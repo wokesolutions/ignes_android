@@ -77,20 +77,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
+    public static ArrayList<MarkerClass> mReportList;
     private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
     private String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
     private String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-
     // Declare a variable for the cluster manager.
     private ClusterManager<MarkerClass> mClusterManager;
-
     private MapTask mMapTask = null;
     private Geocoder mCoder;
-
-    public static ArrayList<MarkerClass> mReportList;
-
     private LocationManager mManager;
 
     private boolean mGps;
@@ -184,7 +180,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
             mClusterManager.setRenderer(new OwnIconRendered(context, mMap, mClusterManager));
-           // feedActivity.addMarker(mReportList.get(i));
+            // feedActivity.addMarker(mReportList.get(i));
         }
 
     }
@@ -222,9 +218,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String status = jsonobject.getString("report_status");
                 String address = jsonobject.getString("report_address");
                 String date = jsonobject.getString("report_creationtime");
-                String name = jsonobject.getString("report_username");
+                String name = "";
+                if (jsonobject.getString("report_username") != null)
+                    name = jsonobject.getString("report_username");
+                int gravity = 0;
+                if (jsonobject.has("report_gravity"))
+                    gravity = jsonobject.getInt("report_gravity");
+                String description = "";
+                if (jsonobject.has("report_description"))
+                    description = jsonobject.getString("report_description");
+                String title ="";
+                if (jsonobject.has("report_title"))
+                    title= jsonobject.getString("report_title");
 
-                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name);
+
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name, description, gravity, title);
 
                 if (!temp.contains(report))
                     temp.add(report);
@@ -232,8 +240,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mReportList = temp;
 
             setUpCluster(new LatLng(lat, lng));
-
-
 
 
         } catch (JSONException e) {
@@ -441,7 +447,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         if (item.getItemId() == R.id.filtericon)
             filterTask();
-        if(item.getItemId() == R.id.refreshicon)
+        if (item.getItemId() == R.id.refreshicon)
             recreate();
 
         return super.onOptionsItemSelected(item);
@@ -602,7 +608,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 try {
                     List<Address> addresses = mCoder.getFromLocationName(address, 1);
-                    if(addresses.size() > 0) {
+                    if (addresses.size() > 0) {
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
                         mMapTask = new MapTask(lat, lng, 10000);

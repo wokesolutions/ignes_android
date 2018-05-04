@@ -12,8 +12,11 @@ public class MarkerClass implements ClusterItem {
     private final String mUsername;
     private final double mLatitude;
     private final double mLongitude;
+    private final String mDescription;
+    private final int mGravity;
+    private final String mTitle;
 
-    public MarkerClass(double lat, double lng, String status, String address, String date, String username) {
+    public MarkerClass(double lat, double lng, String status, String address, String date, String username, String description, int gravity, String title) {
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
@@ -21,6 +24,9 @@ public class MarkerClass implements ClusterItem {
         mUsername = username;
         mLatitude = lat;
         mLongitude = lng;
+        mDescription = description;
+        mGravity = gravity;
+        mTitle = title;
     }
 
     @Override
@@ -56,7 +62,19 @@ public class MarkerClass implements ClusterItem {
         return mUsername;
     }
 
+    public String getmDescription() {
+        return mDescription;
+    }
+
+    public int getmGravity() {
+        return mGravity;
+    }
+
+    public String getmTitle() {
+        return mTitle;
+    }
+
     public String getSnippet() {
-        return "Address: " + mAddress + "\n"+ "Posted by: "+ mUsername + "\n" + "Creation Date: "+ mDate;
+        return "Address: " + mAddress + "\n" + "Posted by: " + mUsername + "\n" + "Creation Date: " + mDate;
     }
 }

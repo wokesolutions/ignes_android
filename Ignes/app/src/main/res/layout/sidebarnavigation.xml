@@ -65,6 +65,33 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="#99000000" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginVertical="15dp"
+            android:src="@drawable/mapicon" />
+
+        <Button
+            android:id="@+id/menu_button_map"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="15dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="Map"
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#99000000" />
 
     <LinearLayout
         android:layout_width="wrap_content"

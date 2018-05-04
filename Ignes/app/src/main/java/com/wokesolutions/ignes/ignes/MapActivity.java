@@ -441,6 +441,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         if (item.getItemId() == R.id.filtericon)
             filterTask();
+        if(item.getItemId() == R.id.refreshicon)
+            recreate();
 
         return super.onOptionsItemSelected(item);
     }

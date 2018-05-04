@@ -1,6 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,12 +10,14 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -61,6 +64,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private String mCurrentPhotoPath;
     private Bitmap mImage;
+    private Uri mImageURI;
+    private File mImgFile;
 
     private String mReportType;
 
@@ -216,13 +221,22 @@ public class ReportFormActivity extends AppCompatActivity {
         return image;
     }
 
+    private void addPicToGallery() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File file = new File(mCurrentPhotoPath);
+        mImageURI = Uri.fromFile(file);
+        mediaScanIntent.setData(mImageURI);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    Bundle bundle = data.getExtras();
+                    addPicToGallery();
+                    /*Bundle bundle = data.getExtras();
                     mImage = (Bitmap) bundle.get("data");
                     mImageView.setVisibility(View.VISIBLE);
 
@@ -232,7 +246,24 @@ public class ReportFormActivity extends AppCompatActivity {
                     mImageView.setImageDrawable(roundedBitmap);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byteArray = stream.toByteArray();*/
+                    //nao consigooooooo
+                    // mImage = (Bitmap) MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(), ContentUris.parseId(mImageURI),MediaStore.Images.Thumbnails.MINI_KIND, (BitmapFactory.Options) null);
+                    final int THUMBSIZE = 128;
+                    mImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(mCurrentPhotoPath),
+                            300,
+                            300);
+                    mImageView.setVisibility(View.VISIBLE);
+
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
+                    roundedBitmap.setCircular(true);
+
+                    mImageView.setImageDrawable(roundedBitmap);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
+
                     //mImage.recycle();
                 }
                 break;
@@ -265,8 +296,20 @@ public class ReportFormActivity extends AppCompatActivity {
     private void openCamera() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null)
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File pictureFile = null;
+            try {
+                pictureFile = createImageFile();
+            } catch (IOException e) {
+                System.out.println("ERROR CREATING FILE");
+                e.printStackTrace();
+            }
+            if(pictureFile != null) {
+                Uri pictureURI = FileProvider.getUriForFile(context, "com.wokesolutions.ignes.ignes", pictureFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureURI);
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
     }
 
     private void changeFormVisibility(String reportType) {
@@ -304,7 +347,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String address = this.address;
         double lat = this.lat;
         double lng = this.lng;
-        int gravity = 0;
+        int gravity = mGravity;
 
         if (mReportType.equals("detailed")) {
             if(!mCheckBox.isChecked()) {
@@ -387,6 +430,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
+                    report.put("report_thumbnail", "alo");
                     report.put("report_address", mAddress);
                     report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
@@ -396,6 +440,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
+                    report.put("report_thumbnail", "alo");
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_address", mAddress);
@@ -407,6 +452,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_img", base64);
+                    report.put("report_thumbnail", "alo");
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);

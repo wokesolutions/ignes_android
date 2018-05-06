@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -249,12 +251,33 @@ public class ReportFormActivity extends AppCompatActivity {
                     byteArray = stream.toByteArray();*/
                     //nao consigooooooo
                     // mImage = (Bitmap) MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(), ContentUris.parseId(mImageURI),MediaStore.Images.Thumbnails.MINI_KIND, (BitmapFactory.Options) null);
-                    final int THUMBSIZE = 128;
+                    final int THUMBSIZE = 300;
                     mImage = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(mCurrentPhotoPath),
-                            300,
-                            300);
+                            THUMBSIZE,
+                            THUMBSIZE);
                     mImageView.setVisibility(View.VISIBLE);
+
+                    try {
+                        ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
+                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
+                        System.out.println("EXIF: "+orientation);
+                        Matrix matrix = new Matrix();
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                            matrix.postRotate(90);
+                        }
+                        else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                            matrix.postRotate(180);
+                        }
+                        else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                            matrix.postRotate(270);
+                        }
+                        mImage = Bitmap.createBitmap(mImage,0,0,mImage.getWidth(),mImage.getHeight(),matrix,true);
+
+                    } catch (Exception e) {
+                        System.out.println("NO ORIENTEATION FOUND");
+                        e.printStackTrace();
+                    }
 
                     RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
                     roundedBitmap.setCircular(true);

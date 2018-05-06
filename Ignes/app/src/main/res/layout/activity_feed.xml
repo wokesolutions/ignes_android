@@ -39,20 +39,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                
+
 
                 <LinearLayout
                     android:id="@+id/feed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorIgnesPrimary"
                     android:gravity="center_horizontal|center"
                     android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:background="@color/colorIgnesPrimary" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/feed_recyclerview"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:background="@color/colorIgnesPrimary"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:background="@color/colorIgnesPrimary" />
 
                 </LinearLayout>
 

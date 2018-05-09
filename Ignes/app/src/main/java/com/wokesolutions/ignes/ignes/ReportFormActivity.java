@@ -249,19 +249,6 @@ public class ReportFormActivity extends AppCompatActivity {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     addPicToGallery();
-                    /*Bundle bundle = data.getExtras();
-                    mImage = (Bitmap) bundle.get("data");
-                    mImageView.setVisibility(View.VISIBLE);
-
-                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
-                    roundedBitmap.setCircular(true);
-
-                    mImageView.setImageDrawable(roundedBitmap);
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    byteArray = stream.toByteArray();*/
-                    //nao consigooooooo
-                    // mImage = (Bitmap) MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(), ContentUris.parseId(mImageURI),MediaStore.Images.Thumbnails.MINI_KIND, (BitmapFactory.Options) null);
 
                     mThumbnail = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(mCurrentPhotoPath),
@@ -293,31 +280,19 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageView.setImageDrawable(roundedBitmap);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    //mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
 
-                    //mImage.recycle();
+
                 }
                 break;
             case 1:
                 if (resultCode == RESULT_OK) {
 
-                    //try {
-                        Uri imageUri = data.getData();
-                        mImageURI = imageUri;
-                        /*InputStream imageStream = getContentResolver().openInputStream(imageUri);
-
-                        mImage = BitmapFactory.decodeStream(imageStream);
-                        ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
-                        mImage.compress(Bitmap.CompressFormat.JPEG, 90, imgStream);
-                        imgByteArray = imgStream.toByteArray();
-
-                        System.out.println("BYTE COUNT IMG: "+mImage.getByteCount());
-                        System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);*/
-
+                        mImageURI = data.getData();
 
                         mThumbnail = ThumbnailUtils.extractThumbnail(
-                                BitmapFactory.decodeFile(getRealPathFromURI(imageUri)),
+                                BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
                                 THUMBSIZE,
                                 THUMBSIZE);
                         mImageView.setVisibility(View.VISIBLE);
@@ -325,7 +300,7 @@ public class ReportFormActivity extends AppCompatActivity {
                         System.out.println("BYTE COUNT THUMB: "+mThumbnail.getByteCount());
 
                         try {
-                            ExifInterface exif = new ExifInterface(getRealPathFromURI(imageUri));
+                            ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
                             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
                             System.out.println("EXIF: " + orientation);
                             Matrix matrix = new Matrix();
@@ -356,11 +331,6 @@ public class ReportFormActivity extends AppCompatActivity {
 
                         System.out.println("BYTEARRAY ENVIADO DO THUMB: "+byteArray.length);
 
-                        //mImage.recycle();
-                        //mThumbnail.recycle();
-                    //} catch (FileNotFoundException e) {
-                     //   e.printStackTrace();
-                   // }
                 }
                 break;
         }
@@ -412,7 +382,7 @@ public class ReportFormActivity extends AppCompatActivity {
     }
 
     private void attemptReport() {
-        byte[] image = imgByteArray;
+
         byte[] thumbnail = byteArray;
         String description = "";
         String title = "";
@@ -448,13 +418,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
         }
 
-        mReportTask = new ReportTask(image, thumbnail, description, title, district, address, locality, gravity, lat, lng);
+        mReportTask = new ReportTask(thumbnail, description, title, district, address, locality, gravity, lat, lng);
         mReportTask.execute((Void) null);
     }
 
     public class ReportTask extends AsyncTask<Void, Void, String> {
 
-        byte[] mImage;
         byte[] mThumbnail;
         double mLat;
         double mLng;
@@ -470,11 +439,9 @@ public class ReportFormActivity extends AppCompatActivity {
         SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(byte[] img, byte[] thumb, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
-            mImage = img;
+        ReportTask(byte[] thumb, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
+
             mThumbnail = thumb;
-            //base64Img = Base64.encodeToString(mImage, Base64.DEFAULT);
-            //System.out.println("TAMANHO DO BASE 64 IMG "+base64Img.length());
             base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
             mLat = lat;
             mLng = lng;
@@ -502,6 +469,17 @@ public class ReportFormActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             try {
 
+                InputStream imageStream = getContentResolver().openInputStream(mImageURI);
+
+                Bitmap teste = BitmapFactory.decodeStream(imageStream);
+                ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
+                teste.compress(Bitmap.CompressFormat.JPEG, 95, imgStream);
+                imgByteArray = imgStream.toByteArray();
+                base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
+
+                System.out.println("BYTE COUNT IMG: "+teste.getByteCount());
+                System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);
+
                 JSONObject report = new JSONObject();
 
                 if (mReportType.equals("fast")) {
@@ -515,17 +493,6 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("medium")) {
-
-                    InputStream imageStream = getContentResolver().openInputStream(mImageURI);
-
-                    Bitmap teste = BitmapFactory.decodeStream(imageStream);
-                    ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
-                    teste.compress(Bitmap.CompressFormat.JPEG, 95, imgStream);
-                    imgByteArray = imgStream.toByteArray();
-                    base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
-
-                    System.out.println("BYTE COUNT IMG: "+teste.getByteCount());
-                    System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);

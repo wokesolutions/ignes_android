@@ -1,5 +1,8 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -18,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
@@ -86,10 +90,13 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private SeekBar mGravitySlider;
 
+    private View mProgressView;
+
     private LinearLayout mMediumForm;
     private LinearLayout mSliderForm;
     private LinearLayout mLongForm;
     private LinearLayout mSelectImage;
+    private LinearLayout mReportForm;
 
     private EditText mTitle;
     private EditText mMediumTitle;
@@ -117,6 +124,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
         mCoder = new Geocoder(this);
 
+        mReportForm = (LinearLayout) findViewById(R.id.report_form);
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
         mSelectImage = (LinearLayout) findViewById(R.id.report_long_image_form);
@@ -163,6 +171,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mDescription = (EditText) findViewById(R.id.report_description);
 
         mImageView = (ImageView) findViewById(R.id.report_image);
+        mProgressView = findViewById(R.id.login_progress);
 
 
         mGravitySlider = (SeekBar) findViewById(R.id.gravity_slider);
@@ -194,6 +203,7 @@ public class ReportFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 attemptReport();
+                showProgress(true);
             }
         });
 
@@ -381,6 +391,39 @@ public class ReportFormActivity extends AppCompatActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            mReportForm.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
     private void attemptReport() {
 
         byte[] thumbnail = byteArray;
@@ -543,6 +586,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, new Intent());
                 finish();
             } else if (result.equals(BAD_REQUEST)) {
+                showProgress(false);
                 Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();
             }
         }

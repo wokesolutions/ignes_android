@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -66,6 +67,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
     private String mCurrentPhotoPath;
     private Bitmap mImage;
+    private Bitmap mThumbnail;
     private Uri mImageURI;
     private File mImgFile;
 
@@ -231,8 +233,17 @@ public class ReportFormActivity extends AppCompatActivity {
         this.sendBroadcast(mediaScanIntent);
     }
 
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        final int THUMBSIZE = 460;
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
@@ -251,8 +262,8 @@ public class ReportFormActivity extends AppCompatActivity {
                     byteArray = stream.toByteArray();*/
                     //nao consigooooooo
                     // mImage = (Bitmap) MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(), ContentUris.parseId(mImageURI),MediaStore.Images.Thumbnails.MINI_KIND, (BitmapFactory.Options) null);
-                    final int THUMBSIZE = 300;
-                    mImage = ThumbnailUtils.extractThumbnail(
+
+                    mThumbnail = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(mCurrentPhotoPath),
                             THUMBSIZE,
                             THUMBSIZE);
@@ -272,19 +283,19 @@ public class ReportFormActivity extends AppCompatActivity {
                         else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                             matrix.postRotate(270);
                         }
-                        mImage = Bitmap.createBitmap(mImage,0,0,mImage.getWidth(),mImage.getHeight(),matrix,true);
+                        mThumbnail = Bitmap.createBitmap(mThumbnail,0,0,mThumbnail.getWidth(),mThumbnail.getHeight(),matrix,true);
 
                     } catch (Exception e) {
                         System.out.println("NO ORIENTEATION FOUND");
                         e.printStackTrace();
                     }
 
-                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
                     roundedBitmap.setCircular(true);
 
                     mImageView.setImageDrawable(roundedBitmap);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
 
                     //mImage.recycle();
@@ -293,24 +304,54 @@ public class ReportFormActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == RESULT_OK) {
 
-                    try {
+                    //try {
                         Uri imageUri = data.getData();
-                        InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        mImage = BitmapFactory.decodeStream(imageStream);
+                        System.out.println("PATH DA IMAGEM: "+ getRealPathFromURI(imageUri));
+                        //InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        //mImage = BitmapFactory.decodeStream(imageStream);
+
+                        mThumbnail = ThumbnailUtils.extractThumbnail(
+                                BitmapFactory.decodeFile(getRealPathFromURI(imageUri)),
+                                THUMBSIZE,
+                                THUMBSIZE);
                         mImageView.setVisibility(View.VISIBLE);
 
-                        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mImage);
+                        try {
+                            ExifInterface exif = new ExifInterface(getRealPathFromURI(imageUri));
+                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
+                            System.out.println("EXIF: "+orientation);
+                            Matrix matrix = new Matrix();
+                            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                                matrix.postRotate(90);
+                            }
+                            else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                                matrix.postRotate(180);
+                            }
+                            else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                                matrix.postRotate(270);
+                            }
+                            mThumbnail = Bitmap.createBitmap(mThumbnail,0,0,mThumbnail.getWidth(),mThumbnail.getHeight(),matrix,true);
+
+                        } catch (Exception e) {
+                            System.out.println("NO ORIENTATION FOUND");
+                            e.printStackTrace();
+                        }
+
+                        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
                         roundedBitmap.setCircular(true);
+
+
 
                         mImageView.setImageDrawable(roundedBitmap);
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        System.out.println("QUE BOLEEAN DEEEEEU?!: " + mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream));
+                        mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream); //nao faz nada, por causa do 100(?)
+
                         byteArray = stream.toByteArray();
                         //mImage.recycle();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                   // } catch (FileNotFoundException e) {
+                     //   e.printStackTrace();
+                    //}
                 }
                 break;
         }
@@ -404,9 +445,10 @@ public class ReportFormActivity extends AppCompatActivity {
     public class ReportTask extends AsyncTask<Void, Void, String> {
 
         byte[] mImage;
+        byte[] mThumbnail;
         double mLat;
         double mLng;
-        String base64;
+        String base64Thumbnail;
         String mDescription;
         int mGravity;
         String mTitle;
@@ -419,7 +461,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
         ReportTask(byte[] img, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
             mImage = img;
-            base64 = Base64.encodeToString(mImage, Base64.DEFAULT);
+            mThumbnail = img;
+            base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
             mLat = lat;
             mLng = lng;
             mDescription = description;
@@ -452,7 +495,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
+                    report.put("report_img", base64Thumbnail);
                     report.put("report_thumbnail", "alo");
                     report.put("report_address", mAddress);
                     report.put("report_city", mDistrict);
@@ -462,8 +505,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
-                    report.put("report_thumbnail", "alo");
+                    report.put("report_thumbnail", base64Thumbnail);
+                    report.put("report_img", "alo");
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_address", mAddress);
@@ -474,8 +517,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64);
-                    report.put("report_thumbnail", "alo");
+                    report.put("report_thumbnail", base64Thumbnail);
+                    report.put("report_img", "alo");
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);

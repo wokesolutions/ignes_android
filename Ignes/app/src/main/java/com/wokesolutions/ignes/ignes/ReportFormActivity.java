@@ -64,6 +64,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private int mGravity;
 
     private byte[] byteArray;
+    private byte[] imgByteArray;
 
     private String mCurrentPhotoPath;
     private Bitmap mImage;
@@ -125,7 +126,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mCheckBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked()) {
                     mAddress.setText(address);
                 } else
                     mAddress.setText("");
@@ -196,7 +197,7 @@ public class ReportFormActivity extends AppCompatActivity {
             }
         });
 
-        if(mCurrentLocation!=null) {
+        if (mCurrentLocation != null) {
             try {
                 List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
                 address = addresses.get(0).getAddressLine(0);
@@ -208,8 +209,7 @@ public class ReportFormActivity extends AppCompatActivity {
             }
             lat = mCurrentLocation.getLatitude();
             lng = mCurrentLocation.getLongitude();
-        }
-        else
+        } else
             mCheckBox.setVisibility(View.INVISIBLE);
 
     }
@@ -219,7 +219,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imgFileName = "IGNES_" + timeStamp + "_";
         File storageDir = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-        File image = File.createTempFile(imgFileName,".jpg", storageDir);
+        File image = File.createTempFile(imgFileName, ".jpg", storageDir);
 
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
@@ -271,22 +271,20 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     try {
                         ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
-                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
-                        System.out.println("EXIF: "+orientation);
+                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                             matrix.postRotate(90);
-                        }
-                        else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
                             matrix.postRotate(180);
-                        }
-                        else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                             matrix.postRotate(270);
                         }
-                        mThumbnail = Bitmap.createBitmap(mThumbnail,0,0,mThumbnail.getWidth(),mThumbnail.getHeight(),matrix,true);
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
 
                     } catch (Exception e) {
-                        System.out.println("NO ORIENTEATION FOUND");
+                        System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();
                     }
 
@@ -295,7 +293,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageView.setImageDrawable(roundedBitmap);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    //mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byteArray = stream.toByteArray();
 
                     //mImage.recycle();
@@ -306,9 +304,17 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     //try {
                         Uri imageUri = data.getData();
-                        System.out.println("PATH DA IMAGEM: "+ getRealPathFromURI(imageUri));
-                        //InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        //mImage = BitmapFactory.decodeStream(imageStream);
+                        mImageURI = imageUri;
+                        /*InputStream imageStream = getContentResolver().openInputStream(imageUri);
+
+                        mImage = BitmapFactory.decodeStream(imageStream);
+                        ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
+                        mImage.compress(Bitmap.CompressFormat.JPEG, 90, imgStream);
+                        imgByteArray = imgStream.toByteArray();
+
+                        System.out.println("BYTE COUNT IMG: "+mImage.getByteCount());
+                        System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);*/
+
 
                         mThumbnail = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(getRealPathFromURI(imageUri)),
@@ -316,22 +322,23 @@ public class ReportFormActivity extends AppCompatActivity {
                                 THUMBSIZE);
                         mImageView.setVisibility(View.VISIBLE);
 
+                        System.out.println("BYTE COUNT THUMB: "+mThumbnail.getByteCount());
+
                         try {
                             ExifInterface exif = new ExifInterface(getRealPathFromURI(imageUri));
-                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
-                            System.out.println("EXIF: "+orientation);
+                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                            System.out.println("EXIF: " + orientation);
                             Matrix matrix = new Matrix();
                             if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                                 matrix.postRotate(90);
-                            }
-                            else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
                                 matrix.postRotate(180);
-                            }
-                            else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                                 matrix.postRotate(270);
                             }
-                            mThumbnail = Bitmap.createBitmap(mThumbnail,0,0,mThumbnail.getWidth(),mThumbnail.getHeight(),matrix,true);
+                            mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
 
+                            System.out.println("BYTE COUNT 2 THUMB: "+mThumbnail.getByteCount());
                         } catch (Exception e) {
                             System.out.println("NO ORIENTATION FOUND");
                             e.printStackTrace();
@@ -341,17 +348,19 @@ public class ReportFormActivity extends AppCompatActivity {
                         roundedBitmap.setCircular(true);
 
 
-
                         mImageView.setImageDrawable(roundedBitmap);
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream); //nao faz nada, por causa do 100(?)
-
+                        mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         byteArray = stream.toByteArray();
+
+                        System.out.println("BYTEARRAY ENVIADO DO THUMB: "+byteArray.length);
+
                         //mImage.recycle();
-                   // } catch (FileNotFoundException e) {
+                        //mThumbnail.recycle();
+                    //} catch (FileNotFoundException e) {
                      //   e.printStackTrace();
-                    //}
+                   // }
                 }
                 break;
         }
@@ -368,7 +377,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 System.out.println("ERROR CREATING FILE");
                 e.printStackTrace();
             }
-            if(pictureFile != null) {
+            if (pictureFile != null) {
                 Uri pictureURI = FileProvider.getUriForFile(context, "com.wokesolutions.ignes.ignes", pictureFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureURI);
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
@@ -403,7 +412,8 @@ public class ReportFormActivity extends AppCompatActivity {
     }
 
     private void attemptReport() {
-        byte[] image = byteArray;
+        byte[] image = imgByteArray;
+        byte[] thumbnail = byteArray;
         String description = "";
         String title = "";
         String locality = this.locality;
@@ -414,7 +424,7 @@ public class ReportFormActivity extends AppCompatActivity {
         int gravity = mGravity;
 
         if (mReportType.equals("detailed")) {
-            if(!mCheckBox.isChecked()) {
+            if (!mCheckBox.isChecked()) {
                 address = mAddress.getText().toString();
                 try {
                     System.out.println("MORADA DENTRO DO LONG: " + address);
@@ -438,7 +448,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
         }
 
-        mReportTask = new ReportTask(image, description, title, district, address, locality, gravity, lat, lng);
+        mReportTask = new ReportTask(image, thumbnail, description, title, district, address, locality, gravity, lat, lng);
         mReportTask.execute((Void) null);
     }
 
@@ -448,6 +458,7 @@ public class ReportFormActivity extends AppCompatActivity {
         byte[] mThumbnail;
         double mLat;
         double mLng;
+        String base64Img;
         String base64Thumbnail;
         String mDescription;
         int mGravity;
@@ -459,9 +470,11 @@ public class ReportFormActivity extends AppCompatActivity {
         SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         String token = prefs.getString("token", null);
 
-        ReportTask(byte[] img, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
+        ReportTask(byte[] img, byte[] thumb, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
             mImage = img;
-            mThumbnail = img;
+            mThumbnail = thumb;
+            //base64Img = Base64.encodeToString(mImage, Base64.DEFAULT);
+            //System.out.println("TAMANHO DO BASE 64 IMG "+base64Img.length());
             base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
             mLat = lat;
             mLng = lng;
@@ -495,18 +508,29 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
-                    report.put("report_img", base64Thumbnail);
-                    report.put("report_thumbnail", "alo");
+                    report.put("report_img", base64Img);
+                    report.put("report_thumbnail", base64Thumbnail);
                     report.put("report_address", mAddress);
                     report.put("report_city", mDistrict);
                     report.put("report_locality", mLocality);
 
                 } else if (mReportType.equals("medium")) {
 
+                    InputStream imageStream = getContentResolver().openInputStream(mImageURI);
+
+                    Bitmap teste = BitmapFactory.decodeStream(imageStream);
+                    ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
+                    teste.compress(Bitmap.CompressFormat.JPEG, 95, imgStream);
+                    imgByteArray = imgStream.toByteArray();
+                    base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
+
+                    System.out.println("BYTE COUNT IMG: "+teste.getByteCount());
+                    System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);
+
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_thumbnail", base64Thumbnail);
-                    report.put("report_img", "alo");
+                    report.put("report_img", base64Img);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_address", mAddress);
@@ -518,7 +542,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     report.put("report_lat", mLat);
                     report.put("report_lng", mLng);
                     report.put("report_thumbnail", base64Thumbnail);
-                    report.put("report_img", "alo");
+                    report.put("report_img", base64Img);
                     report.put("report_title", mTitle);
                     report.put("report_gravity", mGravity);
                     report.put("report_description", mDescription);
@@ -528,7 +552,9 @@ public class ReportFormActivity extends AppCompatActivity {
                 }
 
                 System.out.println("REPORT JSON: " + report);
-                System.out.println("ADDRESS DO DETAILED: "+ mAddress +"Localidade e cidade "+ mLocality +" " + mDistrict);
+                System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
+
+
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
 

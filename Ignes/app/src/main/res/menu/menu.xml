@@ -23,15 +23,5 @@
         android:icon="@drawable/filter_icon"
         android:title="Filter"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/testeddddd"
-        android:icon="@drawable/filter_icon"
-        android:title="Filter"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/testedddddd"
-        android:icon="@drawable/filter_icon"
-        android:title="Filter"
-        app:showAsAction="ifRoom" />
 
 </menu>

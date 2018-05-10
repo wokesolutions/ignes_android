@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ public class FeedActivity extends AppCompatActivity {
     private Button mLoggoutButton;
     private Button mFeedButton;
     private Button mMapButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,11 @@ public class FeedActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
         menuButtons();
+        TextView errorText = (TextView) findViewById(R.id.text_error);
+        if(markerList.isEmpty())
+            errorText.setText("There are no reports to list in this area...");
+
+
     }
 
     /*----- About Menu Bar -----*/

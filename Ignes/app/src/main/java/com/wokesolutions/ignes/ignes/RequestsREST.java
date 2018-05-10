@@ -52,7 +52,7 @@ public class RequestsREST {
             stream = connection.getInputStream();
             if (stream != null) {
                 // Converts Stream to String with max length of 1024.
-                result = readStream(stream, 10240);
+                result = readStream(stream, 2000240);
             }
         } finally {
             // Close Stream and disconnect HTTPS connection.

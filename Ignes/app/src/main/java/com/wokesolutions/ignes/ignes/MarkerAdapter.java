@@ -43,18 +43,24 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView title = holder.marker_title;
         TextView username = holder.marker_username;
         TextView date = holder.marker_date;
-        TextView description = holder.marker_description;
+        //  TextView description = holder.marker_description;
         TextView address = holder.marker_address;
         TextView gravity = holder.marker_gravity;
         TextView status = holder.marker_status;
 
-        title.setText(markerItem.getmTitle()+"\n");
+        if(!markerItem.getmTitle().isEmpty())
+             title.setText(markerItem.getmTitle());
+        else
+            title.setVisibility(View.GONE);
+
         username.setText(markerItem.getmUsername());
         date.setText(markerItem.getmDate());
-        description.setText(markerItem.getmDescription());
+        //  description.setText(markerItem.getmDescription());
         address.setText(markerItem.getmAddress());
-        gravity.setText(""+markerItem.getmGravity());
+        gravity.setText("" + markerItem.getmGravity());
         status.setText(markerItem.getmStatus());
+
+        image.setImageBitmap(markerItem.getmImg_bitmap());
     }
 
     @Override
@@ -66,7 +72,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         ImageView marker_image;
         TextView marker_title;
-        TextView marker_description;
+        // TextView marker_description;
         TextView marker_address;
         TextView marker_username;
         TextView marker_date;
@@ -79,7 +85,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
             marker_image = itemView.findViewById(R.id.feed_image_marker);
             marker_title = itemView.findViewById(R.id.feed_title_marker);
-            marker_description = itemView.findViewById(R.id.feed_description_marker);
+            // marker_description = itemView.findViewById(R.id.feed_description_marker);
             marker_address = itemView.findViewById(R.id.feed_address_marker);
             marker_date = itemView.findViewById(R.id.feed_date_marker);
             marker_username = itemView.findViewById(R.id.feed_username_marker);

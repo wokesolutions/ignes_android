@@ -1,5 +1,10 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -15,8 +20,11 @@ public class MarkerClass implements ClusterItem {
     private final String mDescription;
     private final int mGravity;
     private final String mTitle;
+    private final byte[] mImg_byte;
+    private Bitmap mImage_bitmap;
 
-    public MarkerClass(double lat, double lng, String status, String address, String date, String username, String description, int gravity, String title) {
+
+    public MarkerClass(double lat, double lng, String status, String address, String date, String username, String description, int gravity, String title, byte[] img_byte) {
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
@@ -27,6 +35,9 @@ public class MarkerClass implements ClusterItem {
         mDescription = description;
         mGravity = gravity;
         mTitle = title;
+        mImg_byte = img_byte;
+        mImage_bitmap = makeImg();
+
     }
 
     @Override
@@ -76,5 +87,17 @@ public class MarkerClass implements ClusterItem {
 
     public String getSnippet() {
         return "Address: " + mAddress + "\n" + "Posted by: " + mUsername + "\n" + "Creation Date: " + mDate;
+    }
+
+    private Bitmap makeImg() {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        mImage_bitmap = BitmapFactory.decodeByteArray(mImg_byte, 0, mImg_byte.length, options);
+        return mImage_bitmap;
+    }
+
+    public Bitmap getmImg_bitmap() {
+        return mImage_bitmap;
     }
 }

@@ -58,6 +58,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +66,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -217,7 +219,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
                 String status = jsonobject.getString("report_status");
                 String address = jsonobject.getString("report_address");
-                String date = jsonobject.getString("report_creationtime");
+                String date = jsonobject.getString("report_creationtimeformatted");
+
+                byte[] img_byte = Base64.decode(jsonobject.getString("thumbnail"), Base64.DEFAULT);
+
                 String name = "";
                 if (jsonobject.getString("report_username") != null)
                     name = jsonobject.getString("report_username");
@@ -227,12 +232,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String description = "";
                 if (jsonobject.has("report_description"))
                     description = jsonobject.getString("report_description");
-                String title ="";
+                String title = "";
                 if (jsonobject.has("report_title"))
-                    title= jsonobject.getString("report_title");
+                    title = jsonobject.getString("report_title");
 
 
-                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name, description, gravity, title);
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name, description, gravity, title, img_byte);
 
                 if (!temp.contains(report))
                     temp.add(report);

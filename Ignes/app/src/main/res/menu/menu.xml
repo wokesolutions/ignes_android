@@ -3,25 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/filtericon"
+        android:id="@+id/searchicon"
         android:icon="@drawable/lupared"
-        android:title="Filter"
+        android:title="Search"
         app:showAsAction="always" />
     <item
         android:id="@+id/reporticon"
         android:icon="@drawable/ocorrenciared"
-        android:title="Filter"
+        android:title="Report"
         app:showAsAction="always" />
     <item
         android:id="@+id/refreshicon"
         android:icon="@drawable/refresh"
-        android:title="Filter"
+        android:title="Refresh"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/testeddd"
-        android:icon="@drawable/filter_icon"
-        android:title="Filter"
-        app:showAsAction="ifRoom" />
 
 </menu>

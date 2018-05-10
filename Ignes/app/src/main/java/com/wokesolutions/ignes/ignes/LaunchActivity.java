@@ -54,7 +54,7 @@ public class LaunchActivity extends AppCompatActivity {
         progressDrawable = mProgressBar.getIndeterminateDrawable().mutate();
         progressDrawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         mProgressBar.setProgressDrawable(progressDrawable);
-        
+
         mTouchText = findViewById(R.id.touch_to_start_text);
         layout.setOnClickListener(new OnClickListener() {
             @Override

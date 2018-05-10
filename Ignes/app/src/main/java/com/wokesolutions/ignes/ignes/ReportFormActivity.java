@@ -250,20 +250,41 @@ public class ReportFormActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+    private Bitmap scaleImage(int destWidth, String path) {
+        Bitmap image = BitmapFactory.decodeFile(path);
+
+        int originWidth = image.getWidth();
+        int originHeight = image.getHeight();
+
+        if(originWidth > destWidth) {
+            int destHeight = originHeight/(originWidth/destWidth);
+
+            Bitmap scaled = Bitmap.createScaledBitmap(image, destWidth, destHeight, false);
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+            scaled.compress(Bitmap.CompressFormat.JPEG, 70, outStream);
+
+            return scaled;
+        }
+        return image;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        final int THUMBSIZE = 460;
+        final int THUMBSIZE = 512;
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     addPicToGallery();
 
-                    mThumbnail = ThumbnailUtils.extractThumbnail(
+                    mThumbnail = scaleImage(700, mCurrentPhotoPath);
+
+                    /*mThumbnail = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(mCurrentPhotoPath),
                             THUMBSIZE,
-                            THUMBSIZE);
+                            THUMBSIZE*2);*/
                     mImageView.setVisibility(View.VISIBLE);
 
                     try {
@@ -285,12 +306,12 @@ public class ReportFormActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
-                    roundedBitmap.setCircular(true);
+                    //RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
+                    //roundedBitmap.setCircular(true);
 
-                    mImageView.setImageDrawable(roundedBitmap);
+                    mImageView.setImageBitmap(mThumbnail);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 90, stream);
                     byteArray = stream.toByteArray();
 
 
@@ -304,7 +325,7 @@ public class ReportFormActivity extends AppCompatActivity {
                         mThumbnail = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
                                 THUMBSIZE,
-                                THUMBSIZE);
+                                THUMBSIZE*2);
                         mImageView.setVisibility(View.VISIBLE);
 
                         System.out.println("BYTE COUNT THUMB: "+mThumbnail.getByteCount());
@@ -329,11 +350,11 @@ public class ReportFormActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
-                        roundedBitmap.setCircular(true);
+                        //RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
+                        //roundedBitmap.setCircular(true);
 
 
-                        mImageView.setImageDrawable(roundedBitmap);
+                        mImageView.setImageBitmap(mThumbnail);
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -516,7 +537,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                 Bitmap teste = BitmapFactory.decodeStream(imageStream);
                 ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
-                teste.compress(Bitmap.CompressFormat.JPEG, 95, imgStream);
+                teste.compress(Bitmap.CompressFormat.JPEG, 70, imgStream);
                 imgByteArray = imgStream.toByteArray();
                 base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
 

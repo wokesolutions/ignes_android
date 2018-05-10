@@ -5,10 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -37,19 +34,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -58,17 +50,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -140,7 +128,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         menuButtons();
         /*---------------------------------------------------------------------------------*/
         mReport = (Button) findViewById(R.id.reporticon);
-        mFilter = (Button) findViewById(R.id.filtericon);
+        mFilter = (Button) findViewById(R.id.searchicon);
 
         /*----- About Google Maps -----*/
         checkLocationPermission();
@@ -450,10 +438,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             onReport();
             return true;
         }
-        if (item.getItemId() == R.id.filtericon)
+        if (item.getItemId() == R.id.searchicon)
             filterTask();
         if (item.getItemId() == R.id.refreshicon)
             recreate();
+
 
         return super.onOptionsItemSelected(item);
     }

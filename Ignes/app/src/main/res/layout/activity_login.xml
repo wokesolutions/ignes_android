@@ -72,10 +72,11 @@
 
                 <Button
                     android:id="@+id/login_sign_in_button"
-                    style="?android:textAppearanceSmall"
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:fontFamily="@font/quicksand_bold"
                     android:text="@string/sign_in"
                     android:background="@drawable/button"
                     android:textColor="@color/backgroundColor"
@@ -90,12 +91,16 @@
                 android:orientation="vertical">
 
                 <Button
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:layout_height="wrap_content"
                     android:text="FACEBOOK" />
 
                 <Button
+                    style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:layout_height="wrap_content"
                     android:text="Google" />
             </LinearLayout>
@@ -116,6 +121,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_light"
                         android:text="@string/don_t_have_an_account" />
 
                     <Button
@@ -123,14 +129,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/create_a_new_one"
+                        android:fontFamily="@font/quicksand_bold"
                         android:textColor="@color/colorIgnesPrimary"
-                        android:textStyle="bold"
                         android:id="@+id/login_create_acc"/>
                 </LinearLayout>
 
                 <Button
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
                     android:layout_height="wrap_content"
                     android:text="@string/enter_without_an_account"
                     android:id="@+id/login_continue_without"/>

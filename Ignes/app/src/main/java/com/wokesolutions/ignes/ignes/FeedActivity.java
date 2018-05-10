@@ -96,7 +96,7 @@ public class FeedActivity extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.refreshicon);
         item.setVisible(false);
-        MenuItem item2 = menu.findItem(R.id.filtericon);
+        MenuItem item2 = menu.findItem(R.id.searchicon);
         item2.setVisible(false);
         MenuItem item3 = menu.findItem(R.id.reporticon);
         item3.setVisible(false);

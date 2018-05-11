@@ -52,9 +52,8 @@
 
             <ImageView
                 android:id="@+id/feed_image_marker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
+                android:layout_width="700px"
+                android:layout_height="700px"
                 android:gravity="left"
                 android:src="@drawable/addphoto" />
         </LinearLayout>
@@ -81,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="#ffffff"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
@@ -98,7 +96,6 @@
                 android:id="@+id/feed_gravity_marker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
                 android:fontFamily="@font/quicksand_light"
                 android:gravity="center_horizontal"
                 android:text="Gravity"
@@ -109,12 +106,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="#ffffff"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ocorrenciared" />
 
@@ -122,7 +121,6 @@
                 android:id="@+id/feed_address_marker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
                 android:fontFamily="@font/quicksand_light"
                 android:text="ADDRESS"
                 android:textSize="20dp" />
@@ -131,8 +129,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
+            android:background="#ffffff"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
@@ -148,29 +146,52 @@
                 android:textColor="@color/colorIgnesGreen"
                 android:textSize="15dp" />
 
-            <ImageView
+            <TextView
+                android:id="@+id/feed_comments_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:src="@drawable/commentreporticon" />
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:text="" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/commentreporticon" />
+
+            <TextView
+                android:id="@+id/feed_likes_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
                 android:src="@drawable/likeanddislikesicon" />
+
+            <TextView
+                android:id="@+id/feed_dislikes_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="" />
 
         </LinearLayout>
 
         <Button
+            android:id="@+id/button_more"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="More"
             android:fontFamily="@font/quicksand_bold"
-            android:textColor="@color/colorIgnesPrimary"
-            android:id="@+id/button_more"/>
+            android:text="..."
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorIgnesPrimary" />
 
 
     </LinearLayout>

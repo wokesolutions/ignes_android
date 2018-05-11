@@ -2,15 +2,11 @@ package com.wokesolutions.ignes.ignes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-import java.io.Serializable;
 
-public class MarkerClass implements ClusterItem, Serializable {
+public class MarkerClass implements ClusterItem {
 
     private final LatLng mPosition;
     private final String mStatus;
@@ -20,13 +16,17 @@ public class MarkerClass implements ClusterItem, Serializable {
     private final double mLatitude;
     private final double mLongitude;
     private final String mDescription;
-    private final int mGravity;
+    private final String mGravity;
     private final String mTitle;
     private final byte[] mImg_byte;
+    private final String mLikes;
+    private final String mDislikes;
     private Bitmap mImage_bitmap;
 
 
-    public MarkerClass(double lat, double lng, String status, String address, String date, String username, String description, int gravity, String title, byte[] img_byte) {
+    public MarkerClass(double lat, double lng, String status, String address,
+                       String date, String username, String description, String gravity,
+                       String title, byte[] img_byte, String likes, String dislikes) {
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
@@ -39,6 +39,8 @@ public class MarkerClass implements ClusterItem, Serializable {
         mTitle = title;
         mImg_byte = img_byte;
         mImage_bitmap = makeImg();
+        mLikes = likes;
+        mDislikes = dislikes;
 
     }
 
@@ -79,7 +81,7 @@ public class MarkerClass implements ClusterItem, Serializable {
         return mDescription;
     }
 
-    public int getmGravity() {
+    public String getmGravity() {
         return mGravity;
     }
 
@@ -91,11 +93,23 @@ public class MarkerClass implements ClusterItem, Serializable {
         return "Address: " + mAddress + "\n" + "Posted by: " + mUsername + "\n" + "Creation Date: " + mDate;
     }
 
-    private Bitmap makeImg() {
+    public String getmDislikes() {
+        return mDislikes;
+    }
 
+    public String getmLikes() {
+        return mLikes;
+    }
+
+    public byte[] getmImg_byte() {
+        return mImg_byte;
+    }
+
+    private Bitmap makeImg() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
         mImage_bitmap = BitmapFactory.decodeByteArray(mImg_byte, 0, mImg_byte.length, options);
+
         return mImage_bitmap;
     }
 

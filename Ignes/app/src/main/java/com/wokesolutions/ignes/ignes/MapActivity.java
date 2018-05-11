@@ -30,7 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -67,36 +66,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
+
+    private static final String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
+    private static final String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
+    private static final String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
+    private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
+
     public static ArrayList<MarkerClass> mReportList;
-    private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
-    private String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
-    private String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
-    private String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
-    // Declare a variable for the cluster manager.
-    private ClusterManager<MarkerClass> mClusterManager;
+
     private MapTask mMapTask = null;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private ClusterManager<MarkerClass> mClusterManager;
+
     private Geocoder mCoder;
+
     private LocationManager mManager;
 
     private boolean mGps;
 
     private DrawerLayout mDrawerLayout;
+
     private ActionBarDrawerToggle mMenu;
+
     private Button mLoggoutButton;
     private Button mFeedButton;
 
-    private Button mReport;
-    private Button mFilter;
     private Location mCurrentLocation;
-    private ImageView mImage;
-    private Context context;
-    private FeedActivity feedActivity;
 
-    private boolean ola;
-
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +112,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mCurrentLocation = null;
         mReportList = new ArrayList<>();
-        context = this;
+        mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -128,9 +129,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
         menuButtons();
-        /*---------------------------------------------------------------------------------*/
-        mReport = (Button) findViewById(R.id.reporticon);
-        mFilter = (Button) findViewById(R.id.searchicon);
 
         /*----- About Google Maps -----*/
         checkLocationPermission();
@@ -153,7 +151,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setUpCluster(LatLng latLng) {
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        // System.out.print("ahdgfhjsgdzfjhsgdhfdjs" + latLng);
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
@@ -171,23 +168,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         for (int i = 0; i < mReportList.size(); i++) {
             System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
-            mClusterManager.setRenderer(new OwnIconRendered(context, mMap, mClusterManager));
-            // feedActivity.addMarker(mReportList.get(i));
+            mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
         }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("ON RESUMEE");
 
-        System.out.println("ON RESUMEE!");
-        if (mCurrentLocation != null) {
-            /*mMapTask = new MapTask(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 10000);
-            mMapTask.execute((Void) null);*/
-            setMarkers(readFromFile(context), mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
-        }
+        /*if (mCurrentLocation != null) {
+            setMarkers(readFromFile(mContext), mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        }*/
     }
 
     @Override
@@ -204,38 +196,49 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             JSONArray jsonarray = new JSONArray(markers);
 
             for (int i = 0; i < jsonarray.length(); i++) {
+
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
+
                 double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+
                 double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+
+                String likes = "0";//Integer.parseInt(jsonobject.getString("reportvotes_up"));
+
+                String dislikes = "0";// Integer.parseInt(jsonobject.getString("reportvotes_down"));
+
                 String status = jsonobject.getString("report_status");
+
                 String address = jsonobject.getString("report_address");
+
                 String date = jsonobject.getString("report_creationtimeformatted");
 
-                byte[] img_byte = Base64.decode(jsonobject.getString("thumbnail"), Base64.DEFAULT);
+                byte[] img_byte = Base64.decode(jsonobject.getString("report_thumbnail"), Base64.DEFAULT);
 
-                //String name = "";
-                //if (jsonobject.getString("report_username") != null)
                 String name = jsonobject.getString("report_username");
-                int gravity = 0;
+
+                String gravity = "0";
                 if (jsonobject.has("report_gravity"))
-                    gravity = jsonobject.getInt("report_gravity");
+                    gravity = jsonobject.getString("report_gravity");
+
                 String description = "";
                 if (jsonobject.has("report_description"))
                     description = jsonobject.getString("report_description");
+
                 String title = "";
                 if (jsonobject.has("report_title"))
                     title = jsonobject.getString("report_title");
 
-
-                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name, description, gravity, title, img_byte);
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
+                        description, gravity, title, img_byte, likes, dislikes);
 
                 if (!temp.contains(report))
                     temp.add(report);
             }
+
             mReportList = temp;
 
             setUpCluster(new LatLng(lat, lng));
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -247,8 +250,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), GPS_ACTIVITY);
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
+                                        @SuppressWarnings("unused") final int id) {
+                        startActivityForResult(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                                GPS_ACTIVITY);
                         mGps = true;
                     }
                 })
@@ -264,7 +269,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void writeToFile(String data, Context context) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("ignes_markers", Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("ignes_markers",
+                    Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
         } catch (IOException e) {
@@ -298,7 +304,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             System.out.println("Can not read file: " + e.toString());
         }
 
-        System.out.println("DENTRO DO FICHEIRO: " + ret);
         return ret;
     }
 
@@ -439,11 +444,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             onReport();
             return true;
         }
+
         if (item.getItemId() == R.id.searchicon)
             filterTask();
+
         if (item.getItemId() == R.id.refreshicon)
             recreate();
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -453,15 +459,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mBuilder.setTitle("Report");
         mBuilder.setIcon(R.drawable.ocorrenciared);
 
-
         LayoutInflater inflater = MapActivity.this.getLayoutInflater();
         final View mView = inflater.inflate(R.layout.report_choice, null);
         mBuilder.setView(mView);
         final AlertDialog alert = mBuilder.create();
 
         alert.show();
+
         if (mCurrentLocation != null) {
-            //----FAST-----
             Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
             mFast.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -484,13 +489,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     i.putExtra("TYPE", "medium");
                     i.putExtra("LOCATION", mCurrentLocation);
                     alert.dismiss();
-                    //startActivity(i);
                     startActivityForResult(i, REPORT_ACTIVITY);
-
                 }
             });
         } else {
-            Toast.makeText(context, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
 
         }
         //----LONG-----
@@ -498,7 +501,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //reportType.putString("Type", "long");
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "detailed");
 
@@ -519,39 +521,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         switch (requestCode) {
             case REPORT_ACTIVITY:
-                System.out.println("VOLTEI DO REPORT");
-                if (resultCode == RESULT_OK) {
 
+                if (resultCode == RESULT_OK)
                     recreate();
-                    System.out.println("DEU OK");
-
-
-                } else
-                    System.out.println("DEU CANCELLED");
                 break;
             case GPS_ACTIVITY:
-
-                /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Refresh");
-                builder.setIcon(R.drawable.refresh);
-                builder.setMessage("Refresh the map to show the markers in your area")
-                        .setCancelable(false)
-                        .setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
-                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                recreate();
-
-                            }
-                        });
-
-                final AlertDialog alert = builder.create();
-                alert.show();*/
-
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Refreshing...");
                 builder.setIcon(R.drawable.refresh);
                 builder.setMessage("");
-
 
                 builder.setCancelable(true);
 
@@ -573,9 +552,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 });
                 break;
-
         }
-
     }
 
     private void filterTask() {
@@ -590,7 +567,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         alert.show();
 
-        //----SEARCH-----
         final EditText mSearchText = (EditText) mView.findViewById(R.id.search_location_text);
 
         Button mSearch = (Button) mView.findViewById(R.id.search_filters_button);
@@ -609,11 +585,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mMapTask = new MapTask(lat, lng, 10000);
                         mMapTask.execute((Void) null);
                     } else
-                        Toast.makeText(context, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }
@@ -627,8 +602,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         @Override
         protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
-            //  markerOptions.icon(item.getIcon());
-            // markerOptions.snippet(item.getSnippet());
             markerOptions.title("Marker " + item.getPosition());
             markerOptions.snippet(item.getSnippet());
 
@@ -696,28 +669,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             if (result.equals(SERVER_ERROR)) {
 
-                Toast.makeText(context, "Can't connect to server", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("SERVER ERROR");
 
             } else if (result.equals(NO_CONTENT_ERROR)) {
 
-                Toast.makeText(context, "No reports to show in this area", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
                 System.out.println("NADA A MOSTRAR NA ZONA");
 
             } else if (result.equals(NOT_FOUND_ERROR)) {
 
-                Toast.makeText(context, "Can't connect to server", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("NOT FOUND ERROR");
 
             } else if (result.equals(BAD_REQUEST_ERROR)) {
 
-                Toast.makeText(context, "Try again later", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Try again later", Toast.LENGTH_LONG).show();
                 System.out.println("BAD REQUEST ERROR");
 
             } else {
 
                 setMarkers(result, mLat, mLng);
-                writeToFile(result, context);
+               // writeToFile(result, mContext);
 
             }
 

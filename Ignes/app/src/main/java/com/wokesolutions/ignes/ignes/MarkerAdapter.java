@@ -2,7 +2,6 @@ package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -36,17 +33,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         final ViewHolder viewHolder = new ViewHolder(view);
 
-       /* viewHolder.button_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              Intent i =new Intent(parent.getContext(), MarkerActivity.class);
-                i.putExtra("title", )
-                parent.getContext().startActivity(i);
-
-
-
-            }
-        });*/
         return viewHolder;
     }
 
@@ -63,6 +49,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView gravity = holder.marker_gravity;
         TextView status = holder.marker_status;
         Button more_button = holder.button_more;
+        TextView likes = holder.marker_likes;
+        TextView dislikes = holder.marker_dislikes;
+        // TextView comments = holder.marker_comments;
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -71,30 +60,34 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         username.setText(markerItem.getmUsername());
         date.setText(markerItem.getmDate());
-        //  description.setText(markerItem.getmDescription());
         address.setText(markerItem.getmAddress());
-        gravity.setText("" + markerItem.getmGravity());
+        gravity.setText(markerItem.getmGravity());
         status.setText(markerItem.getmStatus());
+        likes.setText(markerItem.getmLikes());
+        dislikes.setText(markerItem.getmDislikes());
+        //  comments.setText(markerItem.getmComments());
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
 
         more_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i =new Intent(holder.itemViewContext, MarkerActivity.class);
+                Intent i = new Intent(holder.itemViewContext, MarkerActivity.class);
+
                 i.putExtra("markerAddress", markerItem.getmAddress());
                 i.putExtra("markerDate", markerItem.getmDate());
                 i.putExtra("markerDescription", markerItem.getmDescription());
                 i.putExtra("markerGravity", markerItem.getmGravity());
-                i.putExtra("markerImg", markerItem.getmImg_bitmap());
+                i.putExtra("markerImg", markerItem.getmImg_byte());
                 i.putExtra("markerUsername", markerItem.getmUsername());
                 i.putExtra("markerTitle", markerItem.getmTitle());
                 i.putExtra("markerStatus", markerItem.getmStatus());
+                i.putExtra("markerLikes", markerItem.getmLikes());
+                i.putExtra("markerDislikes", markerItem.getmDislikes());
 
                 holder.itemViewContext.startActivity(i);
             }
         });
-
 
     }
 
@@ -108,7 +101,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         ImageView marker_image;
         TextView marker_title;
-        // TextView marker_description;
+        TextView marker_likes;
+        TextView marker_dislikes;
+        //TextView marker_comments;
         TextView marker_address;
         TextView marker_username;
         TextView marker_date;
@@ -116,7 +111,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView marker_status;
         Button button_more;
         Context itemViewContext;
-
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -129,9 +123,10 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity = itemView.findViewById(R.id.feed_gravity_marker);
             marker_status = itemView.findViewById(R.id.feed_status_marker);
             button_more = itemView.findViewById(R.id.button_more);
+            marker_likes = itemView.findViewById(R.id.feed_likes_number);
+            marker_dislikes = itemView.findViewById(R.id.feed_dislikes_number);
+           // marker_comments = itemView.findViewById(R.id.feed_comments_number);
 
         }
-
-
     }
 }

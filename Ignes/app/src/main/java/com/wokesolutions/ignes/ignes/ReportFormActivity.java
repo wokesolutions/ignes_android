@@ -257,7 +257,7 @@ public class ReportFormActivity extends AppCompatActivity {
         int originHeight = image.getHeight();
 
         if (originWidth > destWidth) {
-            int destHeight = originHeight / (originWidth / destWidth);
+            int destHeight = 700;// originHeight / (originWidth / destWidth);
 
             Bitmap scaled = Bitmap.createScaledBitmap(image, destWidth, destHeight, false);
 

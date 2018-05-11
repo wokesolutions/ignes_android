@@ -1,14 +1,18 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -24,32 +28,44 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
-        View view = layoutInflater.inflate(R.layout.feed_marker_item, parent, false);
+        final View view = layoutInflater.inflate(R.layout.feed_marker_item, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(view);
+        final ViewHolder viewHolder = new ViewHolder(view);
+
+       /* viewHolder.button_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Intent i =new Intent(parent.getContext(), MarkerActivity.class);
+                i.putExtra("title", )
+                parent.getContext().startActivity(i);
+
+
+
+            }
+        });*/
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        MarkerClass markerItem = mList.get(position);
+        final MarkerClass markerItem = mList.get(position);
 
         ImageView image = holder.marker_image;
-        TextView title = holder.marker_title;
+        final TextView title = holder.marker_title;
         TextView username = holder.marker_username;
         TextView date = holder.marker_date;
-        //  TextView description = holder.marker_description;
         TextView address = holder.marker_address;
         TextView gravity = holder.marker_gravity;
         TextView status = holder.marker_status;
+        Button more_button = holder.button_more;
 
-        if(!markerItem.getmTitle().isEmpty())
-             title.setText(markerItem.getmTitle());
+        if (!markerItem.getmTitle().isEmpty())
+            title.setText(markerItem.getmTitle());
         else
             title.setVisibility(View.GONE);
 
@@ -61,12 +77,24 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         status.setText(markerItem.getmStatus());
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
+
+        more_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i =new Intent(holder.itemViewContext, MarkerActivity.class);
+                i.putExtra("markerClassItem", markerItem);
+                holder.itemViewContext.startActivity(i);
+            }
+        });
+
+
     }
 
     @Override
     public int getItemCount() {
         return mList.size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -78,19 +106,21 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView marker_date;
         TextView marker_gravity;
         TextView marker_status;
+        Button button_more;
+        Context itemViewContext;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
-
+            itemViewContext = itemView.getContext();
             marker_image = itemView.findViewById(R.id.feed_image_marker);
             marker_title = itemView.findViewById(R.id.feed_title_marker);
-            // marker_description = itemView.findViewById(R.id.feed_description_marker);
             marker_address = itemView.findViewById(R.id.feed_address_marker);
             marker_date = itemView.findViewById(R.id.feed_date_marker);
             marker_username = itemView.findViewById(R.id.feed_username_marker);
             marker_gravity = itemView.findViewById(R.id.feed_gravity_marker);
             marker_status = itemView.findViewById(R.id.feed_status_marker);
+            button_more = itemView.findViewById(R.id.button_more);
 
         }
 

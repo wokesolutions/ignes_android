@@ -57,6 +57,9 @@
             android:name=".MapActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
+            android:name=".MarkerActivity"
+            android:theme="@style/WelcomeTheme" />
+        <activity
             android:name=".FeedActivity"
             android:theme="@style/WelcomeTheme" />
         <activity

@@ -8,7 +8,9 @@ import android.media.ExifInterface;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-public class MarkerClass implements ClusterItem {
+import java.io.Serializable;
+
+public class MarkerClass implements ClusterItem, Serializable {
 
     private final LatLng mPosition;
     private final String mStatus;

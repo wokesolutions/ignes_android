@@ -82,7 +82,15 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             @Override
             public void onClick(View v) {
                 Intent i =new Intent(holder.itemViewContext, MarkerActivity.class);
-                i.putExtra("markerClassItem", markerItem);
+                i.putExtra("markerAddress", markerItem.getmAddress());
+                i.putExtra("markerDate", markerItem.getmDate());
+                i.putExtra("markerDescription", markerItem.getmDescription());
+                i.putExtra("markerGravity", markerItem.getmGravity());
+                i.putExtra("markerImg", markerItem.getmImg_bitmap());
+                i.putExtra("markerUsername", markerItem.getmUsername());
+                i.putExtra("markerTitle", markerItem.getmTitle());
+                i.putExtra("markerStatus", markerItem.getmStatus());
+
                 holder.itemViewContext.startActivity(i);
             }
         });

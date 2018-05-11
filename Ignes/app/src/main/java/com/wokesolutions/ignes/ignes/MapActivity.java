@@ -375,7 +375,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 }
             });
-            
+
             if (!mGps) {
                 buildAlertMessageNoGps();
                 mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {

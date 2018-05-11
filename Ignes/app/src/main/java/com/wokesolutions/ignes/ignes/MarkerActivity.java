@@ -1,6 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -33,8 +34,17 @@ public class MarkerActivity extends AppCompatActivity{
         marker_username = findViewById(R.id.marker_reporter_username);
         marker_gravity = findViewById(R.id.marker_gravity);
         marker_status = findViewById(R.id.marker_status);
+        
 
-        marker_title.setText(mMarkerClass.getmTitle());
+        Intent intent = getIntent();
+        marker_image.setImageBitmap((Bitmap) intent.getExtras().get("markerImg"));
+        marker_title.setText(intent.getExtras().getString("markerTitle"));
+        marker_description.setText(intent.getExtras().getString("markerDescription"));
+        marker_address.setText(intent.getExtras().getString("markerAddress"));
+        marker_date.setText(intent.getExtras().getString("markerDate"));
+        marker_username.setText(intent.getExtras().getString("markerUsername"));
+        marker_gravity.setText(intent.getExtras().getString("markerGravity"));
+        marker_status.setText(intent.getExtras().getString("markerStatus"));
 
     }
 

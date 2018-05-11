@@ -256,13 +256,13 @@ public class ReportFormActivity extends AppCompatActivity {
         int originWidth = image.getWidth();
         int originHeight = image.getHeight();
 
-        if(originWidth > destWidth) {
-            int destHeight = originHeight/(originWidth/destWidth);
+        if (originWidth > destWidth) {
+            int destHeight = originHeight / (originWidth / destWidth);
 
             Bitmap scaled = Bitmap.createScaledBitmap(image, destWidth, destHeight, false);
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-            scaled.compress(Bitmap.CompressFormat.JPEG, 70, outStream);
+            /*ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            scaled.compress(Bitmap.CompressFormat.JPEG, 70, outStream);*/
 
             return scaled;
         }
@@ -281,10 +281,6 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mThumbnail = scaleImage(700, mCurrentPhotoPath);
 
-                    /*mThumbnail = ThumbnailUtils.extractThumbnail(
-                            BitmapFactory.decodeFile(mCurrentPhotoPath),
-                            THUMBSIZE,
-                            THUMBSIZE*2);*/
                     mImageView.setVisibility(View.VISIBLE);
 
                     try {
@@ -311,7 +307,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageView.setImageBitmap(mThumbnail);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                     byteArray = stream.toByteArray();
 
 
@@ -320,47 +316,48 @@ public class ReportFormActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == RESULT_OK) {
 
-                        mImageURI = data.getData();
+                    mImageURI = data.getData();
 
-                        mThumbnail = ThumbnailUtils.extractThumbnail(
+                    mThumbnail = scaleImage(700, getRealPathFromURI(mImageURI));
+                        /*mThumbnail = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
                                 THUMBSIZE,
-                                THUMBSIZE*2);
-                        mImageView.setVisibility(View.VISIBLE);
+                                THUMBSIZE*2);*/
+                    mImageView.setVisibility(View.VISIBLE);
 
-                        System.out.println("BYTE COUNT THUMB: "+mThumbnail.getByteCount());
+                    System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());
 
-                        try {
-                            ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
-                            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                            System.out.println("EXIF: " + orientation);
-                            Matrix matrix = new Matrix();
-                            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
-                                matrix.postRotate(90);
-                            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-                                matrix.postRotate(180);
-                            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                                matrix.postRotate(270);
-                            }
-                            mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
-
-                            System.out.println("BYTE COUNT 2 THUMB: "+mThumbnail.getByteCount());
-                        } catch (Exception e) {
-                            System.out.println("NO ORIENTATION FOUND");
-                            e.printStackTrace();
+                    try {
+                        ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
+                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        System.out.println("EXIF: " + orientation);
+                        Matrix matrix = new Matrix();
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                            matrix.postRotate(90);
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                            matrix.postRotate(180);
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                            matrix.postRotate(270);
                         }
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
 
-                        //RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
-                        //roundedBitmap.setCircular(true);
+                        System.out.println("BYTE COUNT 2 THUMB: " + mThumbnail.getByteCount());
+                    } catch (Exception e) {
+                        System.out.println("NO ORIENTATION FOUND");
+                        e.printStackTrace();
+                    }
+
+                    //RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
+                    //roundedBitmap.setCircular(true);
 
 
-                        mImageView.setImageBitmap(mThumbnail);
+                    mImageView.setImageBitmap(mThumbnail);
 
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byteArray = stream.toByteArray();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                    byteArray = stream.toByteArray();
 
-                        System.out.println("BYTEARRAY ENVIADO DO THUMB: "+byteArray.length);
+                    System.out.println("BYTEARRAY ENVIADO DO THUMB: " + byteArray.length);
 
                 }
                 break;
@@ -541,8 +538,8 @@ public class ReportFormActivity extends AppCompatActivity {
                 imgByteArray = imgStream.toByteArray();
                 base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
 
-                System.out.println("BYTE COUNT IMG: "+teste.getByteCount());
-                System.out.println("BYTEARRAY ENVIADO DA IMG: "+imgByteArray.length);
+                System.out.println("BYTE COUNT IMG: " + teste.getByteCount());
+                System.out.println("BYTEARRAY ENVIADO DA IMG: " + imgByteArray.length);
 
                 JSONObject report = new JSONObject();
 
@@ -584,7 +581,6 @@ public class ReportFormActivity extends AppCompatActivity {
 
                 System.out.println("REPORT JSON: " + report);
                 System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
-
 
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");

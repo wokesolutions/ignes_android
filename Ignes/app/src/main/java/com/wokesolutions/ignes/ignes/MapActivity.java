@@ -211,9 +211,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 byte[] img_byte = Base64.decode(jsonobject.getString("thumbnail"), Base64.DEFAULT);
 
-                String name = "";
-                if (jsonobject.getString("report_username") != null)
-                    name = jsonobject.getString("report_username");
+                //String name = "";
+                //if (jsonobject.getString("report_username") != null)
+                String name = jsonobject.getString("report_username");
                 int gravity = 0;
                 if (jsonobject.has("report_gravity"))
                     gravity = jsonobject.getInt("report_gravity");
@@ -375,8 +375,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 }
             });
-
-
+            
             if (!mGps) {
                 buildAlertMessageNoGps();
                 mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {

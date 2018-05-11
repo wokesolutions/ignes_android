@@ -155,8 +155,8 @@ public class LaunchActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final String result) {
             mTokenAuthTask = null;
-            startActivity(new Intent(LaunchActivity.this, MapActivity.class));
-           /*if (result.equals("OK")) {
+
+           if (result.equals("OK")) {
 
                 System.out.println("TOKEN É VALIDO");
                 startActivity(new Intent(LaunchActivity.this, MapActivity.class));
@@ -167,7 +167,7 @@ public class LaunchActivity extends AppCompatActivity {
                 System.out.println("TOKEN INVÁLIDO");
                 startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
                 finish();
-            }*/
+            }
         }
 
         @Override

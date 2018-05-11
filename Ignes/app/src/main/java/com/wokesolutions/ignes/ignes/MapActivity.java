@@ -71,6 +71,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
     private String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
     private String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
+    private String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
+
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     // Declare a variable for the cluster manager.
@@ -706,6 +708,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 Toast.makeText(context, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("NOT FOUND ERROR");
+
+            } else if (result.equals(BAD_REQUEST_ERROR)) {
+
+                Toast.makeText(context, "Try again later", Toast.LENGTH_LONG).show();
+                System.out.println("BAD REQUEST ERROR");
 
             } else {
 

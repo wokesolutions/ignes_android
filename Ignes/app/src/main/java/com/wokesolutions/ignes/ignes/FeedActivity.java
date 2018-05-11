@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static android.support.v4.content.ContextCompat.startActivity;
+
 public class FeedActivity extends AppCompatActivity {
 
     ArrayList<MarkerClass> markerList;
@@ -27,7 +29,6 @@ public class FeedActivity extends AppCompatActivity {
     private Button mLoggoutButton;
     private Button mFeedButton;
     private Button mMapButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -92,8 +93,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private ActionBarDrawerToggle mMenu;
 
-    private Button mLoggoutButton;
-    private Button mFeedButton;
+    private LinearLayout mLoggoutButton;
+    private LinearLayout mFeedButton;
 
     private Location mCurrentLocation;
 
@@ -408,7 +409,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
-        mLoggoutButton = (Button) findViewById(R.id.botao_logout);
+        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -417,7 +418,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        mFeedButton = (Button) findViewById(R.id.menu_button_feed);
+        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
         mFeedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

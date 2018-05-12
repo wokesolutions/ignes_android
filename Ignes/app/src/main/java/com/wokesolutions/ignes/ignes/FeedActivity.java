@@ -87,14 +87,6 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        /*mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mFeedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FeedActivity.this, FeedActivity.class));
-                finish();
-            }
-        });*/
     }
 
     @Override

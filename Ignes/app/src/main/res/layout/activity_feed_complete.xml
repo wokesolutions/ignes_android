@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
     android:orientation="vertical">
 
 
@@ -36,7 +37,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginVertical="20dp"
                     android:orientation="vertical">
 
@@ -44,6 +44,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:weightSum="2">
 
                         <ImageView
@@ -87,6 +88,7 @@
                     <TextView
                         android:id="@+id/marker_title"
                         android:layout_width="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:fontFamily="@font/quicksand_light"
@@ -107,7 +109,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:orientation="horizontal"
+                        android:gravity="center"
                         android:paddingHorizontal="10dp">
 
                         <ImageView
@@ -143,8 +147,8 @@
 
                     <ImageView
                         android:id="@+id/marker_image"
-                        android:layout_width="700px"
-                        android:layout_height="700px"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_menu_camera" />
 
@@ -152,6 +156,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:weightSum="3">
@@ -218,6 +223,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:orientation="horizontal">
 
                         <ImageView

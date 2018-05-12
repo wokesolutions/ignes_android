@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,8 +46,19 @@ public class MarkerActivity extends AppCompatActivity {
         Bitmap img_bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
 
         marker_image.setImageBitmap(img_bitmap);
-        marker_title.setText(intent.getExtras().getString("markerTitle"));
-        marker_description.setText(intent.getExtras().getString("markerDescription"));
+
+        String title = intent.getExtras().getString("markerTitle");
+        if(!title.equals(""))
+        marker_title.setText(title);
+        else
+            marker_title.setVisibility(View.GONE);
+
+        String description = intent.getExtras().getString("markerDescription");
+        if(!description.equals(""))
+        marker_description.setText(description);
+        else
+            marker_description.setVisibility(View.GONE);
+
         marker_address.setText(intent.getExtras().getString("markerAddress"));
         marker_date.setText(intent.getExtras().getString("markerDate"));
         marker_username.setText(intent.getExtras().getString("markerUsername"));

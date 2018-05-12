@@ -196,7 +196,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             JSONArray jsonarray = new JSONArray(markers);
 
-            for (int i = 0; i < jsonarray.length(); i++) {
+            for (int i = 1; i < jsonarray.length(); i++) {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 

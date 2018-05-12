@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -21,7 +22,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         mContext = context;
         mList = list;
     }
-
 
     @NonNull
     @Override
@@ -51,6 +51,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         Button more_button = holder.button_more;
         TextView likes = holder.marker_likes;
         TextView dislikes = holder.marker_dislikes;
+        TextView gravity_title = holder.marker_gravity_title;
         // TextView comments = holder.marker_comments;
 
         if (!markerItem.getmTitle().isEmpty())
@@ -58,10 +59,17 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         else
             title.setVisibility(View.GONE);
 
-        username.setText(markerItem.getmUsername());
+        username.setText(markerItem.getmCreator_username());
         date.setText(markerItem.getmDate());
         address.setText(markerItem.getmAddress());
-        gravity.setText(markerItem.getmGravity());
+
+        if (!markerItem.getmGravity().equals("0"))
+            gravity.setText(markerItem.getmGravity());
+        else {
+            gravity.setVisibility(View.GONE);
+            gravity_title.setVisibility(View.GONE);
+        }
+
         status.setText(markerItem.getmStatus());
         likes.setText(markerItem.getmLikes());
         dislikes.setText(markerItem.getmDislikes());
@@ -79,7 +87,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 i.putExtra("markerDescription", markerItem.getmDescription());
                 i.putExtra("markerGravity", markerItem.getmGravity());
                 i.putExtra("markerImg", markerItem.getmImg_byte());
-                i.putExtra("markerUsername", markerItem.getmUsername());
+                i.putExtra("markerUsername", markerItem.getmCreator_username());
                 i.putExtra("markerTitle", markerItem.getmTitle());
                 i.putExtra("markerStatus", markerItem.getmStatus());
                 i.putExtra("markerLikes", markerItem.getmLikes());
@@ -88,14 +96,12 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 holder.itemViewContext.startActivity(i);
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
         return mList.size();
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -109,6 +115,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView marker_date;
         TextView marker_gravity;
         TextView marker_status;
+        TextView marker_gravity_title;
         Button button_more;
         Context itemViewContext;
 
@@ -125,7 +132,8 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             button_more = itemView.findViewById(R.id.button_more);
             marker_likes = itemView.findViewById(R.id.feed_likes_number);
             marker_dislikes = itemView.findViewById(R.id.feed_dislikes_number);
-           // marker_comments = itemView.findViewById(R.id.feed_comments_number);
+            marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
+            // marker_comments = itemView.findViewById(R.id.feed_comments_number);
 
         }
     }

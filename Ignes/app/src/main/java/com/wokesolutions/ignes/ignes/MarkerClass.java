@@ -8,30 +8,32 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class MarkerClass implements ClusterItem {
 
-    private final LatLng mPosition;
-    private final String mStatus;
-    private final String mAddress;
-    private final String mDate;
-    private final String mUsername;
-    private final double mLatitude;
-    private final double mLongitude;
-    private final String mDescription;
-    private final String mGravity;
-    private final String mTitle;
-    private final byte[] mImg_byte;
-    private final String mLikes;
-    private final String mDislikes;
+    private String mMarker_ID;
+
+    private LatLng mPosition;
+    private String mStatus;
+    private String mAddress;
+    private String mDate;
+    private String mCreator_username;
+    private double mLatitude;
+    private double mLongitude;
+    private String mDescription;
+    private String mGravity;
+    private String mTitle;
+    private byte[] mImg_byte;
+    private String mLikes;
+    private String mDislikes;
     private Bitmap mImage_bitmap;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
-                       String title, byte[] img_byte, String likes, String dislikes) {
+                       String title, byte[] img_byte, String likes, String dislikes/*, String marker_id*/) {
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
         mDate = date;
-        mUsername = username;
+        mCreator_username = username;
         mLatitude = lat;
         mLongitude = lng;
         mDescription = description;
@@ -41,8 +43,12 @@ public class MarkerClass implements ClusterItem {
         mImage_bitmap = makeImg();
         mLikes = likes;
         mDislikes = dislikes;
+       // mMarker_ID = marker_id;
 
     }
+   /* public String getMarkerID(){
+        return mMarker_ID;
+    }*/
 
     @Override
     public LatLng getPosition() {
@@ -73,8 +79,8 @@ public class MarkerClass implements ClusterItem {
         return mStatus;
     }
 
-    public String getmUsername() {
-        return mUsername;
+    public String getmCreator_username() {
+        return mCreator_username;
     }
 
     public String getmDescription() {
@@ -90,7 +96,7 @@ public class MarkerClass implements ClusterItem {
     }
 
     public String getSnippet() {
-        return "Address: " + mAddress + "\n" + "Posted by: " + mUsername + "\n" + "Creation Date: " + mDate;
+        return "Address: " + mAddress + "\n" + "Posted by: " + mCreator_username + "\n" + "Creation Date: " + mDate;
     }
 
     public String getmDislikes() {

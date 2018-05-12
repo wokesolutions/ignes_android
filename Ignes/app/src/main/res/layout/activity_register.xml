@@ -27,10 +27,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/quicksand_bold"
+                android:fontFamily="@font/quicksand_light"
                 android:text="Create a new USER account"
                 android:textColor="@color/backgroundColor"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/register_icon_citizen_button"
@@ -49,10 +50,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/quicksand_bold"
+                android:fontFamily="@font/quicksand_light"
                 android:text="or"
                 android:textColor="@color/backgroundColor"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/register_icon_worker_button"
@@ -63,11 +65,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/quicksand_bold"
+                android:fontFamily="@font/quicksand_light"
                 android:gravity="center_horizontal"
                 android:text="Create a WORKER account using the \n code provided by tour company"
                 android:textColor="@color/backgroundColor"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
@@ -87,6 +90,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_light"
             android:gravity="center_horizontal"
             android:text="@string/insert_company_code"
             android:textSize="30dp"
@@ -100,9 +104,11 @@
                 android:id="@+id/register_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
                 android:hint="@string/code"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textStyle="bold" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -113,9 +119,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
             android:text="@string/next"
-            android:textColor="@color/backgroundColor"
-            android:textStyle="bold" />
+            android:textColor="@color/backgroundColor" />
     </LinearLayout>
 
 
@@ -145,27 +151,27 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="@string/username"
-                android:textColor="@color/colorIgnesPrimary"
-                android:textStyle="bold" />
+                android:textColor="@color/colorIgnesPrimary" />
 
             <Button
                 android:id="@+id/register_email_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="@string/email"
-                android:textColor="@color/colorIgnesPrimary"
-                android:textStyle="bold" />
+                android:textColor="@color/colorIgnesPrimary" />
 
             <Button
                 android:id="@+id/register_password_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="@string/password"
-                android:textColor="@color/colorIgnesPrimary"
-                android:textStyle="bold" />
+                android:textColor="@color/colorIgnesPrimary" />
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -178,9 +184,11 @@
                 android:id="@+id/register_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
                 android:hint="@string/username_register"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textStyle="bold" />
 
 
         </android.support.design.widget.TextInputLayout>
@@ -195,10 +203,12 @@
                 android:id="@+id/register_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
                 android:hint="@string/email_register"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textStyle="bold" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -218,13 +228,15 @@
                     android:id="@+id/register_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_light"
                     android:hint="@string/prompt_password"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textStyle="bold" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -236,10 +248,12 @@
                     android:id="@+id/register_confirmation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_light"
                     android:hint="@string/confirm_password"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textStyle="bold" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -251,9 +265,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button"
+                android:fontFamily="@font/quicksand_bold"
                 android:text="@string/sign_up"
-                android:textColor="@color/backgroundColor"
-                android:textStyle="bold" />
+                android:textColor="@color/backgroundColor" />
 
         </LinearLayout>
     </LinearLayout>

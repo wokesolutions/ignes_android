@@ -39,7 +39,9 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left"
                     android:text="USER"
-                    android:textSize="20dp" />
+                    android:textColor="#000000"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/feed_date_marker"
@@ -82,6 +84,7 @@
                 android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
                 <TextView
+                    android:id="@+id/feed_gravity_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_light"
@@ -124,58 +127,115 @@
                     android:textSize="20dp" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/feed_status_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight=".5"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:fontFamily="@font/quicksand_bold"
+                android:gravity="center_horizontal|center"
+                android:text="STATUS"
+                android:textColor="@color/colorIgnesGreen"
+                android:textSize="20dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/backgroundColor"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/activity_horizontal_margin">
+                android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/feed_status_marker"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/commentreporticon" />
+
+                    <TextView
+                        android:id="@+id/feed_comments_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/quicksand_light"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="@font/quicksand_light"
+                        android:text="comments"
+                        android:textColor="#000000"
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_weight=".5"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:gravity="center_horizontal|center"
-                    android:text="STATUS"
-                    android:textColor="@color/colorIgnesGreen"
-                    android:textSize="15dp" />
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                <TextView
-                    android:id="@+id/feed_comments_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="5dp"
-                    android:text="" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:src="@drawable/commentreporticon" />
+                        <Button
+                            android:id="@+id/feed_likes_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/upicon" />
 
-                <TextView
-                    android:id="@+id/feed_likes_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="" />
+                        <TextView
+                            android:id="@+id/feed_likes_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#000000"
+                            android:textSize="15dp" />
+                    </LinearLayout>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5dp"
-                    android:src="@drawable/likeanddislikesicon" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/feed_dislikes_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:text="" />
+
+                        <Button
+                            android:id="@+id/feed_dislikes_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/downicon" />
+
+                        <TextView
+                            android:id="@+id/feed_dislikes_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#000000"
+                            android:textSize="15dp" />
+                    </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
 

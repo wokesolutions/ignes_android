@@ -40,6 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="20dp"
+            android:fontFamily="@font/quicksand_light"
+            android:textStyle="bold"
             android:text="@string/touch_anywhere_to_start"
             android:textColor="@color/backgroundColor" />
 
@@ -68,8 +70,8 @@
             android:orientation="horizontal">
 
             <View
-                android:layout_width="40dp"
-                android:layout_height="2dp"
+                android:layout_width="30dp"
+                android:layout_height="1dp"
                 android:layout_gravity="center"
                 android:background="#FFFF" />
 
@@ -77,12 +79,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/created_by"
+                android:fontFamily="@font/quicksand_light"
+                android:layout_marginHorizontal="5dp"
+                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:textSize="15dp" />
 
             <View
-                android:layout_width="40dp"
-                android:layout_height="2dp"
+                android:layout_width="30dp"
+                android:layout_height="1dp"
                 android:layout_gravity="center"
                 android:background="#FFFF" />
         </LinearLayout>

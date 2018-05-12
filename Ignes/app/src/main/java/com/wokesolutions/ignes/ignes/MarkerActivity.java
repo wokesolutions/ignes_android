@@ -3,18 +3,15 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MarkerActivity extends AppCompatActivity {
@@ -30,13 +27,18 @@ public class MarkerActivity extends AppCompatActivity {
     TextView marker_likes;
     TextView marker_dislikes;
     TextView marker_comments;
+    TextView marker_gravity_title;
+    Button marker_button_likes;
+    Button marker_button_dislikes;
 
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mMenu;
+    ProgressBar mProgressBar;
 
-    private LinearLayout mLoggoutButton;
-    private LinearLayout mFeedButton;
-    private LinearLayout mMapButton;
+    private int mLikes;
+    private int mDislikes;
+
+    //falta receber se a pessoa tem like ou dislike no marker
+    private boolean mTouchLike;
+    private boolean mTouchDislike;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,16 +46,14 @@ public class MarkerActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_marker);
         setSupportActionBar(myToolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_feed);
 
-        mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mMenu);
-        mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
-        menuButtons();
+        mProgressBar = findViewById(R.id.marker_progress_likes);
 
+        marker_button_likes = findViewById(R.id.likes_button);
+        marker_button_dislikes = findViewById(R.id.dislikes_button);
 
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
@@ -66,6 +66,8 @@ public class MarkerActivity extends AppCompatActivity {
         marker_likes = findViewById(R.id.marker_likes_number);
         marker_dislikes = findViewById(R.id.marker_dislikes_number);
         marker_comments = findViewById(R.id.marker_comments_number);
+        marker_gravity_title = findViewById(R.id.marker_gravity_title);
+
 
         Intent intent = getIntent();
 
@@ -76,80 +78,105 @@ public class MarkerActivity extends AppCompatActivity {
         marker_image.setImageBitmap(img_bitmap);
 
         String title = intent.getExtras().getString("markerTitle");
-        if(!title.equals(""))
-        marker_title.setText(title);
+        if (!title.equals(""))
+            marker_title.setText(title);
         else
             marker_title.setVisibility(View.GONE);
 
         String description = intent.getExtras().getString("markerDescription");
-        if(!description.equals(""))
-        marker_description.setText(description);
+        if (!description.equals(""))
+            marker_description.setText(description);
         else
             marker_description.setVisibility(View.GONE);
 
         marker_address.setText(intent.getExtras().getString("markerAddress"));
         marker_date.setText(intent.getExtras().getString("markerDate"));
         marker_username.setText(intent.getExtras().getString("markerUsername"));
-        marker_gravity.setText(intent.getExtras().getString("markerGravity"));
+
+        String gravity = intent.getExtras().getString("markerGravity");
+        if (!gravity.equals("0"))
+            marker_gravity.setText(gravity);
+        else {
+            marker_gravity.setVisibility(View.GONE);
+            marker_gravity_title.setVisibility(View.GONE);
+        }
+
+
         marker_status.setText(intent.getExtras().getString("markerStatus"));
         marker_likes.setText(intent.getExtras().getString("markerLikes"));
         marker_dislikes.setText(intent.getExtras().getString("markerDislikes"));
 
-    }
-    /*----- About Menu Bar -----*/
-    private void menuButtons() {
-        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+        mLikes = Integer.parseInt(intent.getExtras().getString("markerLikes"));
+        mDislikes = Integer.parseInt(intent.getExtras().getString("markerDislikes"));
+
+
+        int totalProgress = mLikes + mDislikes;
+        if (totalProgress == 0)
+            mProgressBar.setMax(1);
+        else
+            mProgressBar.setMax(totalProgress);
+
+        mProgressBar.setProgress(mLikes);
+
+        mTouchLike = false;
+        mTouchDislike = false;
+
+        if (mTouchLike)
+            marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
+        else
+            marker_button_likes.setBackgroundResource(R.drawable.upicon);
+
+        if (mTouchDislike)
+            marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
+        else
+            marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
+
+        marker_button_likes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MarkerActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
-        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
-        mMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+                mTouchLike = !mTouchLike;
+
+                if (mTouchLike) {
+                    mLikes++;
+                    marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
+
+                } else {
+                    mLikes--;
+                    marker_button_likes.setBackgroundResource(R.drawable.upicon);
+                }
+                mProgressBar.setMax(mLikes + mDislikes);
+                mProgressBar.setProgress(mLikes);
+                marker_likes.setText(""+mLikes);
+
             }
         });
 
-        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mFeedButton.setOnClickListener(new View.OnClickListener() {
+        marker_button_dislikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MarkerActivity.this, FeedActivity.class));
-                finish();
+                mTouchDislike = !mTouchDislike;
+
+                if (mTouchDislike) {
+                    mDislikes++;
+                    marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
+
+                } else {
+                    mDislikes--;
+                    marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
+                }
+
+                mProgressBar.setMax(mLikes + mDislikes);
+                mProgressBar.setProgress(mLikes);
+                marker_dislikes.setText(""+mDislikes);
+
             }
         });
+
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-
-        MenuItem item = menu.findItem(R.id.refreshicon);
-        item.setVisible(false);
-        MenuItem item2 = menu.findItem(R.id.searchicon);
-        item2.setVisible(false);
-        MenuItem item3 = menu.findItem(R.id.reporticon);
-        item3.setVisible(false);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mMenu.onOptionsItemSelected(item))
-            return true;
-
-        return super.onOptionsItemSelected(item);
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

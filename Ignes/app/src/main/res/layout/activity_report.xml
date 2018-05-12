@@ -9,6 +9,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="100dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/ocorrenciared" />
 
     <ProgressBar
@@ -59,6 +60,8 @@
                         android:id="@+id/report_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_light"
+                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
                         android:singleLine="true" />
 
@@ -83,6 +86,8 @@
                         android:id="@+id/report_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_light"
+                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
                         android:inputType="textMultiLine" />
 
@@ -114,6 +119,8 @@
                         android:id="@+id/report_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_light"
+                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
                         android:inputType="textMultiLine" />
 
@@ -202,8 +209,8 @@
 
             <ImageView
                 android:id="@+id/report_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
                 android:visibility="gone" />
 
             <LinearLayout

@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -23,9 +24,10 @@ public class FeedActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private Button mLoggoutButton;
-    private Button mFeedButton;
-    private Button mMapButton;
+
+    private LinearLayout mLoggoutButton;
+    private LinearLayout mFeedButton;
+    private LinearLayout mMapButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class FeedActivity extends AppCompatActivity {
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
-        mLoggoutButton = (Button) findViewById(R.id.botao_logout);
+        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +79,7 @@ public class FeedActivity extends AppCompatActivity {
                 finish();
             }
         });
-        mMapButton = (Button) findViewById(R.id.menu_button_map);
+        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,14 +87,14 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        mFeedButton = (Button) findViewById(R.id.menu_button_feed);
+        /*mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
         mFeedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, FeedActivity.class));
                 finish();
             }
-        });
+        });*/
     }
 
     @Override

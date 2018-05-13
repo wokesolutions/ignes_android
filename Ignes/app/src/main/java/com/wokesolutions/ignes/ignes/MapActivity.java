@@ -57,7 +57,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -80,6 +79,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public static Map<String, MarkerClass> mReportMap;
 
+    private ThumbnailTask mThumbnailTask = null;
+
     private GoogleMap mMap;
 
     private MapTask mMapTask = null;
@@ -99,6 +100,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ActionBarDrawerToggle mMenu;
 
     private LinearLayout mLoggoutButton;
+
     private LinearLayout mFeedButton;
 
     private Location mCurrentLocation;
@@ -110,6 +112,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String mToken;
 
     private boolean isReady;
+
+    private String mCurrentLocality;
+
+    private List<Address> addresses;
 
 
     @Override
@@ -143,7 +149,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
-
         menuButtons();
 
         /*----- About Google Maps -----*/
@@ -162,7 +167,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mToken = sharedPref.getString("token", "");
 
-        /*----------------------------------------------------------------------------------*/
+        addresses = null;
     }
 
     /*----- About Google Maps -----*/
@@ -185,17 +190,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Add ten cluster items in close proximity, for purposes of this example.
         Iterator it = mReportMap.keySet().iterator();
+
         while(it.hasNext()) {
             String key = (String) it.next();
             mClusterManager.addItem(mReportMap.get(key));
             mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
-
         }
-        /*for (int i = 0; i < mReportMap.size(); i++) {
-            System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
-            mClusterManager.addItem(mReportList.get(i));
-            mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
-        }*/
     }
 
     @Override
@@ -241,8 +241,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String date = jsonobject.getString("report_creationtimeformatted");
 
-                byte[] img_byte = new byte[10]; //Base64.decode(jsonobject.getString("report_thumbnail"), Base64.DEFAULT);
-
                 String name = jsonobject.getString("report_username");
 
                 String gravity = "0";
@@ -258,7 +256,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("report_title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, img_byte, likes, dislikes, locality, reportID);
+                        description, gravity, title,likes, dislikes, locality, reportID);
 
                 if (!temp.containsKey(reportID))
                     temp.put(reportID, report);
@@ -267,7 +265,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -406,6 +403,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+
+                        try {
+                            addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                            mCurrentLocality = addresses.get(0).getLocality();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         mMapTask = new MapTask(loc.latitude, loc.longitude, 10000, mToken);
                         mMapTask.execute((Void) null);
                     }
@@ -428,6 +432,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     public boolean onMyLocationButtonClick() {
                         LatLng loc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                        try {
+                            addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                            mCurrentLocality = addresses.get(0).getLocality();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         return true;
                     }
                 });
@@ -451,10 +461,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mFeedButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    String key = mReportMap.keySet().iterator().next();
+                    if(mReportMap.get(key).getmImgbyte()==null){
+                    mThumbnailTask = new ThumbnailTask(mCurrentLocality);
+                    mThumbnailTask.execute((Void) null);}
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
                 }
             });
-
     }
 
 
@@ -464,7 +478,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -511,7 +524,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     alert.dismiss();
                     startActivity(i);
 
-
                 }
             });
 
@@ -528,7 +540,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
         } else {
             Toast.makeText(mContext, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
-
         }
         //----LONG-----
         Button mLong = (Button) mView.findViewById(R.id.report_long_button);
@@ -543,10 +554,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 alert.dismiss();
                 startActivity(i);
-
             }
         });
-
     }
 
     @Override
@@ -562,9 +571,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             case GPS_ACTIVITY:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Refreshing...");
-                builder.setIcon(R.drawable.refresh);
-                builder.setMessage("");
+
+                LayoutInflater inflater = MapActivity.this.getLayoutInflater();
+                final View mView = inflater.inflate(R.layout.map_refresh, null);
+                builder.setView(mView);
 
                 builder.setCancelable(true);
 
@@ -578,7 +588,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         dlg.dismiss(); // when the task active then close the dialog
                         t.cancel();// also just top the timer thread, otherwise, you may receive a crash report
                     }
-                }, 3000); // after 3 second (or 3000 miliseconds), the task will be active.
+                }, 4000); // after 3 second (or 3000 miliseconds), the task will be active.
                 dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
@@ -612,10 +622,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 alert.dismiss();
 
                 try {
-                    List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                    addresses = mCoder.getFromLocationName(address, 1);
                     if (addresses.size() > 0) {
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
+                        mCurrentLocality = addresses.get(0).getLocality();
                         mMapTask = new MapTask(lat, lng, 10000, mToken);
                         mMapTask.execute((Void) null);
                     } else
@@ -654,7 +665,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         MapTask(double lat, double lng, int radius, String token) {
 
             try {
-                List<Address> addresses = mCoder.getFromLocation(lat, lng, 1);
+                 addresses = mCoder.getFromLocation(lat, lng, 1);
                 mLocality = addresses.get(0).getLocality();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -727,6 +738,108 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
                 // writeToFile(result, mContext);
+
+            }
+
+
+        }
+    }
+
+    private void setThumbnails(String thumbnails) {
+        try {
+            JSONObject jsonobject = new JSONObject(thumbnails);
+
+            Iterator it = mReportMap.keySet().iterator();
+            while(it.hasNext()) {
+                String key = (String) it.next();
+
+                String thumbnail = jsonobject.getString(key);
+
+                byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
+
+                mReportMap.get(key).makeImg(data);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public class ThumbnailTask extends AsyncTask<Void, Void, String> {
+
+        String mLocality;
+
+
+        ThumbnailTask(String locality) {
+
+            mLocality = locality;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails?"
+                        + "location=" + mLocality);
+
+                String s = RequestsREST.doGET(url, null);
+
+                System.out.println("RESPOSTA DO BACKGROUND:" + s);
+
+                return s;
+
+
+
+
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mThumbnailTask = null;
+
+            System.out.println("RESPOSTA DO POSTEXECUTE " + result);
+
+
+            if (result.equals(SERVER_ERROR)) {
+
+                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
+                System.out.println("SERVER ERROR");
+
+            } else if (result.equals(NO_CONTENT_ERROR)) {
+
+                Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
+                System.out.println("NADA A MOSTRAR NA ZONA");
+
+            } else if (result.equals(NOT_FOUND_ERROR)) {
+
+                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
+                System.out.println("NOT FOUND ERROR");
+
+            } else if (result.equals(BAD_REQUEST_ERROR)) {
+
+                System.out.println("BAD REQUEST ERROR");
+
+            } else {
+                System.out.println("FAZENDO THUMBNAILS");
+
+                setThumbnails(result);
+
 
             }
 

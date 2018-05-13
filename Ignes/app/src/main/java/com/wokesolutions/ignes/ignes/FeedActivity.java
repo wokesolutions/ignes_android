@@ -1,5 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,22 +16,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity {
 
     Map<String, MarkerClass> markerMap;
+
     private RecyclerView recyclerView;
+
     private DrawerLayout mDrawerLayout;
+
     private ActionBarDrawerToggle mMenu;
 
     private LinearLayout mLoggoutButton;
-    private LinearLayout mFeedButton;
+
     private LinearLayout mMapButton;
 
     private TextView mLocality;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +43,6 @@ public class FeedActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
-
-        RecyclerView.LayoutManager rvLayoutManager = manager;
 
         recyclerView.setLayoutManager(manager);
 
@@ -72,9 +73,6 @@ public class FeedActivity extends AppCompatActivity {
         String firstKey = (String) markerMap.keySet().iterator().next();
         mLocality = findViewById(R.id.feed_address);
         mLocality.setText(markerMap.get(firstKey).getmLocality());
-
-
-
     }
 
     /*----- About Menu Bar -----*/
@@ -128,5 +126,4 @@ public class FeedActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

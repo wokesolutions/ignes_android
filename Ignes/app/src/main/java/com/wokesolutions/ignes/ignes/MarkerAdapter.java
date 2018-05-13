@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -89,7 +87,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 i.putExtra("markerDate", markerItem.getmDate());
                 i.putExtra("markerDescription", markerItem.getmDescription());
                 i.putExtra("markerGravity", markerItem.getmGravity());
-                i.putExtra("markerImg", markerItem.getmImg_byte());
+                i.putExtra("markerImg", markerItem.getmImgbyte());
                 i.putExtra("markerUsername", markerItem.getmCreator_username());
                 i.putExtra("markerTitle", markerItem.getmTitle());
                 i.putExtra("markerStatus", markerItem.getmStatus());

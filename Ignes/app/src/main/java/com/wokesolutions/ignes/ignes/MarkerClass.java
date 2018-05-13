@@ -8,28 +8,33 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class MarkerClass implements ClusterItem {
 
-    private String mMarker_ID;
-
     private LatLng mPosition;
+
+    private String mMarker_ID;
     private String mStatus;
     private String mAddress;
     private String mDate;
     private String mCreator_username;
-    private double mLatitude;
-    private double mLongitude;
     private String mDescription;
     private String mGravity;
     private String mTitle;
-    private byte[] mImg_byte;
     private String mLikes;
     private String mDislikes;
-    private Bitmap mImage_bitmap;
+
     private String mLocality;
+
+    private byte[] mImgbyte;
+
+    private Bitmap mImage_bitmap;
+
+    private double mLatitude;
+    private double mLongitude;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
-                       String title, byte[] img_byte, String likes, String dislikes, String locality, String marker_id) {
+                       String title, String likes, String dislikes, String locality, String marker_id) {
+
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
@@ -40,18 +45,17 @@ public class MarkerClass implements ClusterItem {
         mDescription = description;
         mGravity = gravity;
         mTitle = title;
-        mImg_byte = img_byte;
-        mImage_bitmap = makeImg();
+        mImage_bitmap = null;
         mLikes = likes;
         mDislikes = dislikes;
         mLocality = locality;
         mMarker_ID = marker_id;
+        mImgbyte = null;
 
     }
     public String getMarkerID(){
         return mMarker_ID;
     }
-
     @Override
     public LatLng getPosition() {
         return mPosition;
@@ -113,19 +117,21 @@ public class MarkerClass implements ClusterItem {
         return mLikes;
     }
 
-    public byte[] getmImg_byte() {
-        return mImg_byte;
-    }
-
-    private Bitmap makeImg() {
+    public Bitmap makeImg( byte[] thumbnail) {
+        mImgbyte = thumbnail;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
-        mImage_bitmap = BitmapFactory.decodeByteArray(mImg_byte, 0, mImg_byte.length, options);
+        mImage_bitmap = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length, options);
 
         return mImage_bitmap;
+    }
+
+    public byte[] getmImgbyte() {
+        return mImgbyte;
     }
 
     public Bitmap getmImg_bitmap() {
         return mImage_bitmap;
     }
+
 }

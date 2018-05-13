@@ -721,7 +721,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("SERVER ERROR");
 
             } else if (result.equals(NO_CONTENT_ERROR)) {
-
+                isReady = true;
                 Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
                 System.out.println("NADA A MOSTRAR NA ZONA");
 

@@ -213,6 +213,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
+                String reportID = jsonobject.getString("Report");
+
                 double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
 
                 double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
@@ -244,7 +246,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("report_title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, img_byte, likes, dislikes, locality);
+                        description, gravity, title, img_byte, likes, dislikes, locality, reportID);
 
                 if (!temp.contains(report))
                     temp.add(report);

@@ -29,7 +29,7 @@ public class MarkerClass implements ClusterItem {
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
-                       String title, byte[] img_byte, String likes, String dislikes, String locality/*, String marker_id*/) {
+                       String title, byte[] img_byte, String likes, String dislikes, String locality, String marker_id) {
         mPosition = new LatLng(lat, lng);
         mStatus = status;
         mAddress = address;
@@ -45,12 +45,12 @@ public class MarkerClass implements ClusterItem {
         mLikes = likes;
         mDislikes = dislikes;
         mLocality = locality;
-       // mMarker_ID = marker_id;
+        mMarker_ID = marker_id;
 
     }
-   /* public String getMarkerID(){
+    public String getMarkerID(){
         return mMarker_ID;
-    }*/
+    }
 
     @Override
     public LatLng getPosition() {

@@ -58,8 +58,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -74,7 +77,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
     private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
 
-    public static ArrayList<MarkerClass> mReportList;
+
+    public static Map<String, MarkerClass> mReportMap;
 
     private GoogleMap mMap;
 
@@ -122,7 +126,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this, Locale.getDefault());
 
         mCurrentLocation = null;
-        mReportList = new ArrayList<>();
+        mReportMap = new HashMap<>();
+
         mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -176,14 +181,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        System.out.println("TAMANHO DA LISTA" + mReportList.size());
+        System.out.println("TAMANHO DA LISTA" + mReportMap.size());
 
         // Add ten cluster items in close proximity, for purposes of this example.
-        for (int i = 0; i < mReportList.size(); i++) {
+        Iterator it = mReportMap.keySet().iterator();
+        while(it.hasNext()) {
+            String key = (String) it.next();
+            mClusterManager.addItem(mReportMap.get(key));
+            mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
+
+        }
+        /*for (int i = 0; i < mReportMap.size(); i++) {
             System.out.println("LISTA NA POSICAO " + i + "-->" + mReportList.get(i).getPosition());
             mClusterManager.addItem(mReportList.get(i));
             mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
-        }
+        }*/
     }
 
     @Override
@@ -205,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setMarkers(String markers, double lat, double lng, String locality) {
         try {
-            ArrayList<MarkerClass> temp = new ArrayList<>();
+            Map<String, MarkerClass> temp = new HashMap<>();
 
             JSONArray jsonarray = new JSONArray(markers);
 
@@ -248,11 +260,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, img_byte, likes, dislikes, locality, reportID);
 
-                if (!temp.contains(report))
-                    temp.add(report);
+                if (!temp.containsKey(reportID))
+                    temp.put(reportID, report);
             }
 
-            mReportList = temp;
+            mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
 

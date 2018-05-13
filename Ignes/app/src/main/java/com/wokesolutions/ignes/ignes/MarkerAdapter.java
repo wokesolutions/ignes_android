@@ -12,15 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
 
     private Context mContext;
-    private ArrayList<MarkerClass> mList;
+    private Map<String, MarkerClass> mMap;
 
-    MarkerAdapter(Context context, ArrayList<MarkerClass> list) {
+    MarkerAdapter(Context context, Map<String, MarkerClass> map) {
         mContext = context;
-        mList = list;
+        mMap = map;
     }
 
     @NonNull
@@ -39,7 +40,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        final MarkerClass markerItem = mList.get(position);
+        Object[] keys =  mMap.keySet().toArray();
+
+        final MarkerClass markerItem = mMap.get(keys[position]);
 
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
@@ -100,7 +103,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mMap.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

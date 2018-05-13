@@ -16,10 +16,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity {
 
-    ArrayList<MarkerClass> markerList;
+    Map<String, MarkerClass> markerMap;
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -43,9 +45,9 @@ public class FeedActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(manager);
 
-        markerList = MapActivity.mReportList;
+        markerMap = MapActivity.mReportMap;
 
-        MarkerAdapter markerAdapter = new MarkerAdapter(this, markerList);
+        MarkerAdapter markerAdapter = new MarkerAdapter(this, markerMap);
 
         recyclerView.setAdapter(markerAdapter);
         recyclerView.setNestedScrollingEnabled(false);
@@ -64,11 +66,12 @@ public class FeedActivity extends AppCompatActivity {
 
         menuButtons();
         TextView errorText = (TextView) findViewById(R.id.text_error);
-        if(markerList.isEmpty())
+        if(markerMap.isEmpty())
             errorText.setText("There are no reports to list in this area...");
 
+        String firstKey = (String) markerMap.keySet().iterator().next();
         mLocality = findViewById(R.id.feed_address);
-        mLocality.setText(markerList.get(0).getmLocality());
+        mLocality.setText(markerMap.get(firstKey).getmLocality());
 
 
 

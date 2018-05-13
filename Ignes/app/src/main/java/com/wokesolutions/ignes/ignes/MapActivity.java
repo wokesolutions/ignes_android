@@ -76,7 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
     private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
 
-
+//apagar
     public static Map<String, MarkerClass> mReportMap;
 
     private ThumbnailTask mThumbnailTask = null;

@@ -28,6 +28,8 @@ public class FeedActivity extends AppCompatActivity {
     private LinearLayout mFeedButton;
     private LinearLayout mMapButton;
 
+    private TextView mLocality;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,10 @@ public class FeedActivity extends AppCompatActivity {
         if(markerList.isEmpty())
             errorText.setText("There are no reports to list in this area...");
 
+        mLocality = findViewById(R.id.feed_address);
+        mLocality.setText(markerList.get(0).getmLocality());
+
+
 
     }
 
@@ -93,12 +99,12 @@ public class FeedActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
-        MenuItem item = menu.findItem(R.id.refreshicon);
-        item.setVisible(false);
+
         MenuItem item2 = menu.findItem(R.id.searchicon);
         item2.setVisible(false);
         MenuItem item3 = menu.findItem(R.id.reporticon);
         item3.setVisible(false);
+
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -113,6 +119,9 @@ public class FeedActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
+
+        if (item.getItemId() == R.id.refreshicon)
+            recreate();
 
         return super.onOptionsItemSelected(item);
     }

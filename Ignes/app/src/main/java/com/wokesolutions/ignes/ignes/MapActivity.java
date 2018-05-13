@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -100,10 +101,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private Context mContext;
 
+    private SharedPreferences sharedPref;
+
+    private String mToken;
+
+    private boolean isReady;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        isReady = false;
 
         String languageToLoad = "pt_PT";
         Locale locale = new Locale(languageToLoad);
@@ -143,6 +153,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mToken = sharedPref.getString("token", "");
 
         /*----------------------------------------------------------------------------------*/
     }
@@ -190,7 +203,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    private void setMarkers(String markers, double lat, double lng) {
+    private void setMarkers(String markers, double lat, double lng, String locality) {
         try {
             ArrayList<MarkerClass> temp = new ArrayList<>();
 
@@ -204,9 +217,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
 
-                String likes = "0";//Integer.parseInt(jsonobject.getString("reportvotes_up"));
+                String likes = jsonobject.getString("reportvotes_up");
 
-                String dislikes = "0";// Integer.parseInt(jsonobject.getString("reportvotes_down"));
+                String dislikes = jsonobject.getString("reportvotes_down");
 
                 String status = jsonobject.getString("report_status");
 
@@ -214,7 +227,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String date = jsonobject.getString("report_creationtimeformatted");
 
-                byte[] img_byte = Base64.decode(jsonobject.getString("report_thumbnail"), Base64.DEFAULT);
+                byte[] img_byte = new byte[10]; //Base64.decode(jsonobject.getString("report_thumbnail"), Base64.DEFAULT);
 
                 String name = jsonobject.getString("report_username");
 
@@ -231,7 +244,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("report_title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, img_byte, likes, dislikes);
+                        description, gravity, title, img_byte, likes, dislikes, locality);
 
                 if (!temp.contains(report))
                     temp.add(report);
@@ -240,6 +253,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mReportList = temp;
 
             setUpCluster(new LatLng(lat, lng));
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -378,7 +392,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mCurrentLocation = location;
                         LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000);
+                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000, mToken);
                         mMapTask.execute((Void) null);
                     }
                 }
@@ -409,22 +423,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /*----- About Menu Bar -----*/
     private void menuButtons() {
-        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
 
-        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mFeedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, FeedActivity.class));
-            }
-        });
+            mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
+            mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MapActivity.this, LogoutActivity.class));
+                    finish();
+                }
+            });
+
+            mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
+            mFeedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+                }
+            });
+
     }
 
 
@@ -440,17 +456,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
+        if (isReady) {
+            if (item.getItemId() == R.id.reporticon) {
+                onReport();
+                return true;
+            }
 
-        if (item.getItemId() == R.id.reporticon) {
-            onReport();
-            return true;
+            if (item.getItemId() == R.id.searchicon)
+                filterTask();
+
+            if (item.getItemId() == R.id.refreshicon)
+                recreate();
         }
-
-        if (item.getItemId() == R.id.searchicon)
-            filterTask();
-
-        if (item.getItemId() == R.id.refreshicon)
-            recreate();
+        else
+            Toast.makeText(mContext, "Try again later", Toast.LENGTH_LONG).show();
 
         return super.onOptionsItemSelected(item);
     }
@@ -583,7 +602,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (addresses.size() > 0) {
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
-                        mMapTask = new MapTask(lat, lng, 10000);
+                        mMapTask = new MapTask(lat, lng, 10000, mToken);
                         mMapTask.execute((Void) null);
                     } else
                         Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
@@ -616,8 +635,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         double mLng;
         int mRadius;
         String mLocality;
+        String mToken;
 
-        MapTask(double lat, double lng, int radius) {
+        MapTask(double lat, double lng, int radius, String token) {
 
             try {
                 List<Address> addresses = mCoder.getFromLocation(lat, lng, 1);
@@ -629,6 +649,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mLat = lat;
             mLng = lng;
             mRadius = radius;
+            mToken = token;
+
 
         }
 
@@ -651,7 +673,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getinlocation?"
                         + "location=" + mLocality);
 
-                String s = RequestsREST.doGET(url, null);
+                String s = RequestsREST.doGET(url, mToken);
 
                 return s;
 
@@ -685,13 +707,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             } else if (result.equals(BAD_REQUEST_ERROR)) {
 
-                Toast.makeText(mContext, "Try again later", Toast.LENGTH_LONG).show();
                 System.out.println("BAD REQUEST ERROR");
 
             } else {
-
-                setMarkers(result, mLat, mLng);
-               // writeToFile(result, mContext);
+                isReady = true;
+                setMarkers(result, mLat, mLng, mLocality);
+                // writeToFile(result, mContext);
 
             }
 

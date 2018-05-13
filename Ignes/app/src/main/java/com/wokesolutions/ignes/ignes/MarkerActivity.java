@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -30,6 +31,8 @@ public class MarkerActivity extends AppCompatActivity {
     TextView marker_gravity_title;
     Button marker_button_likes;
     Button marker_button_dislikes;
+
+    EditText marker_comment;
 
     ProgressBar mProgressBar;
 
@@ -67,6 +70,10 @@ public class MarkerActivity extends AppCompatActivity {
         marker_dislikes = findViewById(R.id.marker_dislikes_number);
         marker_comments = findViewById(R.id.marker_comments_number);
         marker_gravity_title = findViewById(R.id.marker_gravity_title);
+
+        marker_comment = findViewById(R.id.marker_comment);
+        marker_comment.setFocusable(false);
+        marker_comment.setFocusableInTouchMode(true);
 
 
         Intent intent = getIntent();
@@ -171,6 +178,7 @@ public class MarkerActivity extends AppCompatActivity {
 
             }
         });
+
 
     }
 

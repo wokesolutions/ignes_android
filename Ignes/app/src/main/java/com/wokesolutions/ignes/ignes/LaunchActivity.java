@@ -44,9 +44,6 @@ public class LaunchActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
 
-
-
-
         layout = (LinearLayout) findViewById(R.id.launcher_touch);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);

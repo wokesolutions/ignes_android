@@ -272,14 +272,15 @@ public class ReportFormActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        final int THUMBSIZE = 512;
+        final int THUMBSIZE = 700;
+        final int QUALITY = 50;
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     addPicToGallery();
 
-                    mThumbnail = scaleImage(700, mCurrentPhotoPath);
+                    mThumbnail = scaleImage(THUMBSIZE, mCurrentPhotoPath);
 
                     mImageView.setVisibility(View.VISIBLE);
 
@@ -307,7 +308,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageView.setImageBitmap(mThumbnail);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
                     byteArray = stream.toByteArray();
 
 
@@ -318,7 +319,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageURI = data.getData();
 
-                    mThumbnail = scaleImage(700, getRealPathFromURI(mImageURI));
+                    mThumbnail = scaleImage(THUMBSIZE, getRealPathFromURI(mImageURI));
                         /*mThumbnail = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
                                 THUMBSIZE,
@@ -354,7 +355,7 @@ public class ReportFormActivity extends AppCompatActivity {
                     mImageView.setImageBitmap(mThumbnail);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
                     byteArray = stream.toByteArray();
 
                     System.out.println("BYTEARRAY ENVIADO DO THUMB: " + byteArray.length);

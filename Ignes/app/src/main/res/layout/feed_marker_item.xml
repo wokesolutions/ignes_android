@@ -13,14 +13,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:background="@drawable/button_grey"
+            android:background="@drawable/shadow"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
-                android:background="@color/backgroundColor"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/activity_horizontal_margin">
@@ -90,6 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:weightSum="4"
                     android:orientation="vertical">
 
                     <TextView
@@ -97,6 +97,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|center"
+                        android:layout_weight="1"
                         android:fontFamily="@font/quicksand_light"
                         android:inputType="textMultiLine"
                         android:text="TITLE"
@@ -107,8 +108,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:background="@color/backgroundColor"
                         android:gravity="center"
+                        android:layout_weight="1"
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
@@ -132,6 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:layout_weight="1"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/activity_horizontal_margin">
@@ -158,9 +160,10 @@
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="bottom"
                         android:layout_marginTop="10dp"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <ImageView

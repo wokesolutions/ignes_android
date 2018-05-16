@@ -462,10 +462,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 @Override
                 public void onClick(View v) {
 
-                    String key = mReportMap.keySet().iterator().next();
-                    if(mReportMap.get(key).getmImgbyte()==null){
-                    mThumbnailTask = new ThumbnailTask(mCurrentLocality);
-                    mThumbnailTask.execute((Void) null);}
+                    if(!mReportMap.isEmpty()) {
+                        String key = mReportMap.keySet().iterator().next();
+                        if (mReportMap.get(key).getmImgbyte() == null) {
+                            mThumbnailTask = new ThumbnailTask(mCurrentLocality);
+                            mThumbnailTask.execute((Void) null);
+                        }
+                    }
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
                 }
             });

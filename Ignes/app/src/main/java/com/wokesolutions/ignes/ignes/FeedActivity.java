@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity {
@@ -66,13 +67,15 @@ public class FeedActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
         menuButtons();
-        TextView errorText = (TextView) findViewById(R.id.text_error);
-        if(markerMap.isEmpty())
-            errorText.setText("There are no reports to list in this area...");
-
-        String firstKey = (String) markerMap.keySet().iterator().next();
         mLocality = findViewById(R.id.feed_address);
-        mLocality.setText(markerMap.get(firstKey).getmLocality());
+        
+        if (markerMap.isEmpty())
+            mLocality.setText("There are no reports to list in this area...");
+        
+        else {
+            String firstKey = (String) markerMap.keySet().iterator().next();
+            mLocality.setText(markerMap.get(firstKey).getmLocality());
+        }
     }
 
     /*----- About Menu Bar -----*/

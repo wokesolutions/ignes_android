@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:weightSum="2"
@@ -96,9 +95,7 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/feed_recyclerview"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/colorIgnesPrimary" />
-
+                        android:layout_height="match_parent"/>
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="5dp"

@@ -6,9 +6,9 @@
     <color name="backgroundColor">#EEEEEE</color>
     <color name="colorIgnesPrimary">#AD363B</color>
     <color name="colorIgnesSecondary">#CA3110</color>
-    <color name="colorIgnesGreen">#3BAD36</color>
-    <color name="colorIgnesGreenII">#76AD36</color>
     <color name="transColor"></color>
     <color name="background_material_light">#fafafa</color>
+    <color name="gravity_one">#54A562</color>
+
 </resources>
 

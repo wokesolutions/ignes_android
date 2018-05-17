@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -52,13 +53,10 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView date = holder.marker_date;
         TextView address = holder.marker_address;
         TextView gravity = holder.marker_gravity;
-        TextView status = holder.marker_status;
         Button more_button = holder.button_more;
-        // TextView likes = holder.marker_likes;
-        // TextView dislikes = holder.marker_dislikes;
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
-      //  View layout = holder.marker_layout;
+        ImageView img_status = holder.marker_status_image;
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -75,21 +73,24 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             gravity.setVisibility(View.GONE);
             gravity_title.setVisibility(View.GONE);
         }
-      /*  if (markerItem.getmGravity().equals("1"))
-            layout.setBackgroundColor(Color.parseColor("#54A562"));
+       if (markerItem.getmGravity().equals("1"))
+           gravity_title.setTextColor(Color.parseColor("#E0DCBE"));
         if (markerItem.getmGravity().equals("2"))
-            layout.setBackgroundColor(Color.parseColor("#368043"));
+            gravity_title.setTextColor(Color.parseColor("#CFD7C7"));
         if (markerItem.getmGravity().equals("3"))
-            layout.setBackgroundColor(Color.parseColor("#1A5023"));
+            gravity_title.setTextColor(Color.parseColor("#70A9A1"));
         if (markerItem.getmGravity().equals("4"))
-            layout.setBackgroundColor(Color.parseColor("#0F3A16"));
+            gravity_title.setTextColor(Color.parseColor("#40798C"));
         if (markerItem.getmGravity().equals("5"))
-            layout.setBackgroundColor(Color.parseColor("#0F3A16"));*/
+            gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
 
-        status.setText(markerItem.getmStatus());
-        // likes.setText(markerItem.getmLikes());
-        // dislikes.setText(markerItem.getmDislikes());
+        if(markerItem.getmStatus().equals("CLOSE"))
+            img_status.setImageResource(R.drawable.lockclose);
+        if(markerItem.getmStatus().equals("OPEN"))
+            img_status.setImageResource(R.drawable.lockopen);
+
+
         int total = Integer.parseInt(markerItem.getmLikes()) + Integer.parseInt(markerItem.getmDislikes());
         interacts.setText("" + total);
 
@@ -123,20 +124,17 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView marker_status_image;
         ImageView marker_image;
         TextView marker_title;
-        TextView marker_likes;
-        TextView marker_dislikes;
         TextView marker_interacts;
         TextView marker_address;
         TextView marker_username;
         TextView marker_date;
         TextView marker_gravity;
-        TextView marker_status;
         TextView marker_gravity_title;
         Button button_more;
         Context itemViewContext;
-     //   View marker_layout;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -147,13 +145,10 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_date = itemView.findViewById(R.id.feed_date_marker);
             marker_username = itemView.findViewById(R.id.feed_username_marker);
             marker_gravity = itemView.findViewById(R.id.feed_gravity_marker);
-            marker_status = itemView.findViewById(R.id.feed_status_marker);
             button_more = itemView.findViewById(R.id.button_more);
-            //  marker_likes = itemView.findViewById(R.id.feed_likes_number);
-            // marker_dislikes = itemView.findViewById(R.id.feed_dislikes_number);
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
-          //  marker_layout = itemView.findViewById(R.id.layout_marker_feed);
+            marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
         }
     }

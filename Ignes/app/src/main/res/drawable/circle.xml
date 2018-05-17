@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Larger blue circle in back -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/colorIgnesPrimary"/>
+            <size
+                android:width="60dp"
+                android:height="60dp"/>
+        </shape>
+    </item>
+    <!-- Smaller red circle in front -->
+    <item>
+        <shape android:shape="oval">
+            <!-- transparent stroke = larger_circle_size - smaller_circle_size -->
+            <stroke android:color="@android:color/transparent"
+                android:width="5dp"/>
+            <solid android:color="#ffffff"/>
+            <size
+                android:width="55dp"
+                android:height="55dp"/>
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/reticencias"
+        android:width="20dp"
+        android:height="20dp"
+        android:gravity="center"
+        >
+    </item>
+</layer-list>

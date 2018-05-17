@@ -183,7 +183,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mGravitySlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mGravity = progress + 1;
+                mGravity = progress;
                 System.out.println(mGravity);
             }
 
@@ -453,7 +453,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String address = this.address;
         double lat = this.lat;
         double lng = this.lng;
-        int gravity = mGravity;
+        int gravity = mGravity+1;
 
         if (mReportType.equals("detailed")) {
             if (!mCheckBox.isChecked()) {

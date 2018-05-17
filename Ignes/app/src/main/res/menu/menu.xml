@@ -18,4 +18,10 @@
         android:title="Refresh"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/username"
+        android:title=""
+        app:showAsAction="always|withText"
+        android:actionLayout="@layout/activity_profile"/>
+
 </menu>

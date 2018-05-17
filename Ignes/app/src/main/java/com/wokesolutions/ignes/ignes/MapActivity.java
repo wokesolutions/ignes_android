@@ -101,6 +101,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private LinearLayout mLoggoutButton;
 
+    private LinearLayout mProfileButton;
+
     private LinearLayout mFeedButton;
 
     private Location mCurrentLocation;
@@ -457,6 +459,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
 
+        mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
+        mProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
+            }
+        });
+
             mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
             mFeedButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -479,6 +489,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        MenuItem item1 = menu.findItem(R.id.username);
+        item1.setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -494,6 +508,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             if (item.getItemId() == R.id.searchicon)
                 filterTask();
+
 
             if (item.getItemId() == R.id.refreshicon)
                 recreate();
@@ -722,6 +737,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("SERVER ERROR");
+                setMarkers(readFromFile(mContext),mLat, mLng, mLocality);
 
             } else if (result.equals(NO_CONTENT_ERROR)) {
                 isReady = true;
@@ -740,7 +756,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             } else {
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
-                // writeToFile(result, mContext);
+                 writeToFile(result, mContext);
 
             }
 

@@ -17,24 +17,25 @@ import android.widget.TextView;
 
 public class MarkerActivity extends AppCompatActivity {
 
-    ImageView marker_image;
-    TextView marker_title;
-    TextView marker_description;
-    TextView marker_address;
-    TextView marker_username;
-    TextView marker_date;
-    TextView marker_gravity;
-    TextView marker_status;
-    TextView marker_likes;
-    TextView marker_dislikes;
-    TextView marker_comments;
-    TextView marker_gravity_title;
-    Button marker_button_likes;
-    Button marker_button_dislikes;
+    private ImageView marker_image;
+    private ImageView marker_status_image;
+    private TextView marker_title;
+    private TextView marker_description;
+    private TextView marker_address;
+    private TextView marker_username;
+    private TextView marker_date;
+    private TextView marker_gravity;
+    private TextView marker_status;
+    private TextView marker_likes;
+    private TextView marker_dislikes;
+    private TextView marker_comments;
+    private TextView marker_gravity_title;
+    private Button marker_button_likes;
+    private Button marker_button_dislikes;
 
-    EditText marker_comment;
+    private EditText marker_comment;
 
-    ProgressBar mProgressBar;
+    private ProgressBar mProgressBar;
 
     private int mLikes;
     private int mDislikes;
@@ -58,6 +59,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
 
+        marker_status_image = findViewById(R.id.marker_lock_img);
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
         marker_description = findViewById(R.id.marker_description);
@@ -70,11 +72,9 @@ public class MarkerActivity extends AppCompatActivity {
         marker_dislikes = findViewById(R.id.marker_dislikes_number);
         marker_comments = findViewById(R.id.marker_comments_number);
         marker_gravity_title = findViewById(R.id.marker_gravity_title);
-
         marker_comment = findViewById(R.id.marker_comment);
         marker_comment.setFocusable(false);
         marker_comment.setFocusableInTouchMode(true);
-
 
         Intent intent = getIntent();
 
@@ -109,7 +109,14 @@ public class MarkerActivity extends AppCompatActivity {
         }
 
 
-        marker_status.setText(intent.getExtras().getString("markerStatus"));
+        String status = intent.getExtras().getString("markerStatus");
+        marker_status.setText(status);
+
+        if (status.equals("CLOSE"))
+            marker_status_image.setImageResource(R.drawable.lockclose);
+        if (status.equals("OPEN"))
+            marker_status_image.setImageResource(R.drawable.lockopen);
+
         marker_likes.setText(intent.getExtras().getString("markerLikes"));
         marker_dislikes.setText(intent.getExtras().getString("markerDislikes"));
 
@@ -153,7 +160,7 @@ public class MarkerActivity extends AppCompatActivity {
                 }
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
-                marker_likes.setText(""+mLikes);
+                marker_likes.setText("" + mLikes);
 
             }
         });
@@ -174,12 +181,10 @@ public class MarkerActivity extends AppCompatActivity {
 
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
-                marker_dislikes.setText(""+mDislikes);
+                marker_dislikes.setText("" + mDislikes);
 
             }
         });
-
-
     }
 
     @Override

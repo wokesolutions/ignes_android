@@ -32,7 +32,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
 
-    <!-- Profile String -->
+    <!-- ProfileActivity String -->
     <string name="welcome">Welcome,</string>
     <string name="points">Points:</string>
     <string name="insert_company_code">Insert company code</string>

@@ -75,7 +75,9 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".LogoutActivity" />
-        <activity android:name=".Profile"></activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:theme="@style/WelcomeTheme" />
     </application>
 
 </manifest>

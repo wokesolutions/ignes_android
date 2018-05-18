@@ -11,6 +11,7 @@ public class MarkerClass implements ClusterItem {
     private LatLng mPosition;
 
     private String mMarker_ID;
+
     private String mStatus;
     private String mAddress;
     private String mDate;

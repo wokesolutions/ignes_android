@@ -1,13 +1,16 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,9 +27,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
@@ -56,6 +62,8 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class ReportFormActivity extends AppCompatActivity {
+
+    public static final int MY_PERMISSIONS_REQUEST_STORAGE = 77;
 
     private String BAD_REQUEST = "java.io.IOException: HTTP error code: 400";
     private final int REQUEST_IMAGE_CAPTURE = 0;
@@ -95,8 +103,8 @@ public class ReportFormActivity extends AppCompatActivity {
     private LinearLayout mMediumForm;
     private LinearLayout mSliderForm;
     private LinearLayout mLongForm;
-    private LinearLayout mSelectImage;
     private LinearLayout mReportForm;
+    private LinearLayout mUploadPicture;
 
     private EditText mTitle;
     private EditText mMediumTitle;
@@ -119,6 +127,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
         context = this;
 
+        checkStoragePermission();
+
         Intent intent = getIntent();
         mReportType = intent.getExtras().getString("TYPE");
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
@@ -127,7 +137,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mReportForm = (LinearLayout) findViewById(R.id.report_form);
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
-        mSelectImage = (LinearLayout) findViewById(R.id.report_long_image_form);
+        mUploadPicture = (LinearLayout) findViewById(R.id.report_upload);
 
         mCheckBox = (CheckBox) findViewById(R.id.report_checkbox);
 
@@ -233,6 +243,50 @@ public class ReportFormActivity extends AppCompatActivity {
 
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    public boolean checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Ignes Storage Permission")
+                        .setMessage("Storage permission is needed to save and upload pictures.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(ReportFormActivity.this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        MY_PERMISSIONS_REQUEST_STORAGE);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_STORAGE);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                System.out.println("Permission Granted");
+            }
+        }
     }
 
     private void addPicToGallery() {
@@ -391,7 +445,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 mMediumForm.setVisibility(View.GONE);
                 mLongForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.GONE);
-                mSelectImage.setVisibility(View.GONE);
+                mUploadPicture.setVisibility(View.GONE);
                 openCamera();
             }
             break;

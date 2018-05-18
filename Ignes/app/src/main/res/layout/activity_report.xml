@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="10dp"
-    android:focusableInTouchMode="true"
     android:paddingVertical="@dimen/activity_horizontal_margin">
 
     <ImageView
@@ -61,10 +61,10 @@
                         android:id="@+id/report_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_light"
-                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
-                        android:singleLine="true" />
+                        android:fontFamily="@font/quicksand_light"
+                        android:singleLine="true"
+                        android:textStyle="bold" />
 
 
                 </android.support.design.widget.TextInputLayout>
@@ -87,10 +87,10 @@
                         android:id="@+id/report_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_light"
-                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
-                        android:inputType="textMultiLine" />
+                        android:fontFamily="@font/quicksand_light"
+                        android:inputType="textMultiLine"
+                        android:textStyle="bold" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_bold"
                     android:text="Use my current location"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -120,10 +120,10 @@
                         android:id="@+id/report_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_light"
-                        android:textStyle="bold"
                         android:backgroundTint="@color/colorIgnesPrimary"
-                        android:inputType="textMultiLine" />
+                        android:fontFamily="@font/quicksand_light"
+                        android:inputType="textMultiLine"
+                        android:textStyle="bold" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -146,33 +146,47 @@
                 android:gravity="center_horizontal"
                 android:visibility="visible">
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/addphoto"
-                    android:layout_gravity="center_vertical"/>
-                <Button
-                    android:id="@+id/report_camera_button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                <LinearLayout
+                    android:id="@+id/report_take_picture"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:text="Camera"
-                    android:textColor="#000000" />
+                    android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/report_upload_button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/addphoto" />
+
+                    <Button
+                        android:id="@+id/report_camera_button"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:text="Camera"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/report_upload"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:text="Upload"
-                    android:textColor="#000000" />
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/uploadicon"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/report_upload_button"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:text="Upload"
+                        android:textColor="#000000" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/uploadicon" />
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -226,10 +240,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:fontFamily="@font/quicksand_bold"
                     android:gravity="center"
                     android:text="Rank report gravity"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="20dp"
                     android:textStyle="bold" />

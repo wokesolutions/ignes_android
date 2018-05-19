@@ -85,8 +85,8 @@
 
                         <ImageView
                             android:id="@+id/feed_image_marker"
-                            android:layout_width="700px"
-                            android:layout_height="700px"
+                            android:layout_width="140dp"
+                            android:layout_height="140dp"
                             android:gravity="left"
                             android:src="@drawable/addphoto" />
                     </LinearLayout>

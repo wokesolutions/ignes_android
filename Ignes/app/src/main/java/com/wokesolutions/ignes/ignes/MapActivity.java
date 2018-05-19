@@ -59,6 +59,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,7 +77,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
     private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
 
-//apagar
     public static Map<String, MarkerClass> mReportMap;
 
     private ThumbnailTask mThumbnailTask = null;
@@ -114,10 +114,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String mToken;
 
     private boolean isReady;
+    private String isReportFinished;
+    private String isThumbnailFinished;
 
     private String mCurrentLocality;
 
     private List<Address> addresses;
+
+    private int offsetReports;
+    private int offsetThumbnails;
+
+    private List<String> orderedIds;
+
+    private String requestId;
 
 
     @Override
@@ -126,6 +135,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         isReady = false;
+
+        offsetReports = 0;
+        offsetThumbnails = 0;
+        requestId = "";
+        orderedIds = new LinkedList<>();
 
         String languageToLoad = "pt_PT";
         Locale locale = new Locale(languageToLoad);
@@ -219,11 +233,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setMarkers(String markers, double lat, double lng, String locality) {
         try {
-            Map<String, MarkerClass> temp = new HashMap<>();
+            //Map<String, MarkerClass> temp = new HashMap<>();
 
             JSONArray jsonarray = new JSONArray(markers);
 
-            for (int i = 0; i < jsonarray.length(); i++) {
+            offsetReports = jsonarray.getJSONObject(0).getInt("offset");
+            requestId = jsonarray.getJSONObject(0).getString("requestid");
+            isReportFinished = jsonarray.getJSONObject(0).getString("finished");
+
+            for (int i = 1; i < jsonarray.length(); i++) {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
@@ -260,11 +278,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title,likes, dislikes, locality, reportID);
 
-                if (!temp.containsKey(reportID))
-                    temp.put(reportID, report);
+                if (!mReportMap.containsKey(reportID)) {
+                    mReportMap.put(reportID, report);
+                    orderedIds.add(reportID);
+                }
             }
 
-            mReportMap = temp;
+            //mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
 
@@ -712,9 +732,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected String doInBackground(Void... voids) {
             try {
-
+                System.out.println("REQUEST ID DOS MARKERS: "+requestId);
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getinlocation?"
-                        + "location=" + mLocality);
+                        + "location=" + mLocality + "&requestid=" + requestId + "&offset=" + offsetReports);
 
                 String s = RequestsREST.doGET(url, mToken);
 
@@ -729,6 +749,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(final String result) {
             mMapTask = null;
+            //isReportFinished = false;
 
             System.out.println("RESPOSTA DO POSTEXECUTE " + result);
 
@@ -737,7 +758,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
                 System.out.println("SERVER ERROR");
-                setMarkers(readFromFile(mContext),mLat, mLng, mLocality);
+                //setMarkers(readFromFile(mContext),mLat, mLng, mLocality);
 
             } else if (result.equals(NO_CONTENT_ERROR)) {
                 isReady = true;
@@ -756,10 +777,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             } else {
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
-                 writeToFile(result, mContext);
+                if(isReportFinished.equals("false"))
+                    new MapTask(mLat, mLng, 10000, mToken).execute((Void) null);
+                 //writeToFile(result, mContext);
 
             }
-
+            System.out.println("PRINT DO OFFSET NO POST EXECUTE: "+offsetReports);
 
         }
     }
@@ -768,16 +791,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         try {
             JSONObject jsonobject = new JSONObject(thumbnails);
 
-            Iterator it = mReportMap.keySet().iterator();
+
+            requestId = jsonobject.getString("requestid");
+            isThumbnailFinished = jsonobject.getString("finished");
+            System.out.println("PRINT DO ISTHUMBNAIL: " + isThumbnailFinished);
+
+            for(int i = offsetThumbnails; i < jsonobject.getInt("offset"); i++) {
+                String reportId = orderedIds.get(i);
+
+                System.out.println("REPORT ID: "+reportId);
+
+                String thumbnail = jsonobject.getString(reportId);
+
+                byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
+
+                mReportMap.get(reportId).makeImg(data);
+            }
+            offsetThumbnails = jsonobject.getInt("offset");
+
+            //Iterator it = mReportMap.keySet().iterator();
+            /*Iterator it = orderedIds.iterator();
             while(it.hasNext()) {
                 String key = (String) it.next();
+                System.out.println("KEY: "+key);
 
                 String thumbnail = jsonobject.getString(key);
 
                 byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
 
                 mReportMap.get(key).makeImg(data);
-            }
+            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -812,7 +855,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             try {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails?"
-                        + "location=" + mLocality);
+                        + "location=" + mLocality + "&requestid=" + requestId + "&offset=" + offsetThumbnails);
 
                 String s = RequestsREST.doGET(url, null);
 
@@ -858,9 +901,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("FAZENDO THUMBNAILS");
 
                 setThumbnails(result);
-
-
+                if(isThumbnailFinished.equals("false")) {
+                    new ThumbnailTask(mCurrentLocality).execute((Void) null);
+                }
             }
+            System.out.println("PRINT DO OFFSET THUMBNAIL NO POST EXECUTE: "+offsetThumbnails);
 
 
         }

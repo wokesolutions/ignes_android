@@ -304,6 +304,29 @@ public class ReportFormActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+    public static Bitmap getScaledBitmap(String path, int newSize) {
+        File image = new File(path);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inInputShareable = true;
+        options.inPurgeable = true;
+
+        BitmapFactory.decodeFile(image.getPath(), options);
+        if ((options.outWidth == -1) || (options.outHeight == -1))
+            return null;
+
+        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
+                : options.outWidth;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = originalSize / newSize;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
+
+        return scaledBitmap;
+    }
+
     private Bitmap scaleImage(int destWidth, String path) {
         Bitmap image = BitmapFactory.decodeFile(path);
 
@@ -326,15 +349,16 @@ public class ReportFormActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        final int THUMBSIZE = 700;
-        final int QUALITY = 50;
+        final int THUMBSIZE = 256;
+        final int QUALITY = 85;
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     addPicToGallery();
 
-                    mThumbnail = scaleImage(THUMBSIZE, mCurrentPhotoPath);
+                    //mThumbnail = scaleImage(THUMBSIZE, mCurrentPhotoPath);
+                    mThumbnail = getScaledBitmap(mCurrentPhotoPath, THUMBSIZE);
 
                     mImageView.setVisibility(View.VISIBLE);
 
@@ -373,11 +397,12 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     mImageURI = data.getData();
 
-                    mThumbnail = scaleImage(THUMBSIZE, getRealPathFromURI(mImageURI));
-                        /*mThumbnail = ThumbnailUtils.extractThumbnail(
+                    mThumbnail = getScaledBitmap(getRealPathFromURI(mImageURI), THUMBSIZE);
+                    //mThumbnail = scaleImage(THUMBSIZE, getRealPathFromURI(mImageURI));
+                       /* mThumbnail = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
                                 THUMBSIZE,
-                                THUMBSIZE*2);*/
+                                THUMBSIZE);*/
                     mImageView.setVisibility(View.VISIBLE);
 
                     System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());

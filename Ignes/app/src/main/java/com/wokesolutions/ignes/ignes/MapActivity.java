@@ -114,7 +114,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String mToken;
 
     private boolean isReady;
-    private String isReportFinished;
+    private boolean isReportFinished;
     private boolean isThumbnailFinished;
 
     private String mCurrentLocality;
@@ -123,6 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private int offsetReports;
     private int offsetThumbnails;
+    private int offsetThumbnailTask;
 
     private List<String> orderedIds;
 
@@ -138,6 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         offsetReports = 0;
         offsetThumbnails = 0;
+        offsetThumbnailTask = 0;
         requestId = "";
         orderedIds = new LinkedList<>();
 
@@ -241,7 +243,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String reportID = jsonobject.getString("id");
+                String reportID = jsonobject.getString("Report");
 
                 double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
 
@@ -255,7 +257,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String address = jsonobject.getString("report_address");
 
-                String date = jsonobject.getString("report_creationtimeformatted");
+                //String date = jsonobject.getString("report_creationtimeformatted");
 
                 String name = jsonobject.getString("report_username");
 
@@ -731,7 +733,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("REQUEST ID DOS MARKERS: "+requestId);
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
                         + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
-                        + "&radius=" + 3 + "&cursor=");
+                        + "&radius=" + 5 + "&cursor=");
 
                 String s = RequestsREST.doGET(url, mToken, null);
 
@@ -746,7 +748,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(final String result) {
             mMapTask = null;
-            //isReportFinished = false;
+            isReportFinished = false;
 
             System.out.println("RESPOSTA DO POSTEXECUTE " + result);
 
@@ -774,6 +776,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             } else {
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
+
+                if(isReportFinished)
+                    System.out.println("ACABARAM OS REPORTS");
+                else{
+                    System.out.println("Continuar a pedir...");
+                }
                  //writeToFile(result, mContext);
 
             }
@@ -784,18 +792,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void setThumbnails(String thumbnails) {
         try {
+
             JSONObject jsonobject = new JSONObject(thumbnails);
 
-            System.out.println("ID1: "+ jsonobject.has("dGVzdGVzMTUyODMwNDg5MDM5Nw=="));
-            System.out.println("ID2: "+ jsonobject.has("dGVzdGVzMTUyODkyNzU4MTU2OA=="));
-            System.out.println("ID3: "+ jsonobject.has("dGVzdGVzMTUyODkyNzU0NTU2Ng=="));
+            for(int i = offsetThumbnails; i < orderedIds.size(); i++) {
 
-
-            //requestId = jsonobject.getString("requestid");
-            //isThumbnailFinished = jsonobject.getString("finished");
-            //System.out.println("PRINT DO ISTHUMBNAIL: " + isThumbnailFinished);
-
-            for(int i = offsetThumbnails; i < 3; i++) {
                 String reportId = orderedIds.get(i);
 
                 System.out.println();
@@ -808,7 +809,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 mReportMap.get(reportId).makeImg(data);
 
-                //offsetThumbnails = i;
+                offsetThumbnails = i;
             }
 
 
@@ -862,12 +863,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 int counter = 0;
 
 
-                for(int i = offsetThumbnails; i < orderedIds.size(); i++) {
+                for(int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
                     String reportId = orderedIds.get(i);
 
                     header = header + reportId+"&";
 
-                    offsetThumbnails = i;
+                    offsetThumbnailTask = i;
 
                     if(counter == 10) {
                         if(orderedIds.size() - offsetThumbnails > 0)

@@ -81,7 +81,7 @@ public class RequestsREST {
             connection.setReadTimeout(10000);
             // Timeout for connection.connect() arbitrarily set to 10000ms.
             connection.setConnectTimeout(10000);
-            // For this use case, set HTTP method to GET.
+            // For this use case, set HTTP method to POST.
             connection.setRequestMethod("POST");
             // Already true by default but setting just in case; needs to be true since this request
             // is carrying an input (response) body.

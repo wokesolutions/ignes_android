@@ -115,7 +115,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private boolean isReady;
     private String isReportFinished;
-    private String isThumbnailFinished;
+    private boolean isThumbnailFinished;
 
     private String mCurrentLocality;
 
@@ -237,15 +237,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             JSONArray jsonarray = new JSONArray(markers);
 
-            offsetReports = jsonarray.getJSONObject(0).getInt("offset");
-            requestId = jsonarray.getJSONObject(0).getString("requestid");
-            isReportFinished = jsonarray.getJSONObject(0).getString("finished");
-
-            for (int i = 1; i < jsonarray.length(); i++) {
+            for (int i = 0; i < jsonarray.length(); i++) {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String reportID = jsonobject.getString("Report");
+                String reportID = jsonobject.getString("id");
 
                 double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
 
@@ -275,7 +271,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("report_title"))
                     title = jsonobject.getString("report_title");
 
-                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, "teste", name,
                         description, gravity, title,likes, dislikes, locality, reportID);
 
                 if (!mReportMap.containsKey(reportID)) {
@@ -499,7 +495,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             mThumbnailTask.execute((Void) null);
                         }
                     }
-                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+                    //startActivity(new Intent(MapActivity.this, FeedActivity.class));
                 }
             });
     }
@@ -733,10 +729,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected String doInBackground(Void... voids) {
             try {
                 System.out.println("REQUEST ID DOS MARKERS: "+requestId);
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getinlocation?"
-                        + "location=" + mLocality + "&requestid=" + requestId + "&offset=" + offsetReports);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+                        + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
+                        + "&radius=" + 3 + "&cursor=");
 
-                String s = RequestsREST.doGET(url, mToken);
+                String s = RequestsREST.doGET(url, mToken, null);
 
                 return s;
 
@@ -777,8 +774,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             } else {
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
-                if(isReportFinished.equals("false"))
-                    new MapTask(mLat, mLng, 10000, mToken).execute((Void) null);
                  //writeToFile(result, mContext);
 
             }
@@ -791,23 +786,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         try {
             JSONObject jsonobject = new JSONObject(thumbnails);
 
+            System.out.println("ID1: "+ jsonobject.has("dGVzdGVzMTUyODMwNDg5MDM5Nw=="));
+            System.out.println("ID2: "+ jsonobject.has("dGVzdGVzMTUyODkyNzU4MTU2OA=="));
+            System.out.println("ID3: "+ jsonobject.has("dGVzdGVzMTUyODkyNzU0NTU2Ng=="));
 
-            requestId = jsonobject.getString("requestid");
-            isThumbnailFinished = jsonobject.getString("finished");
-            System.out.println("PRINT DO ISTHUMBNAIL: " + isThumbnailFinished);
 
-            for(int i = offsetThumbnails; i < jsonobject.getInt("offset"); i++) {
+            //requestId = jsonobject.getString("requestid");
+            //isThumbnailFinished = jsonobject.getString("finished");
+            //System.out.println("PRINT DO ISTHUMBNAIL: " + isThumbnailFinished);
+
+            for(int i = offsetThumbnails; i < 3; i++) {
                 String reportId = orderedIds.get(i);
 
-                System.out.println("REPORT ID: "+reportId);
+                System.out.println();
+
+                System.out.println("REPORT ID ON SET THUMBNAILS: "+reportId);
 
                 String thumbnail = jsonobject.getString(reportId);
 
                 byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
 
                 mReportMap.get(reportId).makeImg(data);
+
+                //offsetThumbnails = i;
             }
-            offsetThumbnails = jsonobject.getInt("offset");
+
 
             //Iterator it = mReportMap.keySet().iterator();
             /*Iterator it = orderedIds.iterator();
@@ -854,10 +857,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected String doInBackground(Void... voids) {
             try {
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails?"
-                        + "location=" + mLocality + "&requestid=" + requestId + "&offset=" + offsetThumbnails);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails");
+                String header="";
+                int counter = 0;
 
-                String s = RequestsREST.doGET(url, null);
+
+                for(int i = offsetThumbnails; i < orderedIds.size(); i++) {
+                    String reportId = orderedIds.get(i);
+
+                    header = header + reportId+"&";
+
+                    offsetThumbnails = i;
+
+                    if(counter == 10) {
+                        if(orderedIds.size() - offsetThumbnails > 0)
+                            isThumbnailFinished = false;
+                        else
+                            isThumbnailFinished = true;
+                        break;
+                    }
+                    counter++;
+                }
+                System.out.println("THUMBNAIL HEADER: "+ header);
+                String s = RequestsREST.doGET(url, null, header);
 
                 System.out.println("RESPOSTA DO BACKGROUND:" + s);
 
@@ -901,9 +923,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("FAZENDO THUMBNAILS");
 
                 setThumbnails(result);
-                if(isThumbnailFinished.equals("false")) {
-                    new ThumbnailTask(mCurrentLocality).execute((Void) null);
-                }
+                //if(isThumbnailFinished.equals("false")) {
+                  //  new ThumbnailTask(mCurrentLocality).execute((Void) null);
+                //}
+                //else
+                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
             System.out.println("PRINT DO OFFSET THUMBNAIL NO POST EXECUTE: "+offsetThumbnails);
 

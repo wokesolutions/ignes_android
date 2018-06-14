@@ -47,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private UserLoginTask mAuthTask = null;
 
+    private SharedPreferences sharedPref;
+
     // UI references.
     private EditText mIdentificationView;
     private EditText mPasswordView;
@@ -59,6 +61,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+
         // Set up the login form.
         mIdentificationView = (EditText) findViewById(R.id.login_identification);
 
@@ -233,10 +238,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     String token = s.getHeaderField("Authorization").toString();
 
-                    SharedPreferences shared = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-                    Editor editor = shared.edit();
+                    sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                    Editor editor = sharedPref.edit();
 
                     editor.putString("token", token);
+                    editor.putString("username", mIdentification);
                     editor.apply();
 
                     System.out.println("TOKEN: " + token);

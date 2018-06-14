@@ -23,7 +23,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestsREST {
 
-    public static String doGET(URL url, String token) throws IOException {
+    public static String doGET(URL url, String token, String thumbHeader) throws IOException {
 
         InputStream stream = null;
         HttpURLConnection connection = null;
@@ -42,6 +42,8 @@ public class RequestsREST {
             //Inserts token in an header for validation
             if(token != null)
                 connection.setRequestProperty("Authorization", token);
+            if(thumbHeader != null)
+                connection.setRequestProperty("Reports", thumbHeader);
             // Open communications link (network traffic occurs here).
             connection.connect();
             int responseCode = connection.getResponseCode();

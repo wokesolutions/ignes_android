@@ -72,7 +72,7 @@ public class LogoutActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/logout");
 
-                String s = RequestsREST.doGET(url, mToken);
+                String s = RequestsREST.doGET(url, mToken, null);
                 //Assumes from this side that the response is ok
                 return s;
             } catch (Exception e) {

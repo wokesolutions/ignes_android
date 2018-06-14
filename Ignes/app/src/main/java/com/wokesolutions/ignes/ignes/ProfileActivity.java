@@ -1,12 +1,20 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +27,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -27,6 +40,11 @@ import static android.R.layout.simple_spinner_item;
 
 
 public class ProfileActivity extends AppCompatActivity {
+    private Context context;
+
+    private ConfirmAccountTask mConfirmAccountTask = null;
+
+    private SharedPreferences sharedPref;
 
     private DrawerLayout mDrawerLayout;
 
@@ -40,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Button mAboutButton;
     private Button mLessAboutButton;
+    private Button mConfirmAccountButton;
 
     private Button mEditButton;
 
@@ -50,6 +69,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
 
@@ -65,6 +86,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         menuButtons();
 
+        mConfirmAccountButton = findViewById(R.id.confirm_account_button);
+        mConfirmAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmAccount();
+            }
+        });
         mAboutButton = findViewById(R.id.profile_about_button);
         mLessAboutButton = findViewById(R.id.profile_less_button);
         mAboutButton.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +105,8 @@ public class ProfileActivity extends AppCompatActivity {
         mEditButton = findViewById(R.id.edit_button);
 
         mAboutLayout = findViewById(R.id.about_layout);
+
+        context = this;
     }
 
     /*----- About Menu Bar -----*/
@@ -331,6 +361,100 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void confirmAccount() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Confirm Account");
+
+        LayoutInflater inflater = ProfileActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.confirm_account, null);
+        mBuilder.setView(mView);
+        final AlertDialog alert = mBuilder.create();
+
+        alert.show();
+
+        final EditText mSearchText = (EditText) mView.findViewById(R.id.confirmation_code_text);
+
+        Button mConfirm = (Button) mView.findViewById(R.id.confirm_alert_button);
+        mConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String insertedCode = mSearchText.getText().toString();
+                System.out.println("INSERTED CODE: " + insertedCode);
+                mConfirmAccountTask = new ConfirmAccountTask(insertedCode);
+                mConfirmAccountTask.execute((Void) null);
+                alert.dismiss();
+            }
+        });
+    }
+
+    public class ConfirmAccountTask extends AsyncTask<Void, Void, String> {
+
+        private final String mToken;
+        private final String mCode;
+
+        ConfirmAccountTask(String code) {
+            mToken = sharedPref.getString("token", "");
+            mCode = code;
+        }
+
+        /**
+         * Cancel background network operation if we do not have network connectivity.
+         */
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+
+                JSONObject codejson = new JSONObject();
+
+                codejson.put("code", mCode);
+
+                String username = sharedPref.getString("username","ERROR");
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/activate/"+username);
+
+                HttpURLConnection s = RequestsREST.doPOST(url, codejson, mToken);
+                System.out.println("RESPOSTA DO VALIDATE - " + s.getResponseCode());
+                return s.getResponseMessage();
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mConfirmAccountTask = null;
+
+            if (result.equals("OK")) {
+
+                Toast.makeText(context, "Your account has been confirmed", Toast.LENGTH_LONG).show();
+
+
+            } else {
+                System.out.println("ERRO A CONFIRMAR CONTA: " +result);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mConfirmAccountTask = null;
+
+        }
     }
 
 }

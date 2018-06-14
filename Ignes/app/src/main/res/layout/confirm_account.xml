@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please insert the code sent to your email and press confirm to validate your account."
+        android:inputType="textMultiLine"/>
+
+    <EditText
+        android:id="@+id/confirmation_code_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"/>
+
+    <Button
+        android:id="@+id/confirm_alert_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@drawable/button"
+        android:fontFamily="@font/quicksand_bold"
+        android:text="Confirm"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
+
+</LinearLayout>

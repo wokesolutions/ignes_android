@@ -140,7 +140,7 @@ public class LaunchActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/verifytoken");
 
-                String s = RequestsREST.doGET(url, mToken);
+                String s = RequestsREST.doGET(url, mToken, null);
                 System.out.println("Strrrrriiiing - " + s);
                 return s;
             } catch (Exception e) {

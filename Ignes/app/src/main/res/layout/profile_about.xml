@@ -105,43 +105,32 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-
-            <LinearLayout
+            <RadioGroup
                 android:id="@+id/edit_gender"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:visibility="gone">
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/checkbox_female"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/quicksand_light"
-                    android:text="Female"
-                    android:textStyle="bold" />
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Male" />
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/checkbox_male"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/quicksand_light"
-                    android:text="Male"
-                    android:textStyle="bold" />
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Female" />
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/checkbox_other"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/quicksand_light"
-                    android:text="Prefer to self describe"
-                    android:textStyle="bold" />
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Prefer to self describe" />
 
                 <EditText
                     android:id="@+id/edit_gender_self"
@@ -153,7 +142,9 @@
                     android:fontFamily="@font/quicksand_light"
                     android:hint="self description*"
                     android:visibility="gone" />
-            </LinearLayout>
+
+            </RadioGroup>
+
 
             <View
                 android:layout_width="match_parent"

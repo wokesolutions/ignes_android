@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ConfirmAccountTask mConfirmAccountTask = null;
 
+    private EditProfileTask mEditProfileTask = null;
+
     private SharedPreferences sharedPref;
 
     private DrawerLayout mDrawerLayout;
@@ -55,6 +59,8 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout mFeedButton;
 
     private LinearLayout mMapButton;
+
+    private String mUsername;
 
     private Button mAboutButton;
     private Button mLessAboutButton;
@@ -71,6 +77,8 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+
+        mUsername = sharedPref.getString("username","ERROR");
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
 
@@ -144,7 +152,7 @@ public class ProfileActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu, menu);
 
         MenuItem item0 = menu.findItem(R.id.username);
-        item0.setTitle("maryloyal");
+        item0.setTitle(mUsername);
 
         MenuItem item1 = menu.findItem(R.id.refreshicon);
         item1.setVisible(false);
@@ -238,10 +246,10 @@ public class ProfileActivity extends AppCompatActivity {
         final View edit_birthdate = mAboutLayout.findViewById(R.id.edit_birthdate_layout);
         final View birthdate = mAboutLayout.findViewById(R.id.birthdate_layout);
 
-        final View edit_gender = mAboutLayout.findViewById(R.id.edit_gender);
-        final CheckBox checkBox_female = mAboutLayout.findViewById(R.id.checkbox_female);
-        final CheckBox checkBox_male = mAboutLayout.findViewById(R.id.checkbox_male);
-        final CheckBox checkBox_other = mAboutLayout.findViewById(R.id.checkbox_other);
+        final RadioGroup edit_gender = mAboutLayout.findViewById(R.id.edit_gender);
+        final RadioButton checkBox_female = mAboutLayout.findViewById(R.id.checkbox_female);
+        final RadioButton checkBox_male = mAboutLayout.findViewById(R.id.checkbox_male);
+        final RadioButton checkBox_other = mAboutLayout.findViewById(R.id.checkbox_other);
 
 
         mEditButton.setOnClickListener(new View.OnClickListener() {
@@ -316,7 +324,6 @@ public class ProfileActivity extends AppCompatActivity {
                             new_gender = edit_gender_self.getText().toString();
                         }
 
-
                         String new_address = edit_address.getText().toString();
                         String new_name = edit_name.getText().toString();
                         String new_contacts = edit_contacts.getText().toString();
@@ -330,6 +337,9 @@ public class ProfileActivity extends AppCompatActivity {
                         day.setText(new_day);
                         month.setText(new_month);
                         year.setText(new_year);
+
+                        String birth = day.getText().toString() +"/"+month.getText().toString()+"/"+year.getText().toString();
+
                         gender.setText(new_gender);
                         address.setText(new_address);
                         name.setText(new_name);
@@ -355,11 +365,13 @@ public class ProfileActivity extends AppCompatActivity {
                         edit_gender_self.setVisibility(View.GONE);
 
                         save_button.setVisibility(View.GONE);
+
+                        mEditProfileTask = new EditProfileTask(phonenumber.getText().toString(), name.getText().toString(), gender.getText().toString(), address.getText().toString(), "locality", "zip", birth, job.getText().toString(), "skills");
+                        mEditProfileTask.execute((Void) null);
                     }
                 });
             }
         });
-
 
     }
 
@@ -453,6 +465,103 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             mConfirmAccountTask = null;
+
+        }
+    }
+
+    public class EditProfileTask extends AsyncTask<Void, Void, String> {
+
+
+        private final String mToken;
+        private final String mPhone;
+        private final String mName;
+        private final String mGender;
+        private final String mAddress;
+        private final String mLocality;
+        private final String mZip;
+        private final String mBirth;
+        private final String mJob;
+        private final String mSkills;
+
+
+        EditProfileTask(String phone, String name, String gender, String address, String locality, String zip, String birth, String job, String skills) {
+            mToken = sharedPref.getString("token", "");
+            mPhone = phone;
+            mName = name;
+            mGender = gender;
+            mAddress = address;
+            mLocality = locality;
+            mZip = zip;
+            mBirth = birth;
+            mJob = job;
+            mSkills =skills;
+        }
+
+        /**
+         * Cancel background network operation if we do not have network connectivity.
+         */
+        @Override
+        protected void onPreExecute() {
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo == null || !networkInfo.isConnected() ||
+                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                // If no connectivity, cancel task and update Callback with null data.
+                cancel(true);
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+
+                JSONObject json = new JSONObject();
+
+                json.put("useroptional_phone", mPhone);
+                json.put("useroptional_name", mName);
+                json.put("useroptional_gender", mGender);
+                json.put("useroptional_address", mAddress);
+                json.put("useroptional_locality", mLocality);
+                json.put("useroptional_zip", mZip);
+                json.put("useroptional_birth", mBirth);
+                json.put("useroptional_job", mJob);
+                json.put("useroptional_skills", mSkills);
+
+                System.out.println("JSON ->>>> : " + json);
+
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/update/"+mUsername);
+
+                HttpURLConnection s = RequestsREST.doPOST(url, json, mToken);
+
+                System.out.println("RESPOSTA DO EDIT - " + s.getResponseCode());
+
+                return s.getResponseMessage();
+
+            } catch (Exception e) {
+                return e.toString();
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(final String result) {
+            mEditProfileTask = null;
+
+            if (result.equals("OK")) {
+
+                Toast.makeText(context, "Your account has been successfully edited", Toast.LENGTH_LONG).show();
+
+
+            } else {
+                System.out.println("ERRO A EDITAR CONTA: " +result);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mEditProfileTask = null;
 
         }
     }

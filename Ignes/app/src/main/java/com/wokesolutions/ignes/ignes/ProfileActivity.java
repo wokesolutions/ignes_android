@@ -13,6 +13,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     private Context context;
@@ -83,6 +86,9 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
 
+    private RecyclerView recyclerView;
+
+    private Map<String, MarkerClass> markerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +160,16 @@ public class ProfileActivity extends AppCompatActivity {
         backBool = false;
 
         checkIfAccountConfirmed();
+
+
+
+        recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
+        LinearLayoutManager manager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(manager);
+        markerMap = MapActivity.mReportMap;
+        MarkerAdapter markerAdapter = new MarkerAdapter(this, markerMap);
+        recyclerView.setAdapter(markerAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
 
 
     }

@@ -106,7 +106,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private LinearLayout mFeedButton;
 
-    private Location mCurrentLocation;
+    public static Location mCurrentLocation;
 
     private Context mContext;
 

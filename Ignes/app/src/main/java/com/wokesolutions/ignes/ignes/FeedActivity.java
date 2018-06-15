@@ -2,24 +2,33 @@ package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Map;
 
+import static com.wokesolutions.ignes.ignes.MapActivity.REPORT_ACTIVITY;
+
 public class FeedActivity extends AppCompatActivity {
+
+    public static final int REPORT_ACTIVITY = 1;
 
     Map<String, MarkerClass> markerMap;
 
@@ -36,6 +45,10 @@ public class FeedActivity extends AppCompatActivity {
     private TextView mLocality;
 
     private LinearLayout mProfileButton;
+
+    private Context mContext;
+
+    private Location mCurrentLocation;
 
 
     @Override
@@ -77,7 +90,10 @@ public class FeedActivity extends AppCompatActivity {
         else {
             String firstKey = (String) markerMap.keySet().iterator().next();
             mLocality.setText(markerMap.get(firstKey).getmLocality());
+            mCurrentLocation = MapActivity.mCurrentLocation;
         }
+
+        mContext = this;
     }
 
     /*----- About Menu Bar -----*/
@@ -118,9 +134,6 @@ public class FeedActivity extends AppCompatActivity {
         item1.setVisible(false);
         MenuItem item2 = menu.findItem(R.id.searchicon);
         item2.setVisible(false);
-        MenuItem item3 = menu.findItem(R.id.reporticon);
-        item3.setVisible(false);
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -139,6 +152,69 @@ public class FeedActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.refreshicon)
             recreate();
 
+        if(item.getItemId() == R.id.reporticon) {
+            onReport();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
+
+    public void onReport() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Report");
+        mBuilder.setIcon(R.drawable.ocorrenciared);
+
+        LayoutInflater inflater = FeedActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.report_choice, null);
+        mBuilder.setView(mView);
+        final AlertDialog alert = mBuilder.create();
+
+        alert.show();
+
+        if (mCurrentLocation != null) {
+            Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
+            mFast.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
+                    i.putExtra("TYPE", "fast");
+                    i.putExtra("LOCATION", mCurrentLocation);
+                    alert.dismiss();
+                    startActivity(i);
+
+                }
+            });
+
+            Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);
+            mMedium.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
+                    i.putExtra("TYPE", "medium");
+                    i.putExtra("LOCATION", mCurrentLocation);
+                    alert.dismiss();
+                    startActivityForResult(i, REPORT_ACTIVITY);
+                }
+            });
+        } else {
+            Toast.makeText(mContext, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
+        }
+        //----LONG-----
+        Button mLong = (Button) mView.findViewById(R.id.report_long_button);
+        mLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
+                i.putExtra("TYPE", "detailed");
+
+                if (mCurrentLocation != null)
+                    i.putExtra("LOCATION", mCurrentLocation);
+
+                alert.dismiss();
+                startActivity(i);
+            }
+        });
+    }
+
 }

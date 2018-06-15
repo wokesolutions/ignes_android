@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,10 +18,20 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +43,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Context context;
     private TextView tx;
     private TextView ty;
-    private UserRegisterTask mRegTask = null;
 
     private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
     private String CONFLICT_ERROR = "java.io.IOException: HTTP error code: 409";
@@ -151,10 +161,6 @@ public class RegisterActivity extends AppCompatActivity {
      * errors are presented and no actual register attempt is made.
      */
     private void attemptRegister() {
-        if (mRegTask != null) {
-            return;
-        }
-
         // Reset errors.
         mEmail.setError(null);
         mPassword.setError(null);
@@ -211,97 +217,64 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
             // showProgress(true);
-            mRegTask = new UserRegisterTask(username, email, password, confirmation);
-            mRegTask.execute((Void) null);
-        }
-    }
-
-    /**
-     * Represents an asynchronous registration task used to authenticate
-     * the user.
-     */
-    public class UserRegisterTask extends AsyncTask<Void, Void, String> {
-
-        private final String mUsernameString;
-        private final String mEmail;
-        private final String mPasswordString;
-        private final String mConfirmation;
-
-
-        UserRegisterTask(String username, String email, String password, String confirmation) {
-            mUsernameString = username;
-            mEmail = email;
-            mPasswordString = password;
-            mConfirmation = confirmation;
-        }
-
-        /**
-         * Cancel background network operation if we do not have network connectivity.
-         */
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                URL url;
-                JSONObject credentials = new JSONObject();
-
-
-                credentials.put("user_username", mUsernameString);
-                credentials.put("user_email", mEmail);
-                credentials.put("user_password", mPasswordString);
-
-                System.out.println("Credentials JSON to send:" + credentials);
-
-                url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
-
-                HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
-
-                return s.getResponseMessage();
-
-            } catch (Exception e) {
-                return e.toString();
-            }
-        }
-
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mRegTask = null;
-
-            System.out.println("RESPOSTA DO REGISTO " + result);
-            if (result.equals("OK")) {
-
-                Toast.makeText(context, "User sucessfully registered", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-
-            } else if (result.equals(CONFLICT_ERROR)) {
-
-                Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
-                changeVisibility("Username");
-                mUsername.setError("Choose a different username");
-                mUsername.requestFocus();
-
-            } else {
-                Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mRegTask = null;
+            registerRequest(username, password, email);
         }
     }
 
 
+    private void registerRequest(String username, String password, String email) {
+        final String mUsername = username;
+        final String mPassword = password;
+        final String mEmail = email;
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://hardy-scarab-200218.appspot.com/api/register/user";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("REGISTER OK");
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("REGISTER ERROR RESPONSE: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_username", mUsername);
+                params.put("user_email", mEmail);
+                params.put("user_password", mPassword);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+        };
+        queue.add(postRequest);
+
+    }
 }
+        /* else if (result.equals(CONFLICT_ERROR)) {
+
+        Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
+        changeVisibility("Username");
+        mUsername.setError("Choose a different username");
+        mUsername.requestFocus();
+
+        } else {
+        Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
+        }*/

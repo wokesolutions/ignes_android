@@ -19,15 +19,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +31,7 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
-
-import static android.R.layout.simple_spinner_item;
-
 
 public class ProfileActivity extends AppCompatActivity {
     private Context context;
@@ -67,8 +59,27 @@ public class ProfileActivity extends AppCompatActivity {
     private Button mConfirmAccountButton;
 
     private Button mEditButton;
+    private Button mSaveButton;
 
     private LinearLayout mAboutLayout;
+
+    private LinearLayout mEditAboutLayout;
+
+    private TextView mDay;
+    private TextView mGender;
+    private TextView mAddress;
+    private TextView mName;
+    private TextView mJob;
+    private TextView mContacts;
+    private TextView mPhonenumber;
+    private TextView mMonth;
+    private TextView mYear;
+    private TextView mSkills;
+    private TextView mLocality;
+    private TextView mProfileName;
+
+    private boolean backBool;
+    private String isConfirmed;
 
 
     @Override
@@ -78,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
-        mUsername = sharedPref.getString("username","ERROR");
+        mUsername = sharedPref.getString("username", "ERROR");
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
 
@@ -110,11 +121,36 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        mEditButton = findViewById(R.id.edit_button);
 
         mAboutLayout = findViewById(R.id.about_layout);
+        mEditAboutLayout = findViewById(R.id.edit_about_layout);
 
         context = this;
+
+        mEditButton = mAboutLayout.findViewById(R.id.edit_button);
+
+        mGender = mAboutLayout.findViewById(R.id.gender);
+        mAddress = mAboutLayout.findViewById(R.id.address);
+        mName = mAboutLayout.findViewById(R.id.name);
+        mJob = mAboutLayout.findViewById(R.id.job);
+        mContacts = mAboutLayout.findViewById(R.id.contacts);
+        mPhonenumber = mAboutLayout.findViewById(R.id.phonenumber);
+        mDay = mAboutLayout.findViewById(R.id.day);
+        mMonth = mAboutLayout.findViewById(R.id.month);
+        mYear = mAboutLayout.findViewById(R.id.year);
+        mSkills = mAboutLayout.findViewById(R.id.skills);
+        mLocality = findViewById(R.id.locality);
+        mProfileName = findViewById(R.id.profile_name);
+
+        mProfileName.setHint(mUsername);
+
+        initializeProfile();
+
+        backBool = false;
+
+        checkIfAccountConfirmed();
+
+
     }
 
     /*----- About Menu Bar -----*/
@@ -144,6 +180,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void checkIfAccountConfirmed() {
+
+        isConfirmed = sharedPref.getString("isConfirmed", "");
+
+        if (isConfirmed.equals("true"))
+            mConfirmAccountButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -179,6 +223,23 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void initializeProfile() {
+
+        mGender.setText(sharedPref.getString("user_gender", ""));
+        mAddress.setText(sharedPref.getString("user_address", ""));
+        mName.setText(sharedPref.getString("user_name", ""));
+        mJob.setText(sharedPref.getString("user_job", ""));
+        mContacts.setText(sharedPref.getString("user_contacts", ""));
+        mPhonenumber.setText(sharedPref.getString("user_phone", ""));
+        mDay.setText(sharedPref.getString("user_day", ""));
+        mMonth.setText(sharedPref.getString("user_month", ""));
+        mYear.setText(sharedPref.getString("user_year", ""));
+        mSkills.setText(sharedPref.getString("user_skills", ""));
+        mLocality.setText(sharedPref.getString("user_locality", ""));
+        mProfileName.setText(sharedPref.getString("user_name", ""));
+    }
+
+
     private void onAboutClick() {
 
         mEditButton.setVisibility(View.VISIBLE);
@@ -196,124 +257,50 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        ArrayList<String> years = new ArrayList<String>();
-        int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = thisYear; i >= 1900; i--) {
-            years.add(Integer.toString(i));
-        }
-        ArrayAdapter<String> adapterI = new ArrayAdapter<String>(this, simple_spinner_item, years);
-        final Spinner spinYear = mAboutLayout.findViewById(R.id.year_spinner);
-        spinYear.setAdapter(adapterI);
-
-        ArrayList<String> days = new ArrayList<String>();
-        for (int i = 1; i <= 31; i++) {
-            days.add(Integer.toString(i));
-        }
-        ArrayAdapter<String> adapterII = new ArrayAdapter<String>(this, simple_spinner_item, days);
-        final Spinner spinDay = mAboutLayout.findViewById(R.id.day_spinner);
-        spinDay.setAdapter(adapterII);
-
-
-        ArrayAdapter<CharSequence> adapterIII = ArrayAdapter.createFromResource(this,
-                R.array.month_array, simple_spinner_item);
-        final Spinner spinMonth = mAboutLayout.findViewById(R.id.month_spinner);
-        spinMonth.setAdapter(adapterIII);
-
-        final Button save_button = mAboutLayout.findViewById(R.id.save_button);
-
-        final TextView gender = mAboutLayout.findViewById(R.id.gender);
-        final TextView address = mAboutLayout.findViewById(R.id.address);
-        final TextView name = mAboutLayout.findViewById(R.id.name);
-        final TextView job = mAboutLayout.findViewById(R.id.job);
-        final TextView contacts = mAboutLayout.findViewById(R.id.contacts);
-        final TextView phonenumber = mAboutLayout.findViewById(R.id.phonenumber);
-
-        final TextView day = mAboutLayout.findViewById(R.id.day);
-        final TextView month = mAboutLayout.findViewById(R.id.month);
-        final TextView year = mAboutLayout.findViewById(R.id.year);
-
-        final TextView edit_day = mAboutLayout.findViewById(R.id.edit_day);
-        final TextView edit_month = mAboutLayout.findViewById(R.id.edit_month);
-        final TextView edit_year = mAboutLayout.findViewById(R.id.edit_year);
-
-        final EditText edit_address = mAboutLayout.findViewById(R.id.edit_address);
-        final EditText edit_name = mAboutLayout.findViewById(R.id.edit_name);
-        final EditText edit_job = mAboutLayout.findViewById(R.id.edit_job);
-        final EditText edit_contacts = mAboutLayout.findViewById(R.id.edit_contacts);
-        final EditText edit_phonenumber = mAboutLayout.findViewById(R.id.edit_phonenumber);
-        final EditText edit_gender_self = mAboutLayout.findViewById(R.id.edit_gender_self);
-
-        final View edit_birthdate = mAboutLayout.findViewById(R.id.edit_birthdate_layout);
-        final View birthdate = mAboutLayout.findViewById(R.id.birthdate_layout);
-
-        final RadioGroup edit_gender = mAboutLayout.findViewById(R.id.edit_gender);
-        final RadioButton checkBox_female = mAboutLayout.findViewById(R.id.checkbox_female);
-        final RadioButton checkBox_male = mAboutLayout.findViewById(R.id.checkbox_male);
-        final RadioButton checkBox_other = mAboutLayout.findViewById(R.id.checkbox_other);
-
-
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                address.setVisibility(View.GONE);
-                name.setVisibility(View.GONE);
-                job.setVisibility(View.GONE);
-                contacts.setVisibility(View.GONE);
-                phonenumber.setVisibility(View.GONE);
-                birthdate.setVisibility(View.GONE);
-                gender.setVisibility(View.GONE);
+
+                setContentView(R.layout.profile_about_edit);
+
+                backBool = true;
+
+                mSaveButton = findViewById(R.id.save_button);
+
+                final EditText edit_day = findViewById(R.id.edit_day);
+                edit_day.setText(mDay.getText().toString());
+                final EditText edit_month = findViewById(R.id.edit_month);
+                edit_month.setText(mMonth.getText().toString());
+                final EditText edit_year = findViewById(R.id.edit_year);
+                edit_year.setText(mYear.getText().toString());
+                final EditText edit_address = findViewById(R.id.edit_address);
+                edit_address.setText(mAddress.getText().toString());
+                final EditText edit_locality = findViewById(R.id.edit_locality);
+                edit_locality.setText(mLocality.getText().toString());
+                final EditText edit_skills = findViewById(R.id.edit_skills);
+                edit_skills.setText(mSkills.getText().toString());
+                final EditText edit_name = findViewById(R.id.edit_name);
+                edit_name.setText(mName.getText().toString());
+                final EditText edit_job = findViewById(R.id.edit_job);
+                edit_job.setText(mJob.getText().toString());
+                final EditText edit_contacts = findViewById(R.id.edit_contacts);
+                edit_contacts.setText(mContacts.getText().toString());
+                final EditText edit_phonenumber = findViewById(R.id.edit_phonenumber);
+                edit_phonenumber.setText(mPhonenumber.getText().toString());
+                final EditText edit_gender_self = findViewById(R.id.edit_gender_self);
 
 
-                spinMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        edit_month.setText(spinMonth.getItemAtPosition(position).toString());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-                spinDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        edit_day.setText(spinDay.getItemAtPosition(position).toString());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-                spinYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        edit_year.setText(spinYear.getItemAtPosition(position).toString());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                });
-
-                edit_address.setVisibility(View.VISIBLE);
-                edit_name.setVisibility(View.VISIBLE);
-                edit_job.setVisibility(View.VISIBLE);
-                edit_contacts.setVisibility(View.VISIBLE);
-                edit_phonenumber.setVisibility(View.VISIBLE);
-                edit_birthdate.setVisibility(View.VISIBLE);
-                edit_gender.setVisibility(View.VISIBLE);
-
-                save_button.setVisibility(View.VISIBLE);
-
-                save_button.setOnClickListener(new View.OnClickListener() {
+                mSaveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         String new_gender = "";
 
-                        //falta mostrar o edittext para escreveer o genero que se quer
+
+                        RadioGroup edit_gender = findViewById(R.id.edit_gender);
+                        RadioButton checkBox_female = findViewById(R.id.checkbox_female);
+                        RadioButton checkBox_male = findViewById(R.id.checkbox_male);
+                        RadioButton checkBox_other = findViewById(R.id.checkbox_other);
 
                         if (checkBox_female.isChecked())
                             new_gender = "Female";
@@ -324,50 +311,71 @@ public class ProfileActivity extends AppCompatActivity {
                             new_gender = edit_gender_self.getText().toString();
                         }
 
+
+                        String new_day = edit_day.getText().toString();
+                        String new_month = edit_month.getText().toString();
+                        String new_year = edit_year.getText().toString();
                         String new_address = edit_address.getText().toString();
                         String new_name = edit_name.getText().toString();
                         String new_contacts = edit_contacts.getText().toString();
                         String new_job = edit_job.getText().toString();
                         String new_phonenumber = edit_phonenumber.getText().toString();
+                        String new_locality = edit_locality.getText().toString();
+                        String new_skills = edit_skills.getText().toString();
 
-                        String new_day = edit_day.getText().toString();
-                        String new_month = edit_month.getText().toString();
-                        String new_year = edit_year.getText().toString();
+                        boolean cancel = false;
+                        View focusView = null;
 
-                        day.setText(new_day);
-                        month.setText(new_month);
-                        year.setText(new_year);
+                        if (!(new_day.equals("") && new_month.equals("") && new_year.equals(""))) {
 
-                        String birth = day.getText().toString() +"/"+month.getText().toString()+"/"+year.getText().toString();
+                            Calendar calendar = Calendar.getInstance();
 
-                        gender.setText(new_gender);
-                        address.setText(new_address);
-                        name.setText(new_name);
-                        job.setText(new_job);
-                        contacts.setText(new_contacts);
-                        phonenumber.setText(new_phonenumber);
+                            if (Integer.parseInt(new_year) >= 1900 && Integer.parseInt(new_year) <= calendar.get(Calendar.YEAR))
+                                mYear.setText(new_year);
+                            else {
+                                edit_year.setError("Invalid Year!");
+                                cancel = true;
+                                focusView = edit_year;
+                            }
 
-                        address.setVisibility(View.VISIBLE);
-                        name.setVisibility(View.VISIBLE);
-                        job.setVisibility(View.VISIBLE);
-                        contacts.setVisibility(View.VISIBLE);
-                        phonenumber.setVisibility(View.VISIBLE);
-                        birthdate.setVisibility(View.VISIBLE);
-                        gender.setVisibility(View.VISIBLE);
 
-                        edit_address.setVisibility(View.GONE);
-                        edit_name.setVisibility(View.GONE);
-                        edit_job.setVisibility(View.GONE);
-                        edit_contacts.setVisibility(View.GONE);
-                        edit_phonenumber.setVisibility(View.GONE);
-                        edit_birthdate.setVisibility(View.GONE);
-                        edit_gender.setVisibility(View.GONE);
-                        edit_gender_self.setVisibility(View.GONE);
+                            if (Integer.parseInt(new_month) <= 12 && Integer.parseInt(new_month) >= 1)
+                                mMonth.setText(new_month);
+                            else {
+                                edit_month.setError("Invalid Month!");
+                                focusView = edit_month;
+                                cancel = true;
+                            }
 
-                        save_button.setVisibility(View.GONE);
+                            if (Integer.parseInt(new_day) >= 1 && Integer.parseInt(new_day) <= 31)
+                                mDay.setText(new_day);
+                            else {
+                                edit_day.setError("Invalid Day!");
+                                cancel = true;
+                                focusView = edit_day;
+                            }
+                        }
 
-                        mEditProfileTask = new EditProfileTask(phonenumber.getText().toString(), name.getText().toString(), gender.getText().toString(), address.getText().toString(), "locality", "zip", birth, job.getText().toString(), "skills");
-                        mEditProfileTask.execute((Void) null);
+                        mGender.setText(new_gender);
+                        mAddress.setText(new_address);
+                        mName.setText(new_name);
+                        mJob.setText(new_job);
+                        mContacts.setText(new_contacts);
+                        mPhonenumber.setText(new_phonenumber);
+                        mLocality.setText(new_locality);
+                        mSkills.setText(new_skills);
+
+                        if (cancel) {
+                            // There was an error; don't attempt register and focus the first
+                            // form field with an error.
+                            focusView.requestFocus();
+                        } else {
+                            mEditProfileTask = new EditProfileTask(mPhonenumber.getText().toString(),
+                                    mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
+                                    mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
+                                    mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString());
+                            mEditProfileTask.execute((Void) null);
+                        }
                     }
                 });
             }
@@ -399,6 +407,17 @@ public class ProfileActivity extends AppCompatActivity {
                 alert.dismiss();
             }
         });
+
+    }
+
+    public void onBackPressed() {
+
+        if (backBool)
+            recreate();
+        else
+            finish();
+
+
     }
 
     public class ConfirmAccountTask extends AsyncTask<Void, Void, String> {
@@ -435,9 +454,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                 codejson.put("code", mCode);
 
-                String username = sharedPref.getString("username","ERROR");
+                String username = sharedPref.getString("username", "ERROR");
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/activate/"+username);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/activate/" + username);
 
                 HttpURLConnection s = RequestsREST.doPOST(url, codejson, mToken);
                 System.out.println("RESPOSTA DO VALIDATE - " + s.getResponseCode());
@@ -455,11 +474,16 @@ public class ProfileActivity extends AppCompatActivity {
             if (result.equals("OK")) {
 
                 Toast.makeText(context, "Your account has been confirmed", Toast.LENGTH_LONG).show();
+                sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("isConfirmed", "true");
 
 
             } else {
-                System.out.println("ERRO A CONFIRMAR CONTA: " +result);
+                System.out.println("ERRO A CONFIRMAR CONTA: " + result);
             }
+
+            checkIfAccountConfirmed();
         }
 
         @Override
@@ -479,12 +503,15 @@ public class ProfileActivity extends AppCompatActivity {
         private final String mAddress;
         private final String mLocality;
         private final String mZip;
-        private final String mBirth;
+        private final String mDay;
+        private final String mMonth;
+        private final String mYear;
         private final String mJob;
         private final String mSkills;
 
 
-        EditProfileTask(String phone, String name, String gender, String address, String locality, String zip, String birth, String job, String skills) {
+        EditProfileTask(String phone, String name, String gender, String address,
+                        String locality, String zip, String day, String month, String year, String job, String skills) {
             mToken = sharedPref.getString("token", "");
             mPhone = phone;
             mName = name;
@@ -492,9 +519,11 @@ public class ProfileActivity extends AppCompatActivity {
             mAddress = address;
             mLocality = locality;
             mZip = zip;
-            mBirth = birth;
+            mDay = day;
+            mMonth = month;
+            mYear = year;
             mJob = job;
-            mSkills =skills;
+            mSkills = skills;
         }
 
         /**
@@ -525,13 +554,13 @@ public class ProfileActivity extends AppCompatActivity {
                 json.put("useroptional_address", mAddress);
                 json.put("useroptional_locality", mLocality);
                 json.put("useroptional_zip", mZip);
-                json.put("useroptional_birth", mBirth);
+                json.put("useroptional_birth", mDay + " " + mMonth + " " + mYear);
                 json.put("useroptional_job", mJob);
                 json.put("useroptional_skills", mSkills);
 
                 System.out.println("JSON ->>>> : " + json);
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/update/"+mUsername);
+                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/update/" + mUsername);
 
                 HttpURLConnection s = RequestsREST.doPOST(url, json, mToken);
 
@@ -552,10 +581,27 @@ public class ProfileActivity extends AppCompatActivity {
             if (result.equals("OK")) {
 
                 Toast.makeText(context, "Your account has been successfully edited", Toast.LENGTH_LONG).show();
+                sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
 
+                SharedPreferences.Editor editor = sharedPref.edit();
+
+                editor.putString("user_phone", mPhone);
+                editor.putString("user_name", mName);
+                editor.putString("user_gender", mGender);
+                editor.putString("user_address", mAddress);
+                editor.putString("user_locality", mLocality);
+                editor.putString("user_zip", mZip);
+                editor.putString("user_day", mDay);
+                editor.putString("user_month", mMonth);
+                editor.putString("user_year", mYear);
+                editor.putString("user_job", mJob);
+                editor.putString("user_skills", mSkills);
+                editor.apply();
+
+                recreate();
 
             } else {
-                System.out.println("ERRO A EDITAR CONTA: " +result);
+                System.out.println("ERRO A EDITAR CONTA: " + result);
             }
         }
 

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_horizontal_margin"
     android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_horizontal_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,12 +21,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="More ABOUT "
+                    android:text="Edit your Profile "
                     android:textAllCaps="true"
                     android:textColor="#000000"
                     android:textSize="20dp" />
@@ -40,16 +41,6 @@
                     android:textColor="#000000"
                     android:textSize="17dp"
                     android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/edit_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/edit_icon"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <View
@@ -67,17 +58,13 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/name"
+            <EditText
+                android:id="@+id/edit_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:backgroundTint="@android:color/transparent"
+                android:text="" />
 
             <View
                 android:layout_width="match_parent"
@@ -88,23 +75,53 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
                 android:text="Gender"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/gender"
-                android:layout_width="match_parent"
+            <RadioGroup
+                android:id="@+id/edit_gender"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+                <RadioButton
+                    android:id="@+id/checkbox_female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Female" />
+
+                <RadioButton
+                    android:id="@+id/checkbox_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Male" />
+
+                <RadioButton
+                    android:id="@+id/checkbox_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorIgnesPrimary"
+                    android:text="Prefer to self describe" />
+
+                <EditText
+                    android:id="@+id/edit_gender_self"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:fontFamily="@font/quicksand_light"
+                    android:hint="self description*"
+                    android:visibility="gone" />
+
+            </RadioGroup>
+
 
             <View
                 android:layout_width="match_parent"
@@ -122,21 +139,22 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/birthdate_layout"
+                android:id="@+id/edit_birthdate_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp">
 
-                <TextView
-                    android:id="@+id/day"
+                <EditText
+                    android:id="@+id/edit_day"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
                     android:fontFamily="@font/quicksand_light"
-                    android:text=""
+                    android:hint="dd"
+                    android:inputType="date"
                     android:textColor="#000000"
                     android:textStyle="bold" />
-
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -145,15 +163,16 @@
                     android:text=" / "
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/month"
+                <EditText
+                    android:id="@+id/edit_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
                     android:fontFamily="@font/quicksand_light"
-                    android:text=""
+                    android:hint="mm"
+                    android:inputType="date"
                     android:textColor="#000000"
                     android:textStyle="bold" />
-
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,16 +181,20 @@
                     android:text=" / "
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/year"
+                <EditText
+                    android:id="@+id/edit_year"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
                     android:fontFamily="@font/quicksand_light"
-                    android:text=""
+                    android:hint="yyyy"
+                    android:inputType="date"
                     android:textColor="#000000"
                     android:textStyle="bold" />
+
 
             </LinearLayout>
+
 
             <View
                 android:layout_width="match_parent"
@@ -189,17 +212,14 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/address"
+            <EditText
+                android:id="@+id/edit_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:backgroundTint="@android:color/transparent"
+                android:inputType="textPostalAddress" />
 
             <View
                 android:layout_width="match_parent"
@@ -217,18 +237,14 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/phonenumber"
+            <EditText
+                android:id="@+id/edit_phonenumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:inputType="phone"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:backgroundTint="@android:color/transparent"
+                android:inputType="phone" />
 
             <View
                 android:layout_width="match_parent"
@@ -245,17 +261,13 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/job"
+            <EditText
+                android:id="@+id/edit_job"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:backgroundTint="@android:color/transparent" />
 
             <View
                 android:layout_width="match_parent"
@@ -272,17 +284,43 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/contacts"
+            <EditText
+                android:id="@+id/edit_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
+                android:backgroundTint="@android:color/transparent"
+                android:inputType="textEmailAddress" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="5dp"
+                android:background="@color/backgroundColor" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
+                android:text="Locality"
                 android:textSize="15dp"
                 android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edit_locality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="@android:color/transparent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="5dp"
+                android:background="@color/backgroundColor" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -293,18 +331,27 @@
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/skills"
+            <EditText
+                android:id="@+id/edit_skills"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
+                android:backgroundTint="@android:color/transparent" />
 
+            <Button
+                android:id="@+id/save_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button"
+                android:fontFamily="@font/quicksand_bold"
+                android:text="Save"
+                android:textColor="@color/backgroundColor"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </ScrollView>

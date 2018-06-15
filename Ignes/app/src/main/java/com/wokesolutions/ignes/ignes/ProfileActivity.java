@@ -53,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout mMapButton;
 
     private String mUsername;
+    private String mUserLevel;
 
     private Button mAboutButton;
     private Button mLessAboutButton;
@@ -77,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mSkills;
     private TextView mLocality;
     private TextView mProfileName;
+    private TextView mProfileLevel;
 
     private boolean backBool;
     private String isConfirmed;
@@ -90,6 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
         mUsername = sharedPref.getString("username", "ERROR");
+        mUserLevel = sharedPref.getString("userLevel", "NO LEVEL");
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
 
@@ -141,8 +144,10 @@ public class ProfileActivity extends AppCompatActivity {
         mSkills = mAboutLayout.findViewById(R.id.skills);
         mLocality = findViewById(R.id.locality);
         mProfileName = findViewById(R.id.profile_name);
+        mProfileLevel = findViewById(R.id.profile_userLevel);
 
         mProfileName.setHint(mUsername);
+        mProfileLevel.setText(mUserLevel);
 
         initializeProfile();
 

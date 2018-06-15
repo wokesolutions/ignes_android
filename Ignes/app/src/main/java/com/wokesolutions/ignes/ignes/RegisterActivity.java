@@ -38,8 +38,6 @@ public class RegisterActivity extends AppCompatActivity {
     private String CONFLICT_ERROR = "java.io.IOException: HTTP error code: 409";
 
     private View mRegister_form;
-    private View mSelectUser_form;
-    private View mRegister_code_layout_form;
     private View mRegister_username_form;
     private View mRegister_email_form;
     private View mRegister_password_form;
@@ -48,18 +46,11 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mEmail_button;
     private Button mPassword_button;
     private Button mSignUp_button;
-    private Button mCode_next_button;
-
-    private Button mCitizen_button;
-    private Button mWorker_button;
 
     private EditText mUsername;
     private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordConfirm;
-    private EditText mCode;
-
-    private String mUserRole = null;
 
 
     @Override
@@ -67,17 +58,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-
-        mSelectUser_form = (View) findViewById(R.id.register_select_user_form);
         mRegister_form = (View) findViewById(R.id.register_form);
         mRegister_username_form = (View) findViewById(R.id.register_username_form);
         mRegister_email_form = (View) findViewById(R.id.register_email_form);
         mRegister_password_form = (View) findViewById(R.id.register_password_form);
-        mRegister_code_layout_form = (View) findViewById(R.id.register_code_layout_form);
 
-        mCode_next_button = (Button) findViewById(R.id.register_code_next_button);
-        mCitizen_button = (Button) findViewById(R.id.register_icon_citizen_button);
-        mWorker_button = (Button) findViewById(R.id.register_icon_worker_button);
         mUsername_button = (Button) findViewById(R.id.register_username_button);
         mEmail_button = (Button) findViewById(R.id.register_email_button);
         mPassword_button = (Button) findViewById(R.id.register_password_button);
@@ -87,44 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
         mEmail = (EditText) findViewById(R.id.register_email);
         mPassword = (EditText) findViewById(R.id.register_password);
         mPasswordConfirm = (EditText) findViewById(R.id.register_confirmation);
-        mCode = (EditText) findViewById(R.id.register_code);
-
-        mCitizen_button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mUserRole = "User";
-                initCitizen();
-            }
-
-        });
-
-        mWorker_button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mUserRole = "Worker";
-                mSelectUser_form.setVisibility(View.GONE);
-                mRegister_code_layout_form.setVisibility(View.VISIBLE);
-
-            }
-        });
-
-        mCode_next_button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mRegister_code_layout_form.setVisibility(View.GONE);
-                initCitizen();
-            }
-        });
-
-        context = this;
-
-    }
-
-    private void initCitizen() {
-
-        mSelectUser_form.setVisibility(View.GONE);
-        mRegister_code_layout_form.setVisibility(View.GONE);
-        mRegister_form.setVisibility(View.VISIBLE);
 
         mUsername_button.setOnClickListener(new OnClickListener() {
             @Override
@@ -151,6 +98,9 @@ public class RegisterActivity extends AppCompatActivity {
                 attemptRegister();
             }
         });
+
+        context = this;
+
     }
 
     private void changeVisibility(String option) {
@@ -161,7 +111,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
-                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
 
@@ -170,7 +119,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                 mRegister_username_form.setVisibility(View.GONE);
                 mRegister_password_form.setVisibility(View.GONE);
-                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
 
@@ -179,7 +127,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                 mRegister_email_form.setVisibility(View.GONE);
                 mRegister_username_form.setVisibility(View.GONE);
-                mRegister_code_layout_form.setVisibility(View.GONE);
             }
             break;
         }
@@ -217,8 +164,6 @@ public class RegisterActivity extends AppCompatActivity {
         String email = mEmail.getText().toString();
         String password = mPassword.getText().toString();
         String confirmation = mPasswordConfirm.getText().toString();
-        String role = mUserRole;
-        String code = mCode.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -266,7 +211,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
             // showProgress(true);
-            mRegTask = new UserRegisterTask(username, email, password, confirmation, role, code);
+            mRegTask = new UserRegisterTask(username, email, password, confirmation);
             mRegTask.execute((Void) null);
         }
     }
@@ -281,18 +226,13 @@ public class RegisterActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPasswordString;
         private final String mConfirmation;
-        private final String mRole;
-        private final String mCode;
 
 
-        UserRegisterTask(String username, String email, String password, String confirmation, String role, String code) {
+        UserRegisterTask(String username, String email, String password, String confirmation) {
             mUsernameString = username;
             mEmail = email;
             mPasswordString = password;
             mConfirmation = confirmation;
-            mRole = role;
-            mCode = code;
-
         }
 
         /**
@@ -313,30 +253,17 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                URL url = null;
+                URL url;
                 JSONObject credentials = new JSONObject();
 
-                if (mUserRole.equals("User")) {
 
-                    credentials.put("user_username", mUsernameString);
-                    credentials.put("user_email", mEmail);
-                    credentials.put("user_password", mPasswordString);
+                credentials.put("user_username", mUsernameString);
+                credentials.put("user_email", mEmail);
+                credentials.put("user_password", mPasswordString);
 
-                    System.out.println("Credentials JSON to send:" + credentials);
+                System.out.println("Credentials JSON to send:" + credentials);
 
-                    url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
-
-                } else if (mUserRole.equals("Worker")) {
-
-                    credentials.put("worker_username", mUsernameString);
-                    credentials.put("worker_email", mEmail);
-                    credentials.put("worker_password", mPasswordString);
-                    credentials.put("worker_code", mCode);
-
-                    System.out.println("Credentials JSON to send:" + credentials);
-
-                    url = new URL("https://hardy-scarab-200218.appspot.com/api/register/worker");
-                }
+                url = new URL("https://hardy-scarab-200218.appspot.com/api/register/user");
 
                 HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
 

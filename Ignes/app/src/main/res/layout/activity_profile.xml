@@ -119,6 +119,17 @@
                     android:textSize="17dp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/profile_userLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/quicksand_light"
+                    android:text=""
+                    android:textColor="#000000"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
                 <Button
                     android:id="@+id/confirm_account_button"
                     style="@style/Base.Widget.AppCompat.Button.Borderless"

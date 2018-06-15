@@ -237,12 +237,16 @@ public class LoginActivity extends AppCompatActivity {
                     System.out.println("HEY" + s.getHeaderField("Authorization"));
 
                     String token = s.getHeaderField("Authorization").toString();
+                    String isConfirmed = s.getHeaderField("Activated").toString();
+                    String userLevel = s.getHeaderField("Level").toString();
 
                     sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                     Editor editor = sharedPref.edit();
 
                     editor.putString("token", token);
                     editor.putString("username", mIdentification);
+                    editor.putString("isConfirmed", isConfirmed);
+                    editor.putString("userLevel", userLevel);
                     editor.apply();
 
                     System.out.println("TOKEN: " + token);

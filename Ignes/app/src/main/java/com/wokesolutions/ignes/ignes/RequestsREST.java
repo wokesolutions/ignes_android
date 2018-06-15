@@ -40,9 +40,9 @@ public class RequestsREST {
             // is carrying an input (response) body.
             connection.setDoInput(true);
             //Inserts token in an header for validation
-            if(token != null)
+            if (token != null)
                 connection.setRequestProperty("Authorization", token);
-            if(thumbHeader != null)
+            if (thumbHeader != null)
                 connection.setRequestProperty("Reports", thumbHeader);
             // Open communications link (network traffic occurs here).
             connection.connect();
@@ -90,7 +90,7 @@ public class RequestsREST {
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-type", "application/json");
             //Inserts token in an header for validation
-            if(token != null)
+            if (token != null)
                 connection.setRequestProperty("Authorization", token);
             // Open communications link (network traffic occurs here).
             out = new BufferedOutputStream(connection.getOutputStream());
@@ -140,6 +140,56 @@ public class RequestsREST {
             // max length.
             numChars = Math.min(numChars, maxLength);
             result = new String(buffer, 0, numChars);
+        }
+        return result;
+    }
+
+    public static String[] doGETV2(URL url, String token, String thumbHeader) throws IOException {
+
+        InputStream stream = null;
+        HttpURLConnection connection = null;
+        //HttpURLConnection result = null;
+        String[] result = new String[2];
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            // Timeout for reading InputStream arbitrarily set to 10000ms.
+            connection.setReadTimeout(10000);
+            // Timeout for connection.connect() arbitrarily set to 10000ms.
+            connection.setConnectTimeout(10000);
+            // For this use case, set HTTP method to GET.
+            connection.setRequestMethod("GET");
+            // Already true by default but setting just in case; needs to be true since this request
+            // is carrying an input (response) body.
+            connection.setDoInput(true);
+            //Inserts token in an header for validation
+            if (token != null)
+                connection.setRequestProperty("Authorization", token);
+            if (thumbHeader != null)
+                connection.setRequestProperty("Reports", thumbHeader);
+            // Open communications link (network traffic occurs here).
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpsURLConnection.HTTP_OK) {
+                throw new IOException("HTTP error code: " + responseCode);
+            }
+            // Retrieve the response body as an InputStream.
+            stream = connection.getInputStream();
+            if (stream != null) {
+                // Converts Stream to String with max length of 1024.
+                if (connection.getHeaderField("Cursor") != null)
+                    result[0] = connection.getHeaderField("Cursor");
+                else
+                    result[0] = "FINISHED";
+                result[1] = readStream(stream, 5000240);
+            }
+        } finally {
+            // Close Stream and disconnect HTTPS connection.
+            if (stream != null) {
+                stream.close();
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
         return result;
     }

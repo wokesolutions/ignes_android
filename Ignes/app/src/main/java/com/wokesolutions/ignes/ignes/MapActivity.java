@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -209,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Add ten cluster items in close proximity, for purposes of this example.
         Iterator it = mReportMap.keySet().iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             String key = (String) it.next();
             mClusterManager.addItem(mReportMap.get(key));
             mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
@@ -274,7 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("report_title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, "teste", name,
-                        description, gravity, title,likes, dislikes, locality, reportID);
+                        description, gravity, title, likes, dislikes, locality, reportID);
 
                 if (!mReportMap.containsKey(reportID)) {
                     mReportMap.put(reportID, report);
@@ -430,7 +431,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000, mToken);
+                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000, mToken, "");
                         mMapTask.execute((Void) null);
                     }
                 }
@@ -468,14 +469,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /*----- About Menu Bar -----*/
     private void menuButtons() {
 
-            mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-            mLoggoutButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MapActivity.this, LogoutActivity.class));
-                    finish();
-                }
-            });
+        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
+        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
+                finish();
+            }
+        });
 
         mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
         mProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -485,21 +486,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-            mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-            mFeedButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
+        mFeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    if(!mReportMap.isEmpty()) {
-                        String key = mReportMap.keySet().iterator().next();
-                        if (mReportMap.get(key).getmImgbyte() == null) {
-                            mThumbnailTask = new ThumbnailTask(mCurrentLocality);
-                            mThumbnailTask.execute((Void) null);
-                        }
+                if (!mReportMap.isEmpty()) {
+                    String key = mReportMap.keySet().iterator().next();
+                    if (mReportMap.get(key).getmImgbyte() == null) {
+                        mThumbnailTask = new ThumbnailTask(mCurrentLocality);
+                        mThumbnailTask.execute((Void) null);
                     }
-                    //startActivity(new Intent(MapActivity.this, FeedActivity.class));
                 }
-            });
+                if (isThumbnailFinished)
+                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+            }
+        });
     }
 
 
@@ -530,8 +532,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             if (item.getItemId() == R.id.refreshicon)
                 recreate();
-        }
-        else
+        } else
             Toast.makeText(mContext, "Try again later", Toast.LENGTH_LONG).show();
 
         return super.onOptionsItemSelected(item);
@@ -663,7 +664,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
                         mCurrentLocality = addresses.get(0).getLocality();
-                        mMapTask = new MapTask(lat, lng, 10000, mToken);
+                        mMapTask = new MapTask(lat, lng, 10000, mToken, "");
                         mMapTask.execute((Void) null);
                     } else
                         Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
@@ -697,11 +698,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         int mRadius;
         String mLocality;
         String mToken;
+        String mCursor;
 
-        MapTask(double lat, double lng, int radius, String token) {
+        MapTask(double lat, double lng, int radius, String token, String cursor) {
 
             try {
-                 addresses = mCoder.getFromLocation(lat, lng, 1);
+                addresses = mCoder.getFromLocation(lat, lng, 1);
                 mLocality = addresses.get(0).getLocality();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -711,6 +713,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mLng = lng;
             mRadius = radius;
             mToken = token;
+            mCursor = cursor;
 
 
         }
@@ -730,14 +733,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                System.out.println("REQUEST ID DOS MARKERS: "+requestId);
+                System.out.println("REQUEST ID DOS MARKERS: " + requestId);
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
                         + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
-                        + "&radius=" + 5 + "&cursor=");
+                        + "&radius=" + 5 + "&cursor=" + mCursor);
 
-                String s = RequestsREST.doGET(url, mToken, null);
+                String[] s = RequestsREST.doGETV2(url, mToken, null);
 
-                return s;
+                mCursor = s[0];
+
+                String result = s[1];
+
+                return result;
 
 
             } catch (Exception e) {
@@ -777,15 +784,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 isReady = true;
                 setMarkers(result, mLat, mLng, mLocality);
 
-                if(isReportFinished)
+                if (mCursor.equals("FINISHED"))
                     System.out.println("ACABARAM OS REPORTS");
-                else{
+                else {
                     System.out.println("Continuar a pedir...");
+                    mMapTask = new MapTask(mLat, mLng, 10000, mToken, mCursor);
+                    mMapTask.execute((Void) null);
                 }
-                 //writeToFile(result, mContext);
+                //writeToFile(result, mContext);
 
             }
-            System.out.println("PRINT DO OFFSET NO POST EXECUTE: "+offsetReports);
+            System.out.println("PRINT DO OFFSET NO POST EXECUTE: " + offsetReports);
 
         }
     }
@@ -795,13 +804,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             JSONObject jsonobject = new JSONObject(thumbnails);
 
-            for(int i = offsetThumbnails; i < orderedIds.size(); i++) {
+            for (int i = offsetThumbnails; i < orderedIds.size(); i++) {
 
                 String reportId = orderedIds.get(i);
 
                 System.out.println();
 
-                System.out.println("REPORT ID ON SET THUMBNAILS: "+reportId);
+                System.out.println("REPORT ID ON SET THUMBNAILS: " + reportId);
 
                 String thumbnail = jsonobject.getString(reportId);
 
@@ -859,34 +868,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             try {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails");
-                String header="";
+                String header = "";
                 int counter = 0;
 
 
-                for(int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
+                for (int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
+
+                    if (counter == 10) {
+                        break;
+                    }
+
                     String reportId = orderedIds.get(i);
 
-                    header = header + reportId+"&";
+                    header = header + reportId + "&";
 
                     offsetThumbnailTask = i;
 
-                    if(counter == 10) {
-                        if(orderedIds.size() - offsetThumbnails > 0)
-                            isThumbnailFinished = false;
-                        else
-                            isThumbnailFinished = true;
-                        break;
-                    }
                     counter++;
+
                 }
-                System.out.println("THUMBNAIL HEADER: "+ header);
+
+                if ((orderedIds.size() - offsetThumbnailTask - 1) > 0)
+                    isThumbnailFinished = false;
+                else
+                    isThumbnailFinished = true;
+
+                System.out.println("THUMBNAIL HEADER: " + header);
+                System.out.println("IS THUMBNAIL FINISHED: " + isThumbnailFinished);
                 String s = RequestsREST.doGET(url, null, header);
 
                 System.out.println("RESPOSTA DO BACKGROUND:" + s);
 
                 return s;
-
-
 
 
             } catch (Exception e) {
@@ -924,13 +937,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("FAZENDO THUMBNAILS");
 
                 setThumbnails(result);
-                //if(isThumbnailFinished.equals("false")) {
-                  //  new ThumbnailTask(mCurrentLocality).execute((Void) null);
-                //}
-                //else
+
+                if (!isThumbnailFinished) {
+                    new ThumbnailTask(mCurrentLocality).execute((Void) null);
+                } else
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
-            System.out.println("PRINT DO OFFSET THUMBNAIL NO POST EXECUTE: "+offsetThumbnails);
+            System.out.println("PRINT DO OFFSET THUMBNAIL NO POST EXECUTE: " + offsetThumbnails);
 
 
         }

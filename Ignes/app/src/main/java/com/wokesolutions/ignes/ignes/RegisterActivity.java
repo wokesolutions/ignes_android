@@ -18,6 +18,8 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -44,8 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView tx;
     private TextView ty;
 
-    private String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
-    private String CONFLICT_ERROR = "java.io.IOException: HTTP error code: 409";
+    private int CONFLICT_ERROR = 409;
 
     private View mRegister_form;
     private View mRegister_username_form;
@@ -221,60 +222,68 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-
     private void registerRequest(String username, String password, String email) {
-        final String mUsername = username;
-        final String mPassword = password;
-        final String mEmail = email;
+
+        final String mUsernameRequest = username;
+        final String mPasswordRequest = password;
+        final String mEmailRequest = email;
+
+        final JSONObject credentials = new JSONObject();
+
+        try {
+            credentials.put("user_username", mUsernameRequest);
+            credentials.put("user_email", mEmailRequest);
+            credentials.put("user_password", mPasswordRequest);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String url = "https://hardy-scarab-200218.appspot.com/api/register/user";
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
+                new Response.Listener<String>()
+                {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("REGISTER OK");
+                        Toast.makeText(context, "User successfully registered!", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         finish();
                     }
                 },
-                new Response.ErrorListener() {
+                new Response.ErrorListener()
+                {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("REGISTER ERROR RESPONSE: " + error.toString());
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("RESPOSTA DO REGISTER: " + response.statusCode);
+
+                        if (response.statusCode == CONFLICT_ERROR) {
+
+                            Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
+                            changeVisibility("Username");
+                            mUsername.setError("Choose a different username");
+                            mUsername.requestFocus();
+
+                        } else {
+                            Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
         ) {
-            @Override
-            public Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_username", mUsername);
-                params.put("user_email", mEmail);
-                params.put("user_password", mPassword);
-                return params;
-            }
+           @Override
+           public byte[] getBody(){
+               return credentials.toString().getBytes();
+           }
 
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-
-                return headers;
+            public String getBodyContentType() {
+                return "application/json";
             }
         };
         queue.add(postRequest);
 
     }
 }
-        /* else if (result.equals(CONFLICT_ERROR)) {
-
-        Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
-        changeVisibility("Username");
-        mUsername.setError("Choose a different username");
-        mUsername.requestFocus();
-
-        } else {
-        Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
-        }*/

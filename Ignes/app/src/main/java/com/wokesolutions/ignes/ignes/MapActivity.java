@@ -84,14 +84,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
 
-    private static final String SERVER_ERROR = "java.io.IOException: HTTP error code: 500";
-    private static final String NO_CONTENT_ERROR = "java.io.IOException: HTTP error code: 204";
-    private static final String NOT_FOUND_ERROR = "java.io.IOException: HTTP error code: 204";
-    private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
+    private Context context;
+
+    private static final int SERVER_ERROR = 500;
+    private static final int NO_CONTENT_ERROR = 204;
+    private static final int NOT_FOUND_ERROR = 404;
+    private static final int BAD_REQUEST_ERROR = 400;
 
     public static Map<String, MarkerClass> mReportMap;
     public static Location mCurrentLocation;
-    private ThumbnailTask mThumbnailTask = null;
     private GoogleMap mMap;
     // private MapTask mMapTask = null;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -129,6 +130,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RequestQueue queue;
 
     private String teste;
+    private String header;
 
 
     @Override
@@ -136,7 +138,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        context = this;
+
         teste = "";
+
+        header = "";
 
         queue = Volley.newRequestQueue(this);
 
@@ -499,8 +505,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (!mReportMap.isEmpty()) {
                     String key = mReportMap.keySet().iterator().next();
                     if (mReportMap.get(key).getmImgbyte() == null) {
-                        mThumbnailTask = new ThumbnailTask(mCurrentLocality);
-                        mThumbnailTask.execute((Void) null);
+                        thumbnailRequest();
                     }
                 }
                 if (isThumbnailFinished)
@@ -736,7 +741,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     try {
 
-                        if(response.headers.get("Cursor")!=null)
+                        if (response.headers.get("Cursor") != null)
                             teste = response.headers.get("Cursor");
                         else
                             teste = "FINISHED";
@@ -773,10 +778,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    private void setThumbnails(String thumbnails) {
+    private void setThumbnails(JSONObject thumbnails) {
         try {
 
-            JSONObject jsonobject = new JSONObject(thumbnails);
+            JSONObject jsonobject = thumbnails;
 
             for (int i = offsetThumbnails; i < orderedIds.size(); i++) {
 
@@ -794,20 +799,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 offsetThumbnails = i;
             }
-
-
-            //Iterator it = mReportMap.keySet().iterator();
-            /*Iterator it = orderedIds.iterator();
-            while(it.hasNext()) {
-                String key = (String) it.next();
-                System.out.println("KEY: "+key);
-
-                String thumbnail = jsonobject.getString(key);
-
-                byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
-
-                mReportMap.get(key).makeImg(data);
-            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -829,114 +820,130 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public class ThumbnailTask extends AsyncTask<Void, Void, String> {
+    private void thumbnailRequest() {
 
-        String mLocality;
-
-
-        ThumbnailTask(String locality) {
-
-            mLocality = locality;
-
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // If no connectivity, cancel task and update Callback with null data.
+            Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
         }
 
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnails";
+        header = "";
+        int counter = 0;
+
+
+        for (int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
+
+            if (counter == 10) {
+                break;
             }
+
+            String reportId = orderedIds.get(i);
+
+            header = header + reportId + "&";
+
+            offsetThumbnailTask = i;
+
+            counter++;
+
         }
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
+        if ((orderedIds.size() - offsetThumbnailTask - 1) > 0)
+            isThumbnailFinished = false;
+        else
+            isThumbnailFinished = true;
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/thumbnails");
-                String header = "";
-                int counter = 0;
+        System.out.println("THUMBNAIL HEADER: " + header);
+        System.out.println("IS THUMBNAIL FINISHED: " + isThumbnailFinished);
+
+        final JsonObjectRequest thumbnailRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        System.out.println("OK: " + response);
 
 
-                for (int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
+                        System.out.println("RESPONSE DATA: ->>> " + response);
 
-                    if (counter == 10) {
-                        break;
+                        setThumbnails(response);
+
+                        if (!isThumbnailFinished) {
+                            thumbnailRequest();
+                        } else
+                            startActivity(new Intent(MapActivity.this, FeedActivity.class));
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO THUMBNAIL REQUEST: " + response);
+
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Reports", header);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                if (response.statusCode == 200) {
+
+                    System.out.println("FAZENDO THUMBNAILS");
+
+
+                    try {
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        JSONObject jsonobject = new JSONObject(json);
+                        return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
                     }
 
-                    String reportId = orderedIds.get(i);
+                } else if (response.statusCode == SERVER_ERROR) {
 
-                    header = header + reportId + "&";
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
+                    return Response.error(error);
 
-                    offsetThumbnailTask = i;
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
 
-                    counter++;
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
+                    return Response.error(error);
 
                 }
+                else {
 
-                if ((orderedIds.size() - offsetThumbnailTask - 1) > 0)
-                    isThumbnailFinished = false;
-                else
-                    isThumbnailFinished = true;
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
+                    return Response.error(error);
 
-                System.out.println("THUMBNAIL HEADER: " + header);
-                System.out.println("IS THUMBNAIL FINISHED: " + isThumbnailFinished);
-                String s = RequestsREST.doGET(url, null, header);
-
-                System.out.println("RESPOSTA DO BACKGROUND:" + s);
-
-                return s;
-
-
-            } catch (Exception e) {
-                return e.toString();
+                }
             }
-        }
+        };
+        thumbnailRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        @Override
-        protected void onPostExecute(final String result) {
-            mThumbnailTask = null;
+        queue.add(thumbnailRequest);
 
-            System.out.println("RESPOSTA DO POSTEXECUTE " + result);
-
-
-            if (result.equals(SERVER_ERROR)) {
-
-                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                System.out.println("SERVER ERROR");
-
-            } else if (result.equals(NO_CONTENT_ERROR)) {
-
-                Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
-                System.out.println("NADA A MOSTRAR NA ZONA");
-
-            } else if (result.equals(NOT_FOUND_ERROR)) {
-
-                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                System.out.println("NOT FOUND ERROR");
-
-            } else if (result.equals(BAD_REQUEST_ERROR)) {
-
-                System.out.println("BAD REQUEST ERROR");
-
-            } else {
-                System.out.println("FAZENDO THUMBNAILS");
-
-                setThumbnails(result);
-
-                if (!isThumbnailFinished) {
-                    new ThumbnailTask(mCurrentLocality).execute((Void) null);
-                } else
-                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
-            }
-            System.out.println("PRINT DO OFFSET THUMBNAIL NO POST EXECUTE: " + offsetThumbnails);
-
-
-        }
     }
-
-
 }

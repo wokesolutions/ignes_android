@@ -197,6 +197,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginRequest(String username, String password) {
 
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // If no connectivity, cancel task and update Callback with null data.
+            showProgress(false);
+            Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
         final String mUsernameRequest = username;
         final String mPasswordRequest = password;
 

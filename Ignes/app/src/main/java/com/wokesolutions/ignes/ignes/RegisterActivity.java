@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -231,9 +232,9 @@ public class RegisterActivity extends AppCompatActivity {
         final JSONObject credentials = new JSONObject();
 
         try {
-            credentials.put("user_username", mUsernameRequest);
-            credentials.put("user_email", mEmailRequest);
-            credentials.put("user_password", mPasswordRequest);
+            credentials.put("username", mUsernameRequest);
+            credentials.put("email", mEmailRequest);
+            credentials.put("password", mPasswordRequest);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -283,6 +284,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return "application/json";
             }
         };
+
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                1,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(postRequest);
 
     }

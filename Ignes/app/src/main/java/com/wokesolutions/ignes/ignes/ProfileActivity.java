@@ -29,17 +29,28 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     private Context context;
-
-    private ConfirmAccountTask mConfirmAccountTask = null;
 
     private EditProfileTask mEditProfileTask = null;
 
@@ -54,6 +65,8 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout mFeedButton;
 
     private LinearLayout mMapButton;
+
+    private LinearLayout mConfirmLayout;
 
     private String mUsername;
     private String mUserLevel;
@@ -90,12 +103,16 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Map<String, MarkerClass> markerMap;
 
+    private RequestQueue queue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+
+        queue = Volley.newRequestQueue(this);
 
         mUsername = sharedPref.getString("username", "ERROR");
         mUserLevel = sharedPref.getString("userLevel", "NO LEVEL");
@@ -133,6 +150,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mAboutLayout = findViewById(R.id.about_layout);
         mEditAboutLayout = findViewById(R.id.edit_about_layout);
+        mConfirmLayout = findViewById(R.id.confirm_account_layout);
 
         context = this;
 
@@ -160,7 +178,6 @@ public class ProfileActivity extends AppCompatActivity {
         backBool = false;
 
         checkIfAccountConfirmed();
-
 
 
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
@@ -200,7 +217,6 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
     private void checkIfAccountConfirmed() {
@@ -208,7 +224,7 @@ public class ProfileActivity extends AppCompatActivity {
         isConfirmed = sharedPref.getString("isConfirmed", "");
 
         if (isConfirmed.equals("true"))
-            mConfirmAccountButton.setVisibility(View.GONE);
+            mConfirmLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -423,8 +439,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String insertedCode = mSearchText.getText().toString();
                 System.out.println("INSERTED CODE: " + insertedCode);
-                mConfirmAccountTask = new ConfirmAccountTask(insertedCode);
-                mConfirmAccountTask.execute((Void) null);
+                confirmRequest(insertedCode);
                 alert.dismiss();
             }
         });
@@ -441,77 +456,81 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    public class ConfirmAccountTask extends AsyncTask<Void, Void, String> {
+    private void confirmRequest(String code) {
 
-        private final String mToken;
-        private final String mCode;
+        final String mCode = code;
+        final String mToken = sharedPref.getString("token", "");
+        final String username = sharedPref.getString("username", "ERROR");
 
-        ConfirmAccountTask(String code) {
-            mToken = sharedPref.getString("token", "");
-            mCode = code;
+        final JSONObject credentials = new JSONObject();
+
+        try {
+            credentials.put("code", mCode);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        /**
-         * Cancel background network operation if we do not have network connectivity.
-         */
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
+        String url = "https://hardy-scarab-200218.appspot.com/api/profile/activate/" + username;
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+                        sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        editor.putString("isConfirmed", "true");
+
+                        editor.apply();
+
+                        checkIfAccountConfirmed();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+
+                        System.out.println("ERRO DO CONFIRM: " + response);
+
+                        Toast.makeText(context, "Error with your confirmation!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        ) {
+            @Override
+            public byte[] getBody() {
+                return credentials.toString().getBytes();
             }
 
-        }
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Authorization", mToken);
 
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                JSONObject codejson = new JSONObject();
-
-                codejson.put("code", mCode);
-
-                String username = sharedPref.getString("username", "ERROR");
-
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/activate/" + username);
-
-                HttpURLConnection s = RequestsREST.doPOST(url, codejson, mToken);
-                System.out.println("RESPOSTA DO VALIDATE - " + s.getResponseCode());
-                return s.getResponseMessage();
-            } catch (Exception e) {
-                return e.toString();
-            }
-        }
-
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mConfirmAccountTask = null;
-
-            if (result.equals("OK")) {
-
-                Toast.makeText(context, "Your account has been confirmed", Toast.LENGTH_LONG).show();
-                sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("isConfirmed", "true");
-
-
-            } else {
-                System.out.println("ERRO A CONFIRMAR CONTA: " + result);
+                return params;
             }
 
-            checkIfAccountConfirmed();
-        }
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
 
-        @Override
-        protected void onCancelled() {
-            mConfirmAccountTask = null;
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        }
+        queue.add(postRequest);
+
+
+
     }
 
     public class EditProfileTask extends AsyncTask<Void, Void, String> {

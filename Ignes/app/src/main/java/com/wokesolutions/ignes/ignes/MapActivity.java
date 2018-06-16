@@ -34,6 +34,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -79,35 +90,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String BAD_REQUEST_ERROR = "java.io.IOException: HTTP error code: 400";
 
     public static Map<String, MarkerClass> mReportMap;
-
-    private ThumbnailTask mThumbnailTask = null;
-
-    private GoogleMap mMap;
-
-    private MapTask mMapTask = null;
-
-    private FusedLocationProviderClient mFusedLocationClient;
-
-    private ClusterManager<MarkerClass> mClusterManager;
-
-    private Geocoder mCoder;
-
-    private LocationManager mManager;
-
-    private boolean mGps;
-
-    private DrawerLayout mDrawerLayout;
-
-    private ActionBarDrawerToggle mMenu;
-
-    private LinearLayout mLoggoutButton;
-
-    private LinearLayout mProfileButton;
-
-    private LinearLayout mFeedButton;
-
     public static Location mCurrentLocation;
-
+    private ThumbnailTask mThumbnailTask = null;
+    private GoogleMap mMap;
+    // private MapTask mMapTask = null;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private ClusterManager<MarkerClass> mClusterManager;
+    private Geocoder mCoder;
+    private LocationManager mManager;
+    private boolean mGps;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mMenu;
+    private LinearLayout mLoggoutButton;
+    private LinearLayout mProfileButton;
+    private LinearLayout mFeedButton;
     private Context mContext;
 
     private SharedPreferences sharedPref;
@@ -130,11 +126,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private String requestId;
 
+    private RequestQueue queue;
+
+    private String teste;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        teste = "";
+
+        queue = Volley.newRequestQueue(this);
 
         isReady = false;
 
@@ -187,6 +191,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mToken = sharedPref.getString("token", "");
 
         addresses = null;
+
+
     }
 
     /*----- About Google Maps -----*/
@@ -234,11 +240,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    private void setMarkers(String markers, double lat, double lng, String locality) {
+    private void setMarkers(JSONArray markers, double lat, double lng, String locality) {
         try {
             //Map<String, MarkerClass> temp = new HashMap<>();
 
-            JSONArray jsonarray = new JSONArray(markers);
+            JSONArray jsonarray = markers;
 
             for (int i = 0; i < jsonarray.length(); i++) {
 
@@ -431,8 +437,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        mMapTask = new MapTask(loc.latitude, loc.longitude, 10000, mToken, "");
-                        mMapTask.execute((Void) null);
+                        mapRequest(loc.latitude, loc.longitude, 10000, mToken, "");
                     }
                 }
             });
@@ -664,8 +669,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
                         mCurrentLocality = addresses.get(0).getLocality();
-                        mMapTask = new MapTask(lat, lng, 10000, mToken, "");
-                        mMapTask.execute((Void) null);
+                        mapRequest(lat, lng, 10000, mToken, "");
                     } else
                         Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
@@ -675,128 +679,98 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+    private void mapRequest(double lat, double lng, int radius, String token, String cursor) {
 
-        public OwnIconRendered(Context context, GoogleMap map,
-                               ClusterManager<MarkerClass> clusterManager) {
-            super(context, map, clusterManager);
+        final double mLat = lat;
+        final double mLng = lng;
+        final int mRadius = radius;
+        final String mToken = token;
+        final String mCursor = cursor;
+
+        try {
+            addresses = mCoder.getFromLocation(lat, lng, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        final String mLocality = addresses.get(0).getLocality();
 
-        @Override
-        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+                + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
+                + "&radius=" + 5 + "&cursor=" + mCursor;
 
-            super.onBeforeClusterItemRendered(item, markerOptions);
-        }
-    }
-
-    public class MapTask extends AsyncTask<Void, Void, String> {
-
-        double mLat;
-        double mLng;
-        int mRadius;
-        String mLocality;
-        String mToken;
-        String mCursor;
-
-        MapTask(double lat, double lng, int radius, String token, String cursor) {
-
-            try {
-                addresses = mCoder.getFromLocation(lat, lng, 1);
-                mLocality = addresses.get(0).getLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mLat = lat;
-            mLng = lng;
-            mRadius = radius;
-            mToken = token;
-            mCursor = cursor;
+        JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK: " + response);
 
 
-        }
+                        isReady = true;
 
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
-            }
-        }
+                        System.out.println("RESPONSE DATA: ->>> " + response);
+                        setMarkers(response, mLat, mLng, mLocality);
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                System.out.println("REQUEST ID DOS MARKERS: " + requestId);
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
-                        + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
-                        + "&radius=" + 5 + "&cursor=" + mCursor);
+                        if (teste.equals("FINISHED"))
+                            System.out.println("ACABARAM OS REPORTS");
+                        else {
+                            System.out.println("Continuar a pedir...");
+                            mapRequest(mLat, mLng, 10000, mToken, teste);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                String[] s = RequestsREST.doGETV2(url, mToken, null);
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO MAP: " + response);
 
-                mCursor = s[0];
-
-                String result = s[1];
-
-                return result;
-
-
-            } catch (Exception e) {
-                return e.toString();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mMapTask = null;
-            isReportFinished = false;
-
-            System.out.println("RESPOSTA DO POSTEXECUTE " + result);
-
-
-            if (result.equals(SERVER_ERROR)) {
-
-                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                System.out.println("SERVER ERROR");
-                //setMarkers(readFromFile(mContext),mLat, mLng, mLocality);
-
-            } else if (result.equals(NO_CONTENT_ERROR)) {
-                isReady = true;
-                Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
-                System.out.println("NADA A MOSTRAR NA ZONA");
-
-            } else if (result.equals(NOT_FOUND_ERROR)) {
-
-                Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                System.out.println("NOT FOUND ERROR");
-
-            } else if (result.equals(BAD_REQUEST_ERROR)) {
-
-                System.out.println("BAD REQUEST ERROR");
-
-            } else {
-                isReady = true;
-                setMarkers(result, mLat, mLng, mLocality);
-
-                if (mCursor.equals("FINISHED"))
-                    System.out.println("ACABARAM OS REPORTS");
-                else {
-                    System.out.println("Continuar a pedir...");
-                    mMapTask = new MapTask(mLat, mLng, 10000, mToken, mCursor);
-                    mMapTask.execute((Void) null);
+                    }
                 }
-                //writeToFile(result, mContext);
+        ) {
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
 
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        if(response.headers.get("Cursor")!=null)
+                            teste = response.headers.get("Cursor");
+                        else
+                            teste = "FINISHED";
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
             }
-            System.out.println("PRINT DO OFFSET NO POST EXECUTE: " + offsetReports);
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        }
+        queue.add(postRequest);
+
     }
 
     private void setThumbnails(String thumbnails) {
@@ -839,6 +813,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<MarkerClass> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+    }
 
     public class ThumbnailTask extends AsyncTask<Void, Void, String> {
 

@@ -217,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             credentials.put("username", mUsernameRequest);
             credentials.put("password", mPasswordRequest);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -226,8 +226,7 @@ public class LoginActivity extends AppCompatActivity {
         String url = "https://hardy-scarab-200218.appspot.com/api/login";
 
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, null,
-                new Response.Listener<JSONObject>()
-                {
+                new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
@@ -240,9 +239,14 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("token", response.getString("token"));
                             editor.putString("username", mUsernameRequest);
                             editor.putString("isConfirmed", response.getString("activated"));
-                            editor.putString("userLevel", response.getString("level"));
+                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL"));
+                            if ((response.getString("level")).contains("LEVEL"))
+                                editor.putString("userLevel", "USER");
+                            else
+                                editor.putString("userLevel", response.getString("level"));
+
                             editor.apply();
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -250,18 +254,16 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
                         NetworkResponse response = error.networkResponse;
                         System.out.println("ERRO DO LOGIN: " + response);
 
                         if (response.statusCode == 403) {
                             mPasswordView.setError(getString(R.string.error_incorrect_password));
                             mPasswordView.requestFocus();
-                        }else
+                        } else
                             Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
 
                         showProgress(false);
@@ -269,7 +271,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
         ) {
             @Override
-            public byte[] getBody(){
+            public byte[] getBody() {
                 return credentials.toString().getBytes();
             }
 
@@ -281,7 +283,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
 
-                if(response.statusCode == 200) {
+                if (response.statusCode == 200) {
 
                     JSONObject result = new JSONObject();
 
@@ -294,20 +296,18 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-                }
-                else if(response.statusCode == 403) {
+                } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
-                }
-                else{
+                } else {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
                 }
             }
         };
         postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(postRequest);

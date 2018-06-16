@@ -83,16 +83,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
-
-    private Context context;
-
     private static final int SERVER_ERROR = 500;
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
-
     public static Map<String, MarkerClass> mReportMap;
     public static Location mCurrentLocation;
+    private Context context;
     private GoogleMap mMap;
     // private MapTask mMapTask = null;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -105,6 +102,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mLoggoutButton;
     private LinearLayout mProfileButton;
     private LinearLayout mFeedButton;
+    private LinearLayout mWorkRoomButton;
+    private LinearLayout mTasksButton;
+
     private Context mContext;
 
     private SharedPreferences sharedPref;
@@ -129,25 +129,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private RequestQueue queue;
 
+    private String mUsername;
+
     private String teste;
     private String header;
+
+    private String mRole;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
 
-        context = this;
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mToken = sharedPref.getString("token", "");
+        mUsername = sharedPref.getString("username", "ERROR");
+        mRole = sharedPref.getString("userLevel", "");
+        System.out.println("MROOOOOLE-> " + mRole);
+        if (mRole.equals("USER"))
+            setContentView(R.layout.activity_map);
+        else if (mRole.equals("WORKER"))
+            setContentView(R.layout.worker_map);
 
+        mContext = this;
         teste = "";
-
         header = "";
-
         queue = Volley.newRequestQueue(this);
-
         isReady = false;
-
         offsetReports = 0;
         offsetThumbnails = 0;
         offsetThumbnailTask = 0;
@@ -159,11 +167,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Locale.setDefault(locale);
 
         mCoder = new Geocoder(this, Locale.getDefault());
-
         mCurrentLocation = null;
         mReportMap = new HashMap<>();
-
-        mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -178,26 +183,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
-        menuButtons();
+        if (mRole.equals("USER"))
+            user_menuButtons();
+        else if (mRole.equals("WORKER"))
+            worker_menuButtons();
 
         /*----- About Google Maps -----*/
         checkLocationPermission();
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        mToken = sharedPref.getString("token", "");
-
         addresses = null;
-
 
     }
 
@@ -478,7 +480,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     /*----- About Menu Bar -----*/
-    private void menuButtons() {
+    private void user_menuButtons() {
 
         mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
@@ -507,8 +509,43 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (mReportMap.get(key).getmImgbyte() == null) {
                         thumbnailRequest();
                     }
-                }
-                if (isThumbnailFinished)
+                } else
+                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+            }
+        });
+    }
+
+    /*----- About Menu Bar -----*/
+    private void worker_menuButtons() {
+
+        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
+        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
+                finish();
+            }
+        });
+
+        mWorkRoomButton = (LinearLayout) findViewById(R.id.botao_workroom);
+        mWorkRoomButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
+            }
+        });
+
+        mTasksButton = (LinearLayout) findViewById(R.id.botao_feed);
+        mTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!mReportMap.isEmpty()) {
+                    String key = mReportMap.keySet().iterator().next();
+                    if (mReportMap.get(key).getmImgbyte() == null) {
+                        thumbnailRequest();
+                    }
+                } else
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
@@ -522,6 +559,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         MenuItem item1 = menu.findItem(R.id.username);
         item1.setVisible(false);
+
+        if (mRole.equals("WORKER")) {
+            MenuItem item2 = menu.findItem(R.id.reporticon);
+            item2.setVisible(false);
+            MenuItem item3 = menu.findItem(R.id.searchicon);
+            item3.setVisible(false);
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -699,9 +743,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         final String mLocality = addresses.get(0).getLocality();
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
-                + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
-                + "&radius=" + 5 + "&cursor=" + mCursor;
+        String url = "";
+
+        if (mRole.equals("USER")) {
+            url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+                    + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
+                    + "&radius=" + 5 + "&cursor=" + mCursor;
+        } else if (mRole.equals("WORKER")) {
+            url = "https://hardy-scarab-200218.appspot.com/api/worker/tasks/" + mUsername + "?cursor=" + mCursor;
+        }
 
         JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -728,14 +778,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO MAP: " + response);
+                        System.out.println("ERRO DO MAP: " + error.toString());
+
+                        if(error.toString().equals("com.android.volley.VolleyError: 204")) {
+                            Toast.makeText(mContext, "No reports to show in this area!", Toast.LENGTH_LONG).show();
+                            isReady = true;
+                        }
+                       else
+                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
 
                     }
                 }
         ) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>"+response.statusCode);
 
                 if (response.statusCode == 200) {
 
@@ -761,6 +819,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
 
                 } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == 204) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
                 } else {
@@ -801,22 +862,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
-
-        public OwnIconRendered(Context context, GoogleMap map,
-                               ClusterManager<MarkerClass> clusterManager) {
-            super(context, map, clusterManager);
-        }
-
-        @Override
-        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
-
-            super.onBeforeClusterItemRendered(item, markerOptions);
         }
     }
 
@@ -893,7 +938,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String>  params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put("Reports", header);
 
                 return params;
@@ -928,8 +973,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
                     return Response.error(error);
 
-                }
-                else {
+                } else {
 
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
@@ -939,11 +983,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
         thumbnailRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(thumbnailRequest);
 
+    }
+
+    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<MarkerClass> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
     }
 }

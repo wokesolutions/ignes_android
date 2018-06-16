@@ -523,8 +523,8 @@ public class ProfileActivity extends AppCompatActivity {
         };
 
         postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(postRequest);

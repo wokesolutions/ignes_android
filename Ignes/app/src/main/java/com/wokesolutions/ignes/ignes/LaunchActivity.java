@@ -19,12 +19,18 @@ import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -118,6 +124,17 @@ public class LaunchActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         // response
                        System.out.println("TOKEN VALIDO");
+                        sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        System.out.println("LOGIIIN CENAS " + response.contains("LEVEL"));
+
+                        if (response.contains("LEVEL"))
+                            editor.putString("userLevel", "USER");
+                        else
+                            editor.putString("userLevel", response);
+
+                        editor.apply();
+
                        startActivity(new Intent(LaunchActivity.this, MapActivity.class));
                        finish();
                     }
@@ -139,10 +156,26 @@ public class LaunchActivity extends AppCompatActivity {
 
                 return params;
             }
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                if (response.statusCode == 200) {
+
+                    String result = response.headers.get("Level");
+
+                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
         };
         postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(postRequest);

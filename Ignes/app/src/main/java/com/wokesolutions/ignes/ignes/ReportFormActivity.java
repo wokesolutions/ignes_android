@@ -106,6 +106,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private Button mSubmitButton;
 
     private CheckBox mCheckBox;
+    private CheckBox mCheckBox_Private;
 
     private SeekBar mGravitySlider;
 
@@ -128,6 +129,7 @@ public class ReportFormActivity extends AppCompatActivity {
     double lat;
     double lng;
 
+    private boolean mIsPrivate;
 
     private ImageView mImageView;
 
@@ -151,6 +153,7 @@ public class ReportFormActivity extends AppCompatActivity {
         mUploadPicture = (LinearLayout) findViewById(R.id.report_upload);
 
         mCheckBox = (CheckBox) findViewById(R.id.report_checkbox);
+        mCheckBox_Private = (CheckBox) findViewById(R.id.report_checkbox_private);
 
         mCheckBox.setOnClickListener(new OnClickListener() {
             @Override
@@ -159,6 +162,16 @@ public class ReportFormActivity extends AppCompatActivity {
                     mAddress.setText(address);
                 } else
                     mAddress.setText("");
+            }
+        });
+
+        mCheckBox_Private.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((CheckBox) v).isChecked()) {
+                    mIsPrivate = true;
+                } else
+                    mIsPrivate = false;
             }
         });
 
@@ -616,6 +629,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 report.put("report_address", mAddress);
                 report.put("report_city", mDistrict);
                 report.put("report_locality", mLocality);
+                report.put("report_private", mIsPrivate);
 
             } else if (mReportType.equals("medium")) {
 
@@ -628,6 +642,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 report.put("report_address", mAddress);
                 report.put("report_city", mDistrict);
                 report.put("report_locality", mLocality);
+                report.put("report_private", mIsPrivate);
 
             } else if (mReportType.equals("detailed")) {
 
@@ -641,6 +656,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 report.put("report_address", mAddress);
                 report.put("report_city", mDistrict);
                 report.put("report_locality", mLocality);
+                report.put("report_private", mIsPrivate);
             }
 
             System.out.println("REPORT JSON: " + report);
@@ -698,7 +714,7 @@ public class ReportFormActivity extends AppCompatActivity {
         };
 
         reportRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
                 1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 

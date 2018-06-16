@@ -167,6 +167,7 @@
                         android:textColor="#000000" />
                 </LinearLayout>
 
+
                 <LinearLayout
                     android:id="@+id/report_upload"
                     android:layout_width="wrap_content"
@@ -189,6 +190,15 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/report_checkbox_private"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/quicksand_bold"
+                android:text="Private location"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/report_medium_form"

@@ -2,6 +2,7 @@ package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,46 +34,41 @@ public class FeedActivity extends AppCompatActivity {
     Map<String, MarkerClass> markerMap;
 
     private RecyclerView recyclerView;
-
     private DrawerLayout mDrawerLayout;
-
     private ActionBarDrawerToggle mMenu;
-
     private LinearLayout mLoggoutButton;
-
     private LinearLayout mMapButton;
-
     private TextView mLocality;
-
     private LinearLayout mProfileButton;
-
     private Context mContext;
-
+    private LinearLayout mWorkRoomButton;
     private Location mCurrentLocation;
+    private SharedPreferences sharedPref;
+    private String mRole;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mRole = sharedPref.getString("userLevel","");
+
+        if (mRole.equals("USER"))
+            setContentView(R.layout.activity_feed);
+        else if (mRole.equals("WORKER"))
+            setContentView(R.layout.worker_tasks);
+
 
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
-
         LinearLayoutManager manager = new LinearLayoutManager(this);
-
         recyclerView.setLayoutManager(manager);
-
         markerMap = MapActivity.mReportMap;
-
         MarkerAdapter markerAdapter = new MarkerAdapter(this, markerMap);
-
         recyclerView.setAdapter(markerAdapter);
         recyclerView.setNestedScrollingEnabled(false);
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_feed);
-
         setSupportActionBar(myToolbar);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_feed);
 
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
@@ -81,35 +77,33 @@ public class FeedActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
-        menuButtons();
-        mLocality = findViewById(R.id.feed_address);
-        
-        if (markerMap.isEmpty())
-            mLocality.setText("There are no reports to list in this area...");
-        
-        else {
-            String firstKey = (String) markerMap.keySet().iterator().next();
-            mLocality.setText(markerMap.get(firstKey).getmLocality());
-            mCurrentLocation = MapActivity.mCurrentLocation;
-        }
+        if (mRole.equals("WORKER"))
+            worker_menuButtons();
+        else if (mRole.equals("USER")) {
 
+            user_menuButtons();
+            mLocality = findViewById(R.id.feed_address);
+
+            if (markerMap.isEmpty())
+                mLocality.setText("There are no reports to list in this area...");
+
+            else {
+                String firstKey = (String) markerMap.keySet().iterator().next();
+                mLocality.setText(markerMap.get(firstKey).getmLocality());
+                mCurrentLocation = MapActivity.mCurrentLocation;
+            }
+        }
         mContext = this;
     }
 
-    /*----- About Menu Bar -----*/
-    private void menuButtons() {
+
+    private void user_menuButtons() {
+
         mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
-        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
-        mMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 finish();
             }
         });
@@ -119,10 +113,45 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
+            }
+        });
+
+        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
+        mMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    /*----- About Menu Bar -----*/
+    private void worker_menuButtons() {
+
+        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
+        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FeedActivity.this, LogoutActivity.class));
                 finish();
             }
         });
 
+        mWorkRoomButton = (LinearLayout) findViewById(R.id.botao_workroom);
+        mWorkRoomButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
+            }
+        });
+
+        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
+        mMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -134,6 +163,11 @@ public class FeedActivity extends AppCompatActivity {
         item1.setVisible(false);
         MenuItem item2 = menu.findItem(R.id.searchicon);
         item2.setVisible(false);
+
+        if(mRole.equals("WORKER")){
+            MenuItem item3 = menu.findItem(R.id.reporticon);
+            item3.setVisible(false);
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -152,7 +186,7 @@ public class FeedActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.refreshicon)
             recreate();
 
-        if(item.getItemId() == R.id.reporticon) {
+        if (item.getItemId() == R.id.reporticon) {
             onReport();
             return true;
         }

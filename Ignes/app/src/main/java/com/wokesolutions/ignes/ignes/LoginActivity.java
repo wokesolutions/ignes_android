@@ -29,7 +29,20 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
@@ -40,12 +53,6 @@ import java.net.URL;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
-
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-
-    private UserLoginTask mAuthTask = null;
 
     private SharedPreferences sharedPref;
 
@@ -108,9 +115,6 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-
-
-
         // Reset errors.
         mIdentificationView.setError(null);
         mPasswordView.setError(null);
@@ -144,8 +148,9 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            loginRequest(email, password);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
         }
     }
 
@@ -190,98 +195,111 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Represents an asynchronous login task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    private void loginRequest(String username, String password) {
 
-        private final String mIdentification;
-        private final String mPassword;
+        final String mUsernameRequest = username;
+        final String mPasswordRequest = password;
 
-        UserLoginTask(String identification, String password) {
-            mIdentification = identification;
-            mPassword = password;
+        final JSONObject credentials = new JSONObject();
+
+        try {
+            credentials.put("username", mUsernameRequest);
+            credentials.put("password", mPasswordRequest);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
-        /**
-         * Cancel background network operation if we do not have network connectivity.
-         */
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
-            }
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        }
+        String url = "https://hardy-scarab-200218.appspot.com/api/login";
 
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                JSONObject credentials = new JSONObject();
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        System.out.println("OK: " + response);
 
-                credentials.put("username", mIdentification);
-                credentials.put("password", mPassword);
+                        sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                        Editor editor = sharedPref.edit();
 
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/login");
+                        try {
+                            editor.putString("token", response.getString("token"));
+                            editor.putString("username", mUsernameRequest);
+                            editor.putString("isConfirmed", response.getString("activated"));
+                            editor.putString("userLevel", response.getString("level"));
+                            editor.apply();
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                HttpURLConnection s = RequestsREST.doPOST(url, credentials, null);
+                        startActivity(new Intent(LoginActivity.this, MapActivity.class));
+                        finish();
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                if(s.getResponseMessage().equals("OK")) {
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response);
 
-                    System.out.println("HEY" + s.getHeaderField("Authorization"));
+                        if (response.statusCode == 403) {
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
+                        }else
+                            Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
 
-                    String token = s.getHeaderField("Authorization").toString();
-                    String isConfirmed = s.getHeaderField("Activated").toString();
-                    String userLevel = s.getHeaderField("Level").toString();
-
-                    sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-                    Editor editor = sharedPref.edit();
-
-                    editor.putString("token", token);
-                    editor.putString("username", mIdentification);
-                    editor.putString("isConfirmed", isConfirmed);
-                    editor.putString("userLevel", userLevel);
-                    editor.apply();
-
-                    System.out.println("TOKEN: " + token);
+                        showProgress(false);
+                    }
                 }
-
-                return s.getResponseMessage();
-
-            } catch (Exception e) {
-                return e.toString();
+        ) {
+            @Override
+            public byte[] getBody(){
+                return credentials.toString().getBytes();
             }
-        }
 
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (result.equals("OK")) {
-
-                startActivity(new Intent(LoginActivity.this, MapActivity.class));
-                finish();
-
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-                System.out.println(result);
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
             }
-        }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                if(response.statusCode == 200) {
+
+                    JSONObject result = new JSONObject();
+
+                    try {
+                        result.put("token", response.headers.get("Authorization"));
+                        result.put("activated", response.headers.get("Activated"));
+                        result.put("level", response.headers.get("Level"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+                }
+                else if(response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+                else{
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(postRequest);
+
     }
 }
 

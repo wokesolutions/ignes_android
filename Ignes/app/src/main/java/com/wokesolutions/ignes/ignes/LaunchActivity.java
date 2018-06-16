@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -138,6 +140,11 @@ public class LaunchActivity extends AppCompatActivity {
                 return params;
             }
         };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                0,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         queue.add(postRequest);
 
     }

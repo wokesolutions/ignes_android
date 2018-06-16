@@ -45,6 +45,18 @@ import android.view.View.OnClickListener;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -56,7 +68,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
@@ -64,11 +78,8 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 public class ReportFormActivity extends AppCompatActivity {
 
     public static final int MY_PERMISSIONS_REQUEST_STORAGE = 77;
-
-    private String BAD_REQUEST = "java.io.IOException: HTTP error code: 400";
+    
     private final int REQUEST_IMAGE_CAPTURE = 0;
-
-    private ReportTask mReportTask = null;
 
     private Context context;
 
@@ -334,7 +345,7 @@ public class ReportFormActivity extends AppCompatActivity {
         int originHeight = image.getHeight();
 
         if (originWidth > destWidth) {
-            int destHeight =originHeight / (originWidth / destWidth);
+            int destHeight = originHeight / (originWidth / destWidth);
 
             Bitmap scaled = Bitmap.createScaledBitmap(image, destWidth, destHeight, false);
 
@@ -532,7 +543,7 @@ public class ReportFormActivity extends AppCompatActivity {
         String address = this.address;
         double lat = this.lat;
         double lng = this.lng;
-        int gravity = mGravity+1;
+        int gravity = mGravity + 1;
 
         if (mReportType.equals("detailed")) {
             if (!mCheckBox.isChecked()) {
@@ -559,133 +570,139 @@ public class ReportFormActivity extends AppCompatActivity {
 
         }
 
-        mReportTask = new ReportTask(thumbnail, description, title, district, address, locality, gravity, lat, lng);
-        mReportTask.execute((Void) null);
+        reportRequest(thumbnail, description, title, district, address, locality, gravity, lat, lng);
     }
 
-    public class ReportTask extends AsyncTask<Void, Void, String> {
+    private void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
+                               String locality, int gravity, double lat, double lng) {
 
-        byte[] mThumbnail;
-        double mLat;
-        double mLng;
-        String base64Img;
-        String base64Thumbnail;
-        String mDescription;
-        int mGravity;
-        String mTitle;
-        String mDistrict;
-        String mAddress;
-        String mLocality;
+        final byte[] mThumbnail = thumbnail;
+        final double mLat = lat;
+        final double mLng = lng;
+        final String base64Img;
+        final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
+        final String mDescription = description;
+        final int mGravity = gravity;
+        final String mTitle = title;
+        final String mDistrict = district;
+        final String mAddress = address;
+        final String mLocality = locality;
 
-        SharedPreferences prefs = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        String token = prefs.getString("token", null);
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
 
-        ReportTask(byte[] thumb, String description, String title, String district, String address, String locality, int gravity, double lat, double lng) {
+        final JSONObject report = new JSONObject();
 
-            mThumbnail = thumb;
-            base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
-            mLat = lat;
-            mLng = lng;
-            mDescription = description;
-            mTitle = title;
-            mDistrict = district;
-            mAddress = address;
-            mLocality = locality;
-            mGravity = gravity;
-        }
+        try {
+            InputStream imageStream = getContentResolver().openInputStream(mImageURI);
 
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
+            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+            ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, imgStream);
+            imgByteArray = imgStream.toByteArray();
+            base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
+
+            System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
+            System.out.println("BYTEARRAY ENVIADO DA IMG: " + imgByteArray.length);
+
+
+
+            if (mReportType.equals("fast")) {
+
+                report.put("report_lat", mLat);
+                report.put("report_lng", mLng);
+                report.put("report_img", base64Img);
+                report.put("report_thumbnail", base64Thumbnail);
+                report.put("report_address", mAddress);
+                report.put("report_city", mDistrict);
+                report.put("report_locality", mLocality);
+
+            } else if (mReportType.equals("medium")) {
+
+                report.put("report_lat", mLat);
+                report.put("report_lng", mLng);
+                report.put("report_thumbnail", base64Thumbnail);
+                report.put("report_img", base64Img);
+                report.put("report_title", mTitle);
+                report.put("report_gravity", mGravity);
+                report.put("report_address", mAddress);
+                report.put("report_city", mDistrict);
+                report.put("report_locality", mLocality);
+
+            } else if (mReportType.equals("detailed")) {
+
+                report.put("report_lat", mLat);
+                report.put("report_lng", mLng);
+                report.put("report_thumbnail", base64Thumbnail);
+                report.put("report_img", base64Img);
+                report.put("report_title", mTitle);
+                report.put("report_gravity", mGravity);
+                report.put("report_description", mDescription);
+                report.put("report_address", mAddress);
+                report.put("report_city", mDistrict);
+                report.put("report_locality", mLocality);
             }
+
+            System.out.println("REPORT JSON: " + report);
+            System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-                InputStream imageStream = getContentResolver().openInputStream(mImageURI);
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/create";
 
-                Bitmap teste = BitmapFactory.decodeStream(imageStream);
-                ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
-                teste.compress(Bitmap.CompressFormat.JPEG, 70, imgStream);
-                imgByteArray = imgStream.toByteArray();
-                base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
+        StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+                        setResult(Activity.RESULT_OK, new Intent());
+                        finish();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                System.out.println("BYTE COUNT IMG: " + teste.getByteCount());
-                System.out.println("BYTEARRAY ENVIADO DA IMG: " + imgByteArray.length);
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response.statusCode);
 
-                JSONObject report = new JSONObject();
-
-                if (mReportType.equals("fast")) {
-
-                    report.put("report_lat", mLat);
-                    report.put("report_lng", mLng);
-                    report.put("report_img", base64Img);
-                    report.put("report_thumbnail", base64Thumbnail);
-                    report.put("report_address", mAddress);
-                    report.put("report_city", mDistrict);
-                    report.put("report_locality", mLocality);
-
-                } else if (mReportType.equals("medium")) {
-
-                    report.put("report_lat", mLat);
-                    report.put("report_lng", mLng);
-                    report.put("report_thumbnail", base64Thumbnail);
-                    report.put("report_img", base64Img);
-                    report.put("report_title", mTitle);
-                    report.put("report_gravity", mGravity);
-                    report.put("report_address", mAddress);
-                    report.put("report_city", mDistrict);
-                    report.put("report_locality", mLocality);
-
-                } else if (mReportType.equals("detailed")) {
-
-                    report.put("report_lat", mLat);
-                    report.put("report_lng", mLng);
-                    report.put("report_thumbnail", base64Thumbnail);
-                    report.put("report_img", base64Img);
-                    report.put("report_title", mTitle);
-                    report.put("report_gravity", mGravity);
-                    report.put("report_description", mDescription);
-                    report.put("report_address", mAddress);
-                    report.put("report_city", mDistrict);
-                    report.put("report_locality", mLocality);
+                        if (response.statusCode == 400) {
+                        } else {
+                            Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
+                            showProgress(false);
+                        }
+                    }
                 }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Authorization", token);
 
-                System.out.println("REPORT JSON: " + report);
-                System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
-
-
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/report/create");
-
-                HttpURLConnection s = RequestsREST.doPOST(url, report, token);
-
-                return s.getResponseMessage();
-
-            } catch (Exception e) {
-                return e.toString();
+                return params;
             }
-        }
 
-        @Override
-        protected void onPostExecute(final String result) {
-            mReportTask = null;
-            System.out.println("RESPOSTA DO REPORT " + result);
-            if (result.equals("OK")) {
-                Toast.makeText(context, "Report successfully registered", Toast.LENGTH_LONG).show();
-                setResult(Activity.RESULT_OK, new Intent());
-                finish();
-            } else if (result.equals(BAD_REQUEST)) {
-                showProgress(false);
-                Toast.makeText(context, "Report bad requested", Toast.LENGTH_LONG).show();
+            @Override
+            public byte[] getBody() {
+                return report.toString().getBytes();
             }
-        }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        reportRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                1,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(reportRequest);
+
     }
 }

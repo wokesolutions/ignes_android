@@ -4,12 +4,9 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,22 +16,15 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -43,34 +33,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
-import android.widget.Toast;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
@@ -78,60 +46,67 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 public class ReportFormActivity extends AppCompatActivity {
 
     public static final int MY_PERMISSIONS_REQUEST_STORAGE = 77;
-    
+
     private final int REQUEST_IMAGE_CAPTURE = 0;
-
-    private Context context;
-
-    private int mRequestCode;
-    private int mGravity;
-
-    private byte[] byteArray;
-    private byte[] imgByteArray;
-
-    private String mCurrentPhotoPath;
-    private Bitmap mImage;
-    private Bitmap mThumbnail;
-    private Uri mImageURI;
-    private File mImgFile;
-
-    private String mReportType;
-
-    private Location mCurrentLocation;
-
-    private Geocoder mCoder;
-
-    private Button mUploadButton;
-    private Button mCameraButton;
-    private Button mSubmitButton;
-
-    private CheckBox mCheckBox;
-    private CheckBox mCheckBox_Private;
-
-    private SeekBar mGravitySlider;
-
-    private View mProgressView;
-
-    private LinearLayout mMediumForm;
-    private LinearLayout mSliderForm;
-    private LinearLayout mLongForm;
-    private LinearLayout mReportForm;
-    private LinearLayout mUploadPicture;
-
-    private EditText mTitle;
-    private EditText mMediumTitle;
-    private EditText mAddress;
-    private EditText mDescription;
-
+    public byte[] imgByteArray;
+    public Uri mImageURI;
+    public String mReportType;
+    public boolean mIsPrivate;
     String address;
     String district;
     String locality;
     double lat;
     double lng;
-
-    private boolean mIsPrivate;
-
+    private Context context;
+    private int mRequestCode;
+    private int mGravity;
+    private byte[] byteArray;
+    private String mCurrentPhotoPath;
+    private Bitmap mImage;
+    private Bitmap mThumbnail;
+    private File mImgFile;
+    private Location mCurrentLocation;
+    private Geocoder mCoder;
+    private Button mUploadButton;
+    private Button mCameraButton;
+    private Button mSubmitButton;
+    private CheckBox mCheckBox;
+    private CheckBox mCheckBox_Private;
+    private SeekBar mGravitySlider;
+    private View mProgressView;
+    private LinearLayout mMediumForm;
+    private LinearLayout mSliderForm;
+    private LinearLayout mLongForm;
+    private LinearLayout mReportForm;
+    private LinearLayout mUploadPicture;
+    private EditText mTitle;
+    private EditText mMediumTitle;
+    private EditText mAddress;
+    private EditText mDescription;
     private ImageView mImageView;
+
+    public static Bitmap getScaledBitmap(String path, int newSize) {
+        File image = new File(path);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inInputShareable = true;
+        options.inPurgeable = true;
+
+        BitmapFactory.decodeFile(image.getPath(), options);
+        if ((options.outWidth == -1) || (options.outHeight == -1))
+            return null;
+
+        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
+                : options.outWidth;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = originalSize / newSize;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
+
+        return scaledBitmap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,29 +303,6 @@ public class ReportFormActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
-    public static Bitmap getScaledBitmap(String path, int newSize) {
-        File image = new File(path);
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inInputShareable = true;
-        options.inPurgeable = true;
-
-        BitmapFactory.decodeFile(image.getPath(), options);
-        if ((options.outWidth == -1) || (options.outHeight == -1))
-            return null;
-
-        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                : options.outWidth;
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inSampleSize = originalSize / newSize;
-
-        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
-
-        return scaledBitmap;
-    }
-
     private Bitmap scaleImage(int destWidth, String path) {
         Bitmap image = BitmapFactory.decodeFile(path);
 
@@ -514,7 +466,7 @@ public class ReportFormActivity extends AppCompatActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+    public void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -589,136 +541,8 @@ public class ReportFormActivity extends AppCompatActivity {
     private void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
                                String locality, int gravity, double lat, double lng) {
 
-        final byte[] mThumbnail = thumbnail;
-        final double mLat = lat;
-        final double mLng = lng;
-        final String base64Img;
-        final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
-        final String mDescription = description;
-        final int mGravity = gravity;
-        final String mTitle = title;
-        final String mDistrict = district;
-        final String mAddress = address;
-        final String mLocality = locality;
-
-        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        final String token = sharedPref.getString("token", null);
-
-        final JSONObject report = new JSONObject();
-
-        try {
-            InputStream imageStream = getContentResolver().openInputStream(mImageURI);
-
-            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
-            ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, imgStream);
-            imgByteArray = imgStream.toByteArray();
-            base64Img = Base64.encodeToString(imgByteArray, Base64.DEFAULT);
-
-            System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
-            System.out.println("BYTEARRAY ENVIADO DA IMG: " + imgByteArray.length);
-
-
-
-            if (mReportType.equals("fast")) {
-
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_img", base64Img);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", mIsPrivate);
-
-            } else if (mReportType.equals("medium")) {
-
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_img", base64Img);
-                report.put("report_title", mTitle);
-                report.put("report_gravity", mGravity);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", mIsPrivate);
-
-            } else if (mReportType.equals("detailed")) {
-
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_img", base64Img);
-                report.put("report_title", mTitle);
-                report.put("report_gravity", mGravity);
-                report.put("report_description", mDescription);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", mIsPrivate);
-            }
-
-            System.out.println("REPORT JSON: " + report);
-            System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/create";
-
-        StringRequest reportRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        System.out.println("OK: " + response);
-                        setResult(Activity.RESULT_OK, new Intent());
-                        finish();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response.statusCode);
-
-                        if (response.statusCode == 400) {
-                        } else {
-                            Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
-                            showProgress(false);
-                        }
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("Authorization", token);
-
-                return params;
-            }
-
-            @Override
-            public byte[] getBody() {
-                return report.toString().getBytes();
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/json";
-            }
-        };
-
-        reportRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
-                1,  // maxNumRetries = 0 means no retry
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(reportRequest);
+        RequestsVolley.reportRequest(thumbnail, description, title, district, address,
+                locality, gravity, lat, lng, context, this);
 
     }
 }

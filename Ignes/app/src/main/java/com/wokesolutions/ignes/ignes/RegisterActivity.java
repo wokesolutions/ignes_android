@@ -1,65 +1,33 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    public int CONFLICT_ERROR = 409;
+    public EditText mUsername;
     /**
      * Keep track of the registration task to ensure we can cancel it if requested.
      */
     private Context context;
     private TextView tx;
     private TextView ty;
-
-    private int CONFLICT_ERROR = 409;
-
     private View mRegister_form;
     private View mRegister_username_form;
     private View mRegister_email_form;
     private View mRegister_password_form;
-
     private Button mUsername_button;
     private Button mEmail_button;
     private Button mPassword_button;
     private Button mSignUp_button;
-
-    private EditText mUsername;
     private EditText mEmail;
     private EditText mPassword;
     private EditText mPasswordConfirm;
@@ -115,7 +83,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void changeVisibility(String option) {
+    public void changeVisibility(String option) {
         switch (option) {
 
             case "Username": {
@@ -224,72 +192,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerRequest(String username, String password, String email) {
-
-        final String mUsernameRequest = username;
-        final String mPasswordRequest = password;
-        final String mEmailRequest = email;
-
-        final JSONObject credentials = new JSONObject();
-
-        try {
-            credentials.put("username", mUsernameRequest);
-            credentials.put("email", mEmailRequest);
-            credentials.put("password", mPasswordRequest);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = "https://hardy-scarab-200218.appspot.com/api/register/user";
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Toast.makeText(context, "User successfully registered!", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                        finish();
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("RESPOSTA DO REGISTER: " + response.statusCode);
-
-                        if (response.statusCode == CONFLICT_ERROR) {
-
-                            Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
-                            changeVisibility("Username");
-                            mUsername.setError("Choose a different username");
-                            mUsername.requestFocus();
-
-                        } else {
-                            Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-        ) {
-           @Override
-           public byte[] getBody(){
-               return credentials.toString().getBytes();
-           }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/json";
-            }
-        };
-
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
-                1,  // maxNumRetries = 0 means no retry
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(postRequest);
-
+        RequestsVolley.registerRequest(username, password, email, context, this);
     }
 }

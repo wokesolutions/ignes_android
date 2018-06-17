@@ -28,25 +28,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -103,7 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Map<String, MarkerClass> markerMap;
 
-    private RequestQueue queue;
+    public RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,7 +208,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void checkIfAccountConfirmed() {
+    public void checkIfAccountConfirmed() {
 
         isConfirmed = sharedPref.getString("isConfirmed", "");
 
@@ -443,7 +432,6 @@ public class ProfileActivity extends AppCompatActivity {
                 alert.dismiss();
             }
         });
-
     }
 
     public void onBackPressed() {
@@ -452,85 +440,10 @@ public class ProfileActivity extends AppCompatActivity {
             recreate();
         else
             finish();
-
-
     }
 
-    private void confirmRequest(String code) {
-
-        final String mCode = code;
-        final String mToken = sharedPref.getString("token", "");
-        final String username = sharedPref.getString("username", "ERROR");
-
-        final JSONObject credentials = new JSONObject();
-
-        try {
-            credentials.put("code", mCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String url = "https://hardy-scarab-200218.appspot.com/api/profile/activate/" + username;
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        System.out.println("OK: " + response);
-
-                        sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-
-                        SharedPreferences.Editor editor = sharedPref.edit();
-
-                        editor.putString("isConfirmed", "true");
-
-                        editor.apply();
-
-                        checkIfAccountConfirmed();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        NetworkResponse response = error.networkResponse;
-
-                        System.out.println("ERRO DO CONFIRM: " + response);
-
-                        Toast.makeText(context, "Error with your confirmation!", Toast.LENGTH_LONG).show();
-
-                    }
-                }
-        ) {
-            @Override
-            public byte[] getBody() {
-                return credentials.toString().getBytes();
-            }
-
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
-
-                return params;
-            }
-
-            @Override
-            public String getBodyContentType() {
-                return "application/json";
-            }
-        };
-
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
-                1,  // maxNumRetries = 0 means no retry
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(postRequest);
-
-
-
+    private void confirmRequest(String insertedCode) {
+        RequestsVolley.confirmRequest(insertedCode, context, this);
     }
 
     public class EditProfileTask extends AsyncTask<Void, Void, String> {

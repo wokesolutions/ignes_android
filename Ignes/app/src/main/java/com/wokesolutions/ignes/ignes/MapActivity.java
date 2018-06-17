@@ -13,7 +13,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -41,7 +40,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -66,9 +64,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -89,12 +84,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int BAD_REQUEST_ERROR = 400;
     public static Map<String, MarkerClass> mReportMap;
     public static Location mCurrentLocation;
+    public Geocoder mCoder;
+    public boolean isReady;
+    public List<Address> addresses;
+    public RequestQueue queue;
+    public String mUsername;
+    public String teste;
+    public String mRole;
     private Context context;
     private GoogleMap mMap;
     // private MapTask mMapTask = null;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
-    private Geocoder mCoder;
     private LocationManager mManager;
     private boolean mGps;
     private DrawerLayout mDrawerLayout;
@@ -104,38 +105,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mFeedButton;
     private LinearLayout mWorkRoomButton;
     private LinearLayout mTasksButton;
-
     private Context mContext;
-
     private SharedPreferences sharedPref;
-
     private String mToken;
-
-    private boolean isReady;
     private boolean isReportFinished;
     private boolean isThumbnailFinished;
-
     private String mCurrentLocality;
-
-    private List<Address> addresses;
-
     private int offsetReports;
     private int offsetThumbnails;
     private int offsetThumbnailTask;
-
     private List<String> orderedIds;
-
     private String requestId;
-
-    private RequestQueue queue;
-
-    private String mUsername;
-
-    private String teste;
     private String header;
-
-    private String mRole;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,7 +229,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    private void setMarkers(JSONArray markers, double lat, double lng, String locality) {
+    public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
         try {
             //Map<String, MarkerClass> temp = new HashMap<>();
 
@@ -510,7 +491,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         thumbnailRequest();
                     }
                 } else*/
-                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+                startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
     }
@@ -728,115 +709,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    private void mapRequest(double lat, double lng, int radius, String token, String cursor) {
+    public void mapRequest(double lat, double lng, int radius, String token, String cursor) {
 
-        final double mLat = lat;
-        final double mLng = lng;
-        final int mRadius = radius;
-        final String mToken = token;
-        final String mCursor = cursor;
-
-        try {
-            addresses = mCoder.getFromLocation(lat, lng, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        final String mLocality = addresses.get(0).getLocality();
-
-        String url = "";
-
-        if (mRole.equals("USER")) {
-            url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
-                    + "lat=" + mCurrentLocation.getLatitude() + "&lng=" + mCurrentLocation.getLongitude()
-                    + "&radius=" + 5 + "&cursor=" + mCursor;
-        } else if (mRole.equals("WORKER")) {
-            url = "https://hardy-scarab-200218.appspot.com/api/worker/tasks/" + mUsername + "?cursor=" + mCursor;
-        }
-
-        JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // response
-                        System.out.println("OK: " + response);
-
-
-                        isReady = true;
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-                        setMarkers(response, mLat, mLng, mLocality);
-
-                        if (teste.equals("FINISHED"))
-                            System.out.println("ACABARAM OS REPORTS");
-                        else {
-                            System.out.println("Continuar a pedir...");
-                            mapRequest(mLat, mLng, 10000, mToken, teste);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        System.out.println("ERRO DO MAP: " + error.toString());
-
-                        if(error.toString().equals("com.android.volley.VolleyError: 204")) {
-                            Toast.makeText(mContext, "No reports to show in this area!", Toast.LENGTH_LONG).show();
-                            isReady = true;
-                        }
-                       else
-                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
-
-                    }
-                }
-        ) {
-            @Override
-            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-
-                System.out.println("PARSE RESPONSE STATUS CODE --->>"+response.statusCode);
-
-                if (response.statusCode == 200) {
-
-                    try {
-
-                        if (response.headers.get("Cursor") != null)
-                            teste = response.headers.get("Cursor");
-                        else
-                            teste = "FINISHED";
-
-                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
-                        JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
-
-                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
-                    }
-
-                } else if (response.statusCode == 403) {
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    return Response.error(error);
-                } else if (response.statusCode == 204) {
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    return Response.error(error);
-                } else {
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    return Response.error(error);
-                }
-            }
-        };
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-                0,  // maxNumRetries = 0 means no retry
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(postRequest);
-
+        RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
     }
 
     private void setThumbnails(JSONObject thumbnails) {
@@ -983,7 +858,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
         thumbnailRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
                 1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 

@@ -18,14 +18,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +39,115 @@ public class RequestsVolley {
 
     private static StringRequest stringRequest;
     private static JsonObjectRequest jsonRequest;
+    private static JsonArrayRequest arrayRequest;
     private static String url;
-    
+
+    public static void mapRequest(double lat, double lng, int radius, String token, String cursor, final Context context, final MapActivity activity) {
+
+        final double mLat = lat;
+        final double mLng = lng;
+        final int mRadius = radius;
+        final String mToken = token;
+        final String mCursor = cursor;
+
+        try {
+            activity.addresses = activity.mCoder.getFromLocation(lat, lng, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final String mLocality = activity.addresses.get(0).getLocality();
+
+        String url = "";
+
+        if (activity.mRole.equals("USER")) {
+            url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+                    + "lat=" + activity.mCurrentLocation.getLatitude() + "&lng=" + activity.mCurrentLocation.getLongitude()
+                    + "&radius=" + 5 + "&cursor=" + mCursor;
+        } else if (activity.mRole.equals("WORKER")) {
+            url = "https://hardy-scarab-200218.appspot.com/api/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
+        }
+
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+
+                        activity.isReady = true;
+
+                        System.out.println("RESPONSE DATA: ->>> " + response);
+                        activity.setMarkers(response, mLat, mLng, mLocality);
+
+                        if (activity.teste.equals("FINISHED"))
+                            System.out.println("ACABARAM OS REPORTS");
+                        else {
+                            System.out.println("Continuar a pedir...");
+                            activity.mapRequest(mLat, mLng, 10000, mToken, activity.teste);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO MAP: " + error.toString());
+
+                        if (error.toString().equals("com.android.volley.VolleyError: 204")) {
+                            Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
+                            activity.isReady = true;
+                        } else
+                            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        ) {
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        if (response.headers.get("Cursor") != null)
+                            activity.teste = response.headers.get("Cursor");
+                        else
+                            activity.teste = "FINISHED";
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == 204) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(arrayRequest);
+
+        activity.queue.add(arrayRequest);
+    }
+
     public static void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
                                      String locality, int gravity, double lat, double lng, final Context context,
                                      final ReportFormActivity activity) {

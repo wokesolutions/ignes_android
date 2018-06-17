@@ -46,13 +46,15 @@ public class FeedActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String mRole;
 
+    private MarkerAdapter markerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        mRole = sharedPref.getString("userLevel","");
+        mRole = sharedPref.getString("userLevel", "");
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_feed);
@@ -64,13 +66,14 @@ public class FeedActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         markerMap = MapActivity.mReportMap;
-        MarkerAdapter markerAdapter = new MarkerAdapter(this, markerMap);
+        markerAdapter = new MarkerAdapter(this, markerMap);
         recyclerView.setAdapter(markerAdapter);
+
         recyclerView.setNestedScrollingEnabled(false);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_feed);
         setSupportActionBar(myToolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_feed);
-
+        
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
@@ -94,6 +97,7 @@ public class FeedActivity extends AppCompatActivity {
             }
         }
         mContext = this;
+
     }
 
 
@@ -164,7 +168,7 @@ public class FeedActivity extends AppCompatActivity {
         MenuItem item2 = menu.findItem(R.id.searchicon);
         item2.setVisible(false);
 
-        if(mRole.equals("WORKER")){
+        if (mRole.equals("WORKER")) {
             MenuItem item3 = menu.findItem(R.id.reporticon);
             item3.setVisible(false);
         }
@@ -183,8 +187,11 @@ public class FeedActivity extends AppCompatActivity {
         if (mMenu.onOptionsItemSelected(item))
             return true;
 
-        if (item.getItemId() == R.id.refreshicon)
-            recreate();
+        if (item.getItemId() == R.id.refreshicon) {
+            //recreate();
+            for (int i = 0; i < 4; i++)
+                markerAdapter.notifyItemChanged(i);
+        }
 
         if (item.getItemId() == R.id.reporticon) {
             onReport();

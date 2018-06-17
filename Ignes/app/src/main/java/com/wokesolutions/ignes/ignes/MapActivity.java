@@ -504,12 +504,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-                if (!mReportMap.isEmpty()) {
+               /* if (!mReportMap.isEmpty()) {
                     String key = mReportMap.keySet().iterator().next();
                     if (mReportMap.get(key).getmImgbyte() == null) {
                         thumbnailRequest();
                     }
-                } else
+                } else*/
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });

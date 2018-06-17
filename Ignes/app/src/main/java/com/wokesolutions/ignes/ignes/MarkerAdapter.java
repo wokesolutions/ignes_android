@@ -1,19 +1,38 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -21,10 +40,12 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     private Context mContext;
     private Map<String, MarkerClass> mMap;
+    RequestQueue queue;
 
     MarkerAdapter(Context context, Map<String, MarkerClass> map) {
         mContext = context;
         mMap = map;
+        queue = Volley.newRequestQueue(mContext);
     }
 
     @NonNull
@@ -46,6 +67,8 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         Object[] keys = mMap.keySet().toArray();
 
         final MarkerClass markerItem = mMap.get(keys[position]);
+
+        thumbnailRequest((String) keys[position], markerItem);
 
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
@@ -152,4 +175,82 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         }
     }
+
+    private void thumbnailRequest(String reportId, MarkerClass marker) {
+
+        final String report = reportId;
+        final MarkerClass item = marker;
+
+        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // If no connectivity, cancel task and update Callback with null data.
+            Toast.makeText(mContext, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+
+
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/"+report;
+
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        System.out.println("OK: " + response);
+                        try {
+                            String base64 = response.getString("report_thumbnail");
+                            byte[] data = Base64.decode(base64, Base64.DEFAULT);
+                            item.makeImg(data);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response);
+
+
+                    }
+                }
+        ) {
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                if (response.statusCode == 200) {
+
+                    try {
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        JSONObject jsonobject = new JSONObject(json);
+                        return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(postRequest);
+
+    }
+
 }

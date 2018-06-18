@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -123,7 +124,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this, Locale.getDefault());
         mCurrentLocation = null;
         mReportMap = new HashMap<>();
-      //  mReportList = new LinkedList<>();
+        //  mReportList = new LinkedList<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -136,12 +137,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         if (mRole.equals("USER")) {
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
-        }
-        else if (mRole.equals("WORKER")) {
+        } else if (mRole.equals("WORKER")) {
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
         }
@@ -181,11 +181,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
         // Add ten cluster items in close proximity, for purposes of this example.
-       Iterator it = mReportMap.keySet().iterator();
+        Iterator it = mReportMap.keySet().iterator();
 
         while (it.hasNext()) {
             String key = (String) it.next();
-            System.out.println("ITEM "+key);
+            System.out.println("ITEM " + key);
             mClusterManager.cluster();
             mClusterManager.addItem(mReportMap.get(key));
             mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
@@ -264,9 +264,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mReportList.add(report);*/
             }
 
-          //  mReportMap = temp;
+            //  mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
+            votesRequest(mUsername, "");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -501,7 +502,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-                    startActivity(new Intent(MapActivity.this, FeedActivity.class));
+                startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
     }
@@ -513,8 +514,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (mRole.equals("USER")) {
             inflater.inflate(R.menu.menu, menu);
-        }
-        else if (mRole.equals("WORKER")) {
+        } else if (mRole.equals("WORKER")) {
             inflater.inflate(R.menu.worker_menu, menu);
         }
 
@@ -689,6 +689,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void mapRequest(double lat, double lng, int radius, String token, String cursor) {
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
+    }
+
+    public void votesRequest(String username, String cursor) {
+        RequestsVolley.votesRequest(username, cursor, mContext, this);
+    }
+
+    public void setUserVotes(JSONArray jsonArray) {
+
+        try {
+            JSONArray jsonarray = jsonArray;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                if (jsonobject.has("uservote_report")) {
+
+                    String idReport = jsonobject.getString("uservote_report");
+                    String vote = jsonobject.getString("uservote_type");
+
+                    if (mReportMap.containsKey(idReport)) {
+                        MarkerClass markerClass = mReportMap.get(idReport);
+                        markerClass.setmVote(vote);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {

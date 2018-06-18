@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+
 import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -104,16 +106,10 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             public void onClick(View v) {
                 Intent i = new Intent(holder.itemViewContext, MarkerActivity.class);
 
-                i.putExtra("markerAddress", markerItem.getmAddress());
-                i.putExtra("markerDate", markerItem.getmDate());
-                i.putExtra("markerDescription", markerItem.getmDescription());
-                i.putExtra("markerGravity", markerItem.getmGravity());
-                i.putExtra("markerImg", markerItem.getmImgbyte());
-                i.putExtra("markerUsername", markerItem.getmCreator_username());
-                i.putExtra("markerTitle", markerItem.getmTitle());
-                i.putExtra("markerStatus", markerItem.getmStatus());
-                i.putExtra("markerLikes", markerItem.getmLikes());
-                i.putExtra("markerDislikes", markerItem.getmDislikes());
+                Gson gson = new Gson();
+                String json = gson.toJson(markerItem);
+
+                i.putExtra("MarkerClass", json);
 
                 holder.itemViewContext.startActivity(i);
             }

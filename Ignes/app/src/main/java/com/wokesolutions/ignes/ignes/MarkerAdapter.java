@@ -16,6 +16,7 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,7 +69,8 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         final MarkerClass markerItem = mMap.get(keys[position]);
 
-        thumbnailRequest((String) keys[position], markerItem);
+        if(markerItem.getmImg_bitmap()== null)
+            thumbnailRequest((String) keys[position], markerItem, position);
 
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
@@ -138,6 +140,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 holder.itemViewContext.startActivity(i);
             }
         });
+
     }
 
     @Override
@@ -173,10 +176,20 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
+          /*  // Handle item click and set the selection
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Redraw the old selection and the new
+                   int selectedItem = getLayoutPosition();
+                    notifyItemChanged(selectedItem);
+                }
+            });*/
+
         }
     }
 
-    private void thumbnailRequest(String reportId, MarkerClass marker) {
+    private void thumbnailRequest(String reportId, MarkerClass marker, final int position) {
 
         final String report = reportId;
         final MarkerClass item = marker;
@@ -192,8 +205,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         }
 
 
-
-
         String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/"+report;
 
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -203,9 +214,13 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                         // response
                         System.out.println("OK: " + response);
                         try {
+
                             String base64 = response.getString("report_thumbnail");
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
                             item.makeImg(data);
+
+                            notifyItemChanged(position);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -230,7 +245,11 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                     try {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                         JSONObject jsonobject = new JSONObject(json);
+
+
+
                         return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         return Response.error(new VolleyError(String.valueOf(response.statusCode)));

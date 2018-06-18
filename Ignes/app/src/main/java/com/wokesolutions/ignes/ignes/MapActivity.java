@@ -83,6 +83,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
     public static Map<String, MarkerClass> mReportMap;
+   // private List<MarkerClass> mReportList;
     public static Location mCurrentLocation;
     public Geocoder mCoder;
     public boolean isReady;
@@ -150,6 +151,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this, Locale.getDefault());
         mCurrentLocation = null;
         mReportMap = new HashMap<>();
+      //  mReportList = new LinkedList<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
@@ -192,7 +194,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MarkerClass>(this, mMap);
+        mClusterManager = new ClusterManager<MarkerClass>(mContext, mMap);
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -200,13 +202,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(mClusterManager);
 
         // Add cluster items (markers) to the cluster manager.
-        System.out.println("TAMANHO DA LISTA" + mReportMap.size());
+        System.out.println("TAMANHO DA LISTA " + mReportMap.size());
+
 
         // Add ten cluster items in close proximity, for purposes of this example.
-        Iterator it = mReportMap.keySet().iterator();
+       Iterator it = mReportMap.keySet().iterator();
 
         while (it.hasNext()) {
             String key = (String) it.next();
+            System.out.println("ITEM "+key);
+            mClusterManager.cluster();
             mClusterManager.addItem(mReportMap.get(key));
             mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
         }
@@ -231,6 +236,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
         try {
+
+
+            System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
             //Map<String, MarkerClass> temp = new HashMap<>();
 
             JSONArray jsonarray = markers;
@@ -276,9 +284,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mReportMap.put(reportID, report);
                     orderedIds.add(reportID);
                 }
+
+                /*if(!mReportList.contains(report))
+                    mReportList.add(report);*/
             }
 
-            //mReportMap = temp;
+          //  mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
 
@@ -521,12 +532,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-                if (!mReportMap.isEmpty()) {
+              /*  if (!mReportMap.isEmpty()) {
                     String key = mReportMap.keySet().iterator().next();
                     if (mReportMap.get(key).getmImgbyte() == null) {
                         thumbnailRequest();
                     }
-                } else
+                } else*/
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
@@ -740,7 +751,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void thumbnailRequest() {
+   /* private void thumbnailRequest() {
 
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -864,7 +875,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         queue.add(thumbnailRequest);
 
-    }
+    }*/
 
     class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
 

@@ -69,6 +69,7 @@ public class FeedActivity extends AppCompatActivity {
         markerAdapter = new MarkerAdapter(this, markerMap);
         recyclerView.setAdapter(markerAdapter);
 
+
         recyclerView.setNestedScrollingEnabled(false);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_feed);
         setSupportActionBar(myToolbar);
@@ -97,6 +98,8 @@ public class FeedActivity extends AppCompatActivity {
             }
         }
         mContext = this;
+
+
 
     }
 
@@ -188,9 +191,9 @@ public class FeedActivity extends AppCompatActivity {
             return true;
 
         if (item.getItemId() == R.id.refreshicon) {
-            //recreate();
-            for (int i = 0; i < 4; i++)
-                markerAdapter.notifyItemChanged(i);
+            recreate();
+           /* for (int i = 0; i < 4; i++)
+                markerAdapter.notifyItemChanged(i);*/
         }
 
         if (item.getItemId() == R.id.reporticon) {

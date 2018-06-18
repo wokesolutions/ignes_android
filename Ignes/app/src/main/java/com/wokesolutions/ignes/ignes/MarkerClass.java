@@ -9,9 +9,6 @@ import com.google.maps.android.clustering.ClusterItem;
 public class MarkerClass implements ClusterItem {
 
     private LatLng mPosition;
-
-    private String mMarker_ID;
-
     private String mStatus;
     private String mAddress;
     private String mDate;
@@ -28,8 +25,6 @@ public class MarkerClass implements ClusterItem {
 
     private Bitmap mImage_bitmap;
 
-    private double mLatitude;
-    private double mLongitude;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
@@ -41,8 +36,6 @@ public class MarkerClass implements ClusterItem {
         mAddress = address;
         mDate = date;
         mCreator_username = username;
-        mLatitude = lat;
-        mLongitude = lng;
         mDescription = description;
         mGravity = gravity;
         mTitle = title;
@@ -50,28 +43,16 @@ public class MarkerClass implements ClusterItem {
         mLikes = likes;
         mDislikes = dislikes;
         mLocality = locality;
-        mMarker_ID = marker_id;
         mImgbyte = null;
 
-    }
-    public String getMarkerID(){
-        return mMarker_ID;
     }
     @Override
     public LatLng getPosition() {
         return mPosition;
     }
 
-    public double getmLatitude() {
-        return mLatitude;
-    }
-
     public String getmLocality() {
         return mLocality;
-    }
-
-    public double getmLongitude() {
-        return mLongitude;
     }
 
     public String getmDate() {
@@ -80,10 +61,6 @@ public class MarkerClass implements ClusterItem {
 
     public String getmAddress() {
         return mAddress;
-    }
-
-    public LatLng getmPosition() {
-        return mPosition;
     }
 
     public String getmStatus() {

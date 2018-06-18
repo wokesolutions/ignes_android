@@ -37,6 +37,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class RequestsVolley {
 
+    private static final int SERVER_ERROR = 500;
+    private static final int NO_CONTENT_ERROR = 204;
+    private static final int NOT_FOUND_ERROR = 404;
+    private static final int BAD_REQUEST_ERROR = 400;
+
     private static StringRequest stringRequest;
     private static JsonObjectRequest jsonRequest;
     private static JsonArrayRequest arrayRequest;

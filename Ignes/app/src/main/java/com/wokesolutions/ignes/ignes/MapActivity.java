@@ -1,7 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,8 +10,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,15 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -78,12 +66,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
-    private static final int SERVER_ERROR = 500;
-    private static final int NO_CONTENT_ERROR = 204;
-    private static final int NOT_FOUND_ERROR = 404;
-    private static final int BAD_REQUEST_ERROR = 400;
     public static Map<String, MarkerClass> mReportMap;
-   // private List<MarkerClass> mReportList;
     public static Location mCurrentLocation;
     public Geocoder mCoder;
     public boolean isReady;
@@ -92,9 +75,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public String mUsername;
     public String teste;
     public String mRole;
-    private Context context;
     private GoogleMap mMap;
-    // private MapTask mMapTask = null;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
     private LocationManager mManager;
@@ -109,15 +90,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Context mContext;
     private SharedPreferences sharedPref;
     private String mToken;
-    private boolean isReportFinished;
-    private boolean isThumbnailFinished;
     private String mCurrentLocality;
-    private int offsetReports;
-    private int offsetThumbnails;
-    private int offsetThumbnailTask;
     private List<String> orderedIds;
-    private String requestId;
-    private String header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,13 +109,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         mContext = this;
         teste = "";
-        header = "";
         queue = Volley.newRequestQueue(this);
         isReady = false;
-        offsetReports = 0;
-        offsetThumbnails = 0;
-        offsetThumbnailTask = 0;
-        requestId = "";
         orderedIds = new LinkedList<>();
 
         String languageToLoad = "pt_PT";
@@ -496,12 +465,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-               /* if (!mReportMap.isEmpty()) {
-                    String key = mReportMap.keySet().iterator().next();
-                    if (mReportMap.get(key).getmImgbyte() == null) {
-                        thumbnailRequest();
-                    }
-                } else*/
                 startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
@@ -532,12 +495,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-              /*  if (!mReportMap.isEmpty()) {
-                    String key = mReportMap.keySet().iterator().next();
-                    if (mReportMap.get(key).getmImgbyte() == null) {
-                        thumbnailRequest();
-                    }
-                } else*/
                     startActivity(new Intent(MapActivity.this, FeedActivity.class));
             }
         });
@@ -724,158 +681,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
     }
-
-    private void setThumbnails(JSONObject thumbnails) {
-        try {
-
-            JSONObject jsonobject = thumbnails;
-
-            for (int i = offsetThumbnails; i < orderedIds.size(); i++) {
-
-                String reportId = orderedIds.get(i);
-
-                System.out.println();
-
-                System.out.println("REPORT ID ON SET THUMBNAILS: " + reportId);
-
-                String thumbnail = jsonobject.getString(reportId);
-
-                byte[] data = Base64.decode(thumbnail, Base64.DEFAULT);
-
-                mReportMap.get(reportId).makeImg(data);
-
-                offsetThumbnails = i;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-   /* private void thumbnailRequest() {
-
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnected() ||
-                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-            // If no connectivity, cancel task and update Callback with null data.
-            Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnails";
-        header = "";
-        int counter = 0;
-
-
-        for (int i = offsetThumbnailTask; i < orderedIds.size(); i++) {
-
-            if (counter == 10) {
-                break;
-            }
-
-            String reportId = orderedIds.get(i);
-
-            header = header + reportId + "&";
-
-            offsetThumbnailTask = i;
-
-            counter++;
-
-        }
-
-        if ((orderedIds.size() - offsetThumbnailTask - 1) > 0)
-            isThumbnailFinished = false;
-        else
-            isThumbnailFinished = true;
-
-        System.out.println("THUMBNAIL HEADER: " + header);
-        System.out.println("IS THUMBNAIL FINISHED: " + isThumbnailFinished);
-
-        final JsonObjectRequest thumbnailRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // response
-                        System.out.println("OK: " + response);
-
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-
-                        setThumbnails(response);
-
-                        if (!isThumbnailFinished) {
-                            thumbnailRequest();
-                        } else
-                            startActivity(new Intent(MapActivity.this, FeedActivity.class));
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO THUMBNAIL REQUEST: " + response);
-
-                    }
-                }
-        ) {
-
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Reports", header);
-
-                return params;
-            }
-
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-
-                if (response.statusCode == 200) {
-
-                    System.out.println("FAZENDO THUMBNAILS");
-
-
-                    try {
-                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                        JSONObject jsonobject = new JSONObject(json);
-                        return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
-                    }
-
-                } else if (response.statusCode == SERVER_ERROR) {
-
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                    return Response.error(error);
-
-                } else if (response.statusCode == NO_CONTENT_ERROR) {
-
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    Toast.makeText(mContext, "No reports to show in this area", Toast.LENGTH_LONG).show();
-                    return Response.error(error);
-
-                } else {
-
-                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
-                    Toast.makeText(mContext, "Can't connect to server", Toast.LENGTH_LONG).show();
-                    return Response.error(error);
-
-                }
-            }
-        };
-        thumbnailRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
-                1,  // maxNumRetries = 0 means no retry
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(thumbnailRequest);
-
-    }*/
 
     class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
 

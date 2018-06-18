@@ -1,40 +1,18 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -175,16 +153,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_status_image = itemView.findViewById(R.id.feed_lock_img);
-
-          /*  // Handle item click and set the selection
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Redraw the old selection and the new
-                   int selectedItem = getLayoutPosition();
-                    notifyItemChanged(selectedItem);
-                }
-            });*/
 
         }
     }

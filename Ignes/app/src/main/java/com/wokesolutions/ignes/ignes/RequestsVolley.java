@@ -42,6 +42,90 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url;
 
+
+    public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter) {
+
+        final String report = reportId;
+        final MarkerClass item = marker;
+
+        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // If no connectivity, cancel task and update Callback with null data.
+            Toast.makeText(mContext, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/"+report;
+
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        System.out.println("OK: " + response);
+                        try {
+
+                            String base64 = response.getString("report_thumbnail");
+                            byte[] data = Base64.decode(base64, Base64.DEFAULT);
+                            item.makeImg(data);
+
+                          markerAdapter.notifyItemChanged(position);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response);
+
+
+                    }
+                }
+        ) {
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                if (response.statusCode == 200) {
+
+                    try {
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        JSONObject jsonobject = new JSONObject(json);
+
+
+
+                        return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                1,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(postRequest);
+
+    }
     public static void mapRequest(double lat, double lng, int radius, String token, String cursor, final Context context, final MapActivity activity) {
 
         final double mLat = lat;

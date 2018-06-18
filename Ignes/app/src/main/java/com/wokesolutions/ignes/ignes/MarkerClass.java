@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-
 public class MarkerClass implements ClusterItem {
 
     private LatLng mPosition;
@@ -18,14 +17,11 @@ public class MarkerClass implements ClusterItem {
     private String mTitle;
     private String mLikes;
     private String mDislikes;
-
     private String mLocality;
-
     private byte[] mImgbyte;
-
     private Bitmap mImage_bitmap;
 
-
+    private String mVote;
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
@@ -45,7 +41,11 @@ public class MarkerClass implements ClusterItem {
         mLocality = locality;
         mImgbyte = null;
 
+        mVote ="";
+
+
     }
+
     @Override
     public LatLng getPosition() {
         return mPosition;
@@ -112,4 +112,12 @@ public class MarkerClass implements ClusterItem {
         return mImage_bitmap;
     }
 
+
+    public String getmVote() {
+        return mVote;
+    }
+
+    public void setmVote(String mVote) {
+        this.mVote = mVote;
+    }
 }

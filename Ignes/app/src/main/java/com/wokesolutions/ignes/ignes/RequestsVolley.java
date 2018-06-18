@@ -22,6 +22,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +48,7 @@ public class RequestsVolley {
     private static JsonObjectRequest jsonRequest;
     private static JsonArrayRequest arrayRequest;
     private static String url;
+    private static String mIsFinish;
 
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter) {
@@ -65,7 +68,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/"+report;
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/" + report;
 
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -79,7 +82,7 @@ public class RequestsVolley {
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
                             item.makeImg(data);
 
-                          markerAdapter.notifyItemChanged(position);
+                            markerAdapter.notifyItemChanged(position);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -107,7 +110,6 @@ public class RequestsVolley {
                         JSONObject jsonobject = new JSONObject(json);
 
 
-
                         return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
 
                     } catch (Exception e) {
@@ -124,13 +126,14 @@ public class RequestsVolley {
             }
         };
         postRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS*2,
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
                 1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(postRequest);
 
     }
+
     public static void mapRequest(double lat, double lng, int radius, String token, String cursor, final Context context, final MapActivity activity) {
 
         final double mLat = lat;
@@ -546,15 +549,27 @@ public class RequestsVolley {
 
                         try {
                             editor.putString("token", response.getString("token"));
+
                             editor.putString("username", mUsernameRequest);
-                            //editor.putString("isConfirmed", response.getString("activated"));
-                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL")+ " " +response.getString("level") );
+
+                            if (response.getString("activated") != null)
+                                editor.putString("isConfirmed", response.getString("activated"));
+
+                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL") + " " + response.getString("level"));
+
                             if ((response.getString("level")).contains("LEVEL"))
                                 editor.putString("userLevel", "USER");
                             else
                                 editor.putString("userLevel", response.getString("level"));
 
+                            UserClass userClass = new UserClass(mUsernameRequest);
+
+                            Gson gson = new Gson();
+                            String json = gson.toJson(userClass);
+                            editor.putString("UserClass", json);
+
                             editor.apply();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -687,6 +702,93 @@ public class RequestsVolley {
 
         queue.add(stringRequest);
     }
+
+    public static void votesRequest(final String username, final String cursor, final Context context, final MapActivity activity) {
+
+        final String mUsername = username;
+        final String mCursor = cursor;
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+            url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/"+mUsername+"?cursor=" + mCursor;
+
+       JsonArrayRequest jsonRequest = new  JsonArrayRequest (Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        System.out.println("OK: " + response);
+
+                        if (mIsFinish.equals("FINISHED")) {
+                            System.out.println("ACABARAM OS REPORTS");
+
+                            activity.setUserVotes(response);
+                        }
+                        else {
+                            System.out.println("Continuar a pedir...");
+                            activity.votesRequest(mUsername,mCursor);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO MAP: " + error.toString());
+
+                        if (error.toString().equals("com.android.volley.VolleyError: 204")) {
+                            Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
+                        } else
+                            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        ) {
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        if (response.headers.get("Cursor") != null)
+                            mIsFinish = response.headers.get("Cursor");
+                        else
+                            mIsFinish = "FINISHED";
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == 204) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(arrayRequest);
+
+        queue.add(arrayRequest);
+    }
+
+
 
     private static void setRetry(Request request) {
 

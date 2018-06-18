@@ -16,6 +16,14 @@
         <item name="colorAccent">@color/colorIgnesPrimary</item>
     </style>
 
+    <!-- Worker theme. -->
+    <style name="WorkerTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. #36ad6d -->
+        <item name="colorPrimary">#FFFF</item>
+        <item name="colorPrimaryDark">@color/colorIgnesWorker</item>
+        <item name="colorAccent">#36ad6d</item>
+    </style>
+
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <!-- Customize your theme here. -->
 

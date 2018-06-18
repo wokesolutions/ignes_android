@@ -104,8 +104,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         System.out.println("MROOOOOLE-> " + mRole);
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_map);
-        else if (mRole.equals("WORKER"))
+        else if (mRole.equals("WORKER")) {
+            setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_map);
+        }
 
         mContext = this;
         teste = "";

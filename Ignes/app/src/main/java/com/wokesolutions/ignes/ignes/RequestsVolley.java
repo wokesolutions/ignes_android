@@ -547,8 +547,8 @@ public class RequestsVolley {
                         try {
                             editor.putString("token", response.getString("token"));
                             editor.putString("username", mUsernameRequest);
-                            editor.putString("isConfirmed", response.getString("activated"));
-                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL"));
+                            //editor.putString("isConfirmed", response.getString("activated"));
+                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL")+ " " +response.getString("level") );
                             if ((response.getString("level")).contains("LEVEL"))
                                 editor.putString("userLevel", "USER");
                             else

@@ -142,6 +142,7 @@ public class RequestsVolley {
         final String mToken = token;
         final String mCursor = cursor;
 
+
         try {
             activity.addresses = activity.mCoder.getFromLocation(lat, lng, 1);
         } catch (IOException e) {
@@ -195,6 +196,15 @@ public class RequestsVolley {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                if (activity.mRole.equals("WORKER"))
+                    params.put("Authorization", mToken);
+
+                return params;
+            }
+
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
 
@@ -552,7 +562,7 @@ public class RequestsVolley {
 
                             editor.putString("username", mUsernameRequest);
 
-                            if (response.getString("activated") != null)
+                            if (response.has("activated"))
                                 editor.putString("isConfirmed", response.getString("activated"));
 
                             System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL") + " " + response.getString("level"));
@@ -704,9 +714,9 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-            url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/"+mUsername+"?cursor=" + mCursor;
+        url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/" + mUsername + "?cursor=" + mCursor;
 
-       JsonArrayRequest jsonRequest = new  JsonArrayRequest (Request.Method.GET, url, null,
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -717,10 +727,9 @@ public class RequestsVolley {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserVotes(response);
-                        }
-                        else {
+                        } else {
                             System.out.println("Continuar a pedir...");
-                            activity.votesRequest(mUsername,mCursor);
+                            activity.votesRequest(mUsername, mCursor);
                         }
                     }
                 },
@@ -781,7 +790,7 @@ public class RequestsVolley {
 
         queue.add(arrayRequest);
     }
-    
+
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(

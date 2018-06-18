@@ -236,7 +236,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String address = jsonobject.getString("report_address");
 
-                //String date = jsonobject.getString("report_creationtimeformatted");
+                String date = jsonobject.getString("report_creationtimeformatted");
 
                 String name = jsonobject.getString("report_username");
 
@@ -252,7 +252,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("report_title"))
                     title = jsonobject.getString("report_title");
 
-                MarkerClass report = new MarkerClass(latitude, longitude, status, address, "teste", name,
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, reportID);
 
                 if (!mReportMap.containsKey(reportID)) {
@@ -267,7 +267,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             //  mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
-            votesRequest(mUsername, "");
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -689,6 +689,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void mapRequest(double lat, double lng, int radius, String token, String cursor) {
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
+        votesRequest(mUsername, "");
     }
 
     public void votesRequest(String username, String cursor) {

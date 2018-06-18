@@ -102,6 +102,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mUsername = sharedPref.getString("username", "ERROR");
         mRole = sharedPref.getString("userLevel", "");
         System.out.println("MROOOOOLE-> " + mRole);
+
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_map);
         else if (mRole.equals("WORKER")) {
@@ -135,12 +136,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ignesred);
-
-        if (mRole.equals("USER"))
+        
+        if (mRole.equals("USER")) {
+            getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
-        else if (mRole.equals("WORKER"))
+        }
+        else if (mRole.equals("WORKER")) {
+            getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
+        }
 
         /*----- About Google Maps -----*/
         checkLocationPermission();
@@ -506,17 +510,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+
+        if (mRole.equals("USER")) {
+            inflater.inflate(R.menu.menu, menu);
+        }
+        else if (mRole.equals("WORKER")) {
+            inflater.inflate(R.menu.worker_menu, menu);
+        }
 
         MenuItem item1 = menu.findItem(R.id.username);
         item1.setVisible(false);
 
-        if (mRole.equals("WORKER")) {
-            MenuItem item2 = menu.findItem(R.id.reporticon);
-            item2.setVisible(false);
-            MenuItem item3 = menu.findItem(R.id.searchicon);
-            item3.setVisible(false);
-        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -526,15 +530,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (mMenu.onOptionsItemSelected(item))
             return true;
         if (isReady) {
-            if (item.getItemId() == R.id.reporticon) {
-                onReport();
-                return true;
+
+            if (mRole.equals("USER")) {
+
+                if (item.getItemId() == R.id.reporticon) {
+                    onReport();
+                    return true;
+                }
+
+                if (item.getItemId() == R.id.searchicon)
+                    filterTask();
+
             }
-
-            if (item.getItemId() == R.id.searchicon)
-                filterTask();
-
-
             if (item.getItemId() == R.id.refreshicon)
                 recreate();
         } else

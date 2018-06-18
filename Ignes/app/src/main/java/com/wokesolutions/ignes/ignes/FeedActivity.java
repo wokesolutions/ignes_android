@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import java.util.Map;
 
-import static com.wokesolutions.ignes.ignes.MapActivity.REPORT_ACTIVITY;
 
 public class FeedActivity extends AppCompatActivity {
 
@@ -58,8 +57,10 @@ public class FeedActivity extends AppCompatActivity {
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_feed);
-        else if (mRole.equals("WORKER"))
+        else if (mRole.equals("WORKER")) {
+            setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_tasks);
+        }
 
 
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
@@ -79,12 +80,14 @@ public class FeedActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ignesred);
 
-        if (mRole.equals("WORKER"))
+
+        if (mRole.equals("WORKER")) {
+            getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
+        }
         else if (mRole.equals("USER")) {
-
+            getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
             mLocality = findViewById(R.id.feed_address);
 
@@ -164,17 +167,20 @@ public class FeedActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+
+        if (mRole.equals("USER")) {
+            inflater.inflate(R.menu.menu, menu);
+
+            MenuItem item2 = menu.findItem(R.id.searchicon);
+            item2.setVisible(false);
+        }
+        else if (mRole.equals("WORKER")) {
+            inflater.inflate(R.menu.worker_menu, menu);
+        }
 
         MenuItem item1 = menu.findItem(R.id.username);
         item1.setVisible(false);
-        MenuItem item2 = menu.findItem(R.id.searchicon);
-        item2.setVisible(false);
 
-        if (mRole.equals("WORKER")) {
-            MenuItem item3 = menu.findItem(R.id.reporticon);
-            item3.setVisible(false);
-        }
 
         return super.onCreateOptionsMenu(menu);
     }

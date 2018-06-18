@@ -562,12 +562,6 @@ public class RequestsVolley {
                             else
                                 editor.putString("userLevel", response.getString("level"));
 
-                            UserClass userClass = new UserClass(mUsernameRequest);
-
-                            Gson gson = new Gson();
-                            String json = gson.toJson(userClass);
-                            editor.putString("UserClass", json);
-
                             editor.apply();
 
                         } catch (Exception e) {
@@ -787,9 +781,7 @@ public class RequestsVolley {
 
         queue.add(arrayRequest);
     }
-
-
-
+    
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(

@@ -42,8 +42,6 @@ public class MarkerClass implements ClusterItem {
         mImgbyte = null;
 
         mVote ="";
-
-
     }
 
     @Override
@@ -95,7 +93,15 @@ public class MarkerClass implements ClusterItem {
         return mLikes;
     }
 
-    public Bitmap makeImg( byte[] thumbnail) {
+    public void setmLikes(String mLikes) {
+        this.mLikes = mLikes;
+    }
+
+    public void setmDislikes(String mDislikes) {
+        this.mDislikes = mDislikes;
+    }
+
+    public Bitmap makeImg(byte[] thumbnail) {
         mImgbyte = thumbnail;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
@@ -111,7 +117,6 @@ public class MarkerClass implements ClusterItem {
     public Bitmap getmImg_bitmap() {
         return mImage_bitmap;
     }
-
 
     public String getmVote() {
         return mVote;

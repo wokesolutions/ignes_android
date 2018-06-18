@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 public class MarkerActivity extends AppCompatActivity {
 
     private ImageView marker_image;
@@ -36,6 +38,8 @@ public class MarkerActivity extends AppCompatActivity {
     private EditText marker_comment;
 
     private ProgressBar mProgressBar;
+
+    private MarkerClass mMarker;
 
     private int mLikes;
     private int mDislikes;
@@ -78,29 +82,29 @@ public class MarkerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        byte[] img = intent.getExtras().getByteArray("markerImg");
+        Gson gson = new Gson();
+        String json = intent.getExtras().getString("MarkerClass");
+        mMarker = gson.fromJson(json, MarkerClass.class);
 
-        Bitmap img_bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+        marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
-        marker_image.setImageBitmap(img_bitmap);
-
-        String title = intent.getExtras().getString("markerTitle");
+        String title = mMarker.getmTitle();
         if (!title.equals(""))
             marker_title.setText(title);
         else
             marker_title.setVisibility(View.GONE);
 
-        String description = intent.getExtras().getString("markerDescription");
+        String description = mMarker.getmDescription();
         if (!description.equals(""))
             marker_description.setText(description);
         else
             marker_description.setVisibility(View.GONE);
 
-        marker_address.setText(intent.getExtras().getString("markerAddress"));
-        marker_date.setText(intent.getExtras().getString("markerDate"));
-        marker_username.setText(intent.getExtras().getString("markerUsername"));
+        marker_address.setText(mMarker.getmAddress());
+        marker_date.setText(mMarker.getmDate());
+        marker_username.setText(mMarker.getmCreator_username());
 
-        String gravity = intent.getExtras().getString("markerGravity");
+        String gravity = mMarker.getmGravity();
         if (!gravity.equals("0"))
             marker_gravity.setText(gravity);
         else {
@@ -108,8 +112,7 @@ public class MarkerActivity extends AppCompatActivity {
             marker_gravity_title.setVisibility(View.GONE);
         }
 
-
-        String status = intent.getExtras().getString("markerStatus");
+        String status = mMarker.getmStatus();
         marker_status.setText(status);
 
         if (status.equals("CLOSE"))
@@ -117,12 +120,11 @@ public class MarkerActivity extends AppCompatActivity {
         if (status.equals("OPEN"))
             marker_status_image.setImageResource(R.drawable.lockopen);
 
-        marker_likes.setText(intent.getExtras().getString("markerLikes"));
-        marker_dislikes.setText(intent.getExtras().getString("markerDislikes"));
+        marker_likes.setText(mMarker.getmLikes());
+        marker_dislikes.setText(mMarker.getmDislikes());
 
-        mLikes = Integer.parseInt(intent.getExtras().getString("markerLikes"));
-        mDislikes = Integer.parseInt(intent.getExtras().getString("markerDislikes"));
-
+        mLikes = Integer.parseInt(mMarker.getmLikes());
+        mDislikes = Integer.parseInt(mMarker.getmDislikes());
 
         int totalProgress = mLikes + mDislikes;
         if (totalProgress == 0)
@@ -132,8 +134,10 @@ public class MarkerActivity extends AppCompatActivity {
 
         mProgressBar.setProgress(mLikes);
 
-        mTouchLike = false;
-        mTouchDislike = false;
+        if(mMarker.getmVote().equals("up"))
+            mTouchLike = true;
+        if(mMarker.getmVote().equals("down"))
+            mTouchDislike = true;
 
         if (mTouchLike)
             marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
@@ -161,6 +165,7 @@ public class MarkerActivity extends AppCompatActivity {
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
                 marker_likes.setText("" + mLikes);
+                mMarker.setmLikes(String.valueOf(mLikes));
 
             }
         });
@@ -182,7 +187,7 @@ public class MarkerActivity extends AppCompatActivity {
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
                 marker_dislikes.setText("" + mDislikes);
-
+                mMarker.setmDislikes(String.valueOf(mDislikes));
             }
         });
     }

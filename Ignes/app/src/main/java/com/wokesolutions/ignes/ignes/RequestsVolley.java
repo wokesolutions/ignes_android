@@ -173,8 +173,10 @@ public class RequestsVolley {
                         System.out.println("RESPONSE DATA: ->>> " + response);
                         activity.setMarkers(response, mLat, mLng, mLocality);
 
-                        if (activity.teste.equals("FINISHED"))
+                        if (activity.teste.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
+                            activity.votesRequest(activity.mUsername, "");
+                        }
                         else {
                             System.out.println("Continuar a pedir...");
                             activity.mapRequest(mLat, mLng, 10000, mToken, activity.teste);
@@ -712,11 +714,11 @@ public class RequestsVolley {
         final String mUsername = username;
         final String mCursor = cursor;
 
-        RequestQueue queue = Volley.newRequestQueue(context);
+       // RequestQueue queue = Volley.newRequestQueue(context);
 
         url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/" + mUsername + "?cursor=" + mCursor;
 
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -788,14 +790,14 @@ public class RequestsVolley {
         };
         setRetry(arrayRequest);
 
-        queue.add(arrayRequest);
+        activity.queue.add(arrayRequest);
     }
 
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
-                1,  // maxNumRetries = 0 means no retry
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 4,
+                -1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 

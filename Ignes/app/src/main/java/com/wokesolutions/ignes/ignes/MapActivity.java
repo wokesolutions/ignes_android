@@ -689,7 +689,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void mapRequest(double lat, double lng, int radius, String token, String cursor) {
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
-        votesRequest(mUsername, "");
+
+        //votesRequest(mUsername, "");
     }
 
     public void votesRequest(String username, String cursor) {

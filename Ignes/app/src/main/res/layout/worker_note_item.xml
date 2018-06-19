@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorIgnesWorker"
+        android:padding="5dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_horizontal|center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note by "
+            android:textAllCaps="true"
+            android:textSize="20dp"
+            android:textColor="@color/backgroundColor"/>
+
+        <TextView
+            android:id="@+id/note_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_bold"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:textColor="@color/backgroundColor"
+            android:text="Username Creator" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="@color/backgroundColor" />
+
+
+    <TextView
+        android:id="@+id/note_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textAutoCorrect"
+        android:fontFamily="@font/quicksand_light"
+        android:textStyle="bold"
+        android:text="Nota aqui toda bonita" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="@color/backgroundColor" />
+
+
+</LinearLayout>

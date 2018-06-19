@@ -171,13 +171,15 @@ public class RequestsVolley {
                         activity.isReady = true;
 
                         System.out.println("RESPONSE DATA: ->>> " + response);
-                        activity.setMarkers(response, mLat, mLng, mLocality);
+                        if (activity.mRole.equals("USER"))
+                            activity.setMarkers(response, mLat, mLng, mLocality);
+                        else if (activity.mRole.equals("WORKER"))
+                            activity.setWorkerMarkers(response, mLat, mLng, mLocality);
 
                         if (activity.teste.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
                             activity.votesRequest(activity.mUsername, "");
-                        }
-                        else {
+                        } else {
                             System.out.println("Continuar a pedir...");
                             activity.mapRequest(mLat, mLng, 10000, mToken, activity.teste);
                         }
@@ -714,7 +716,7 @@ public class RequestsVolley {
         final String mUsername = username;
         final String mCursor = cursor;
 
-       // RequestQueue queue = Volley.newRequestQueue(context);
+        // RequestQueue queue = Volley.newRequestQueue(context);
 
         url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/" + mUsername + "?cursor=" + mCursor;
 

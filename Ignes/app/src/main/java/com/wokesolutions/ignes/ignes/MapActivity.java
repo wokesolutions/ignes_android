@@ -68,6 +68,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
     public static Map<String, MarkerClass> mReportMap;
+    public static Map<String, TaskClass> mWorkerTaskMap;
     public static Location mCurrentLocation;
     public Geocoder mCoder;
     public boolean isReady;
@@ -79,6 +80,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
+    private ClusterManager<TaskClass> mWorkerClusterManager;
     private LocationManager mManager;
     private boolean mGps;
     private DrawerLayout mDrawerLayout;
@@ -124,6 +126,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCoder = new Geocoder(this, Locale.getDefault());
         mCurrentLocation = null;
         mReportMap = new HashMap<>();
+        mWorkerTaskMap = new HashMap<>();
         //  mReportList = new LinkedList<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -169,26 +172,49 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MarkerClass>(mContext, mMap);
+        if(mRole.equals("USER")) {
+            // Add cluster items (markers) to the cluster manager.
+            System.out.println("TAMANHO DA LISTA " + mReportMap.size());
 
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
+            mClusterManager = new ClusterManager<MarkerClass>(mContext, mMap);
 
-        // Add cluster items (markers) to the cluster manager.
-        System.out.println("TAMANHO DA LISTA " + mReportMap.size());
+            // Point the map's listeners at the listeners implemented by the cluster
+            // manager.
+            mMap.setOnCameraIdleListener(mClusterManager);
+            mMap.setOnMarkerClickListener(mClusterManager);
 
+            // Add ten cluster items in close proximity, for purposes of this example.
+            Iterator it = mReportMap.keySet().iterator();
 
-        // Add ten cluster items in close proximity, for purposes of this example.
-        Iterator it = mReportMap.keySet().iterator();
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                System.out.println("ITEM " + key);
+                mClusterManager.cluster();
+                mClusterManager.addItem(mReportMap.get(key));
+                mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
+            }
+        }
+        else if(mRole.equals("WORKER")) {
+            // Add cluster items (markers) to the cluster manager.
+            System.out.println("TAMANHO DA LISTA " + mWorkerTaskMap.size());
 
-        while (it.hasNext()) {
-            String key = (String) it.next();
-            System.out.println("ITEM " + key);
-            mClusterManager.cluster();
-            mClusterManager.addItem(mReportMap.get(key));
-            mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
+            mWorkerClusterManager = new ClusterManager<TaskClass>(mContext, mMap);
+
+            // Point the map's listeners at the listeners implemented by the cluster
+            // manager.
+            mMap.setOnCameraIdleListener(mWorkerClusterManager);
+            mMap.setOnMarkerClickListener(mWorkerClusterManager);
+
+            // Add ten cluster items in close proximity, for purposes of this example.
+            Iterator it = mWorkerTaskMap.keySet().iterator();
+
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                System.out.println("ITEM " + key);
+                mWorkerClusterManager.cluster();
+                mWorkerClusterManager.addItem(mWorkerTaskMap.get(key));
+                mWorkerClusterManager.setRenderer(new OwnIconRenderedWorker(mContext, mMap, mWorkerClusterManager));
+            }
         }
     }
 
@@ -257,6 +283,79 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if (!mReportMap.containsKey(reportID)) {
                     mReportMap.put(reportID, report);
+                    orderedIds.add(reportID);
+                }
+
+                /*if(!mReportList.contains(report))
+                    mReportList.add(report);*/
+            }
+
+            //  mReportMap = temp;
+
+            setUpCluster(new LatLng(lat, lng));
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setWorkerMarkers(JSONArray markers, double lat, double lng, String locality) {
+        try {
+
+
+            System.out.println("ENTREI DENTRO DO SETWORKERMARKERS!!!    " + markers);
+            //Map<String, MarkerClass> temp = new HashMap<>();
+
+            JSONArray jsonarray = markers;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                String reportID = jsonobject.getString("Report");
+
+                double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+
+                double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+
+                String likes = jsonobject.getString("reportvotes_up");
+
+                String dislikes = jsonobject.getString("reportvotes_down");
+
+                String status = jsonobject.getString("report_status");
+
+                String address = jsonobject.getString("report_address");
+
+                String date = jsonobject.getString("report_creationtimeformatted");
+
+                String name = jsonobject.getString("report_username");
+
+                String gravity = "0";
+                if (jsonobject.has("report_gravity"))
+                    gravity = jsonobject.getString("report_gravity");
+
+                String description = "";
+                if (jsonobject.has("report_description"))
+                    description = jsonobject.getString("report_description");
+
+                String title = "";
+                if (jsonobject.has("report_title"))
+                    title = jsonobject.getString("report_title");
+
+                String indications = "";
+                if (jsonobject.has("report_indications"))
+                    title = jsonobject.getString("report_title");
+
+                String contacts = "";
+                if (jsonobject.has("report_contacts"))
+                    title = jsonobject.getString("report_title");
+
+                TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
+                        description, gravity, title, likes, dislikes, locality, reportID, indications, contacts);
+
+                if (!mWorkerTaskMap.containsKey(reportID)) {
+                    mWorkerTaskMap.put(reportID, report);
                     orderedIds.add(reportID);
                 }
 
@@ -731,6 +830,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         @Override
         protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+    }
+
+    class OwnIconRenderedWorker extends DefaultClusterRenderer<TaskClass> {
+
+        public OwnIconRenderedWorker(Context context, GoogleMap map,
+                               ClusterManager<TaskClass> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(TaskClass item, MarkerOptions markerOptions) {
             markerOptions.title("Marker " + item.getPosition());
             markerOptions.snippet(item.getSnippet());
 

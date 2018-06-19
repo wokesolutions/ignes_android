@@ -63,6 +63,9 @@
             android:name=".FeedActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
+            android:name=".NoteActivity"
+            android:theme="@style/WelcomeTheme" />
+        <activity
             android:name=".ReportFormActivity"
             android:parentActivityName=".MapActivity"
             android:theme="@style/WelcomeTheme" />

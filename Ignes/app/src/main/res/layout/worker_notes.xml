@@ -2,10 +2,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="5dp"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".NoteActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorIgnesWorker"
+        android:gravity="center_horizontal|center"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task's Notes "
+            android:textAllCaps="true"
+            android:textColor="@color/backgroundColor"
+            android:textSize="20dp" />
+
+
+        <TextView
+            android:id="@+id/note_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_bold"
+            android:text="Task title"
+            android:textColor="@color/backgroundColor"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/note_add"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
+        android:background="@drawable/addcircleicon"/>
 
     <ListView
         android:id="@+id/listview"
@@ -13,7 +50,6 @@
         android:layout_height="match_parent">
 
     </ListView>
-
 
 
 </LinearLayout>

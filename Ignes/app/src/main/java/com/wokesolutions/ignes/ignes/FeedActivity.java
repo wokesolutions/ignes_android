@@ -31,6 +31,8 @@ public class FeedActivity extends AppCompatActivity {
     public static final int REPORT_ACTIVITY = 1;
 
     Map<String, MarkerClass> markerMap;
+    Map<String, TaskClass> taskMap;
+
 
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
@@ -46,6 +48,7 @@ public class FeedActivity extends AppCompatActivity {
     private String mRole;
 
     private MarkerAdapter markerAdapter;
+    private TaskAdapter taskAdapter;
 
 
     @Override
@@ -66,10 +69,6 @@ public class FeedActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
-        markerMap = MapActivity.mReportMap;
-        markerAdapter = new MarkerAdapter(this, markerMap);
-        recyclerView.setAdapter(markerAdapter);
-
 
         recyclerView.setNestedScrollingEnabled(false);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_feed);
@@ -83,10 +82,16 @@ public class FeedActivity extends AppCompatActivity {
 
 
         if (mRole.equals("WORKER")) {
+            taskMap = MapActivity.mWorkerTaskMap;
+            taskAdapter = new TaskAdapter(this, taskMap);
+            recyclerView.setAdapter(taskAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
         }
         else if (mRole.equals("USER")) {
+            markerMap = MapActivity.mReportMap;
+            markerAdapter = new MarkerAdapter(this, markerMap);
+            recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
             mLocality = findViewById(R.id.feed_address);

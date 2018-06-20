@@ -451,7 +451,6 @@ public class RequestsVolley {
 
     }
 
-
     public static void confirmRequest(String code, final Context context, final ProfileActivity activity) {
 
         final SharedPreferences sharedPref = context.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
@@ -573,8 +572,10 @@ public class RequestsVolley {
 
                             if ((response.getString("level")).contains("LEVEL"))
                                 editor.putString("userLevel", "USER");
-                            else
+                            else {
                                 editor.putString("userLevel", response.getString("level"));
+                                editor.putString("org_name", response.getString("Org"));
+                            }
 
                             editor.apply();
 

@@ -43,10 +43,7 @@ public class NoteActivity extends AppCompatActivity {
         mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_notes);
-        setSupportActionBar(myToolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
+        setToolbar(myToolbar);
 
         Intent intent = getIntent();
         Gson gson = new Gson();
@@ -89,41 +86,22 @@ public class NoteActivity extends AppCompatActivity {
 
                 final String item = (String) parent.getItemAtPosition(position);
 
-
                 view.animate().setDuration(200).alpha(0)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 mBackBool = true;
                                 setContentView(R.layout.worker_note_item);
-
-
-                              /*  list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1)*/
-                                ;
-
-
+                                Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_note);
+                                setToolbar(myToolbar);
                             }
                         });
             }
-
         });
 
         mAddNote_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-                mBuilder.setTitle("New Note");
-                mBuilder.setIcon(R.drawable.addnoteicon);
-
-                LayoutInflater inflater = NoteActivity.this.getLayoutInflater();
-                final View mView = inflater.inflate(R.layout.worker_new_note, null);
-                mBuilder.setView(mView);
-                final AlertDialog alert = mBuilder.create();
-
-                alert.show();
-                */
                 setContentView(R.layout.worker_new_note);
 
                 Button done_button = findViewById(R.id.note_done_button);
@@ -140,8 +118,12 @@ public class NoteActivity extends AppCompatActivity {
                 });
             }
         });
+    }
 
-
+    public  void setToolbar(Toolbar toolbar){
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
     }
 
     public void onBackPressed() {
@@ -182,5 +164,4 @@ public class NoteActivity extends AppCompatActivity {
         }
 
     }
-
 }

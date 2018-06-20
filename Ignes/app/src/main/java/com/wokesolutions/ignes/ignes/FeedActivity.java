@@ -78,7 +78,7 @@ public class FeedActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_feed);
         setSupportActionBar(myToolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_feed);
-        
+
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
@@ -95,8 +95,10 @@ public class FeedActivity extends AppCompatActivity {
             mUsername = findViewById(R.id.feed_worker);
             mUsername.setText(MapActivity.mUsername);
 
-        }
-        else if (mRole.equals("USER")) {
+            mOrganization = findViewById(R.id.feed_org);
+            mOrganization.setText(sharedPref.getString("org_name", ""));
+
+        } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
             markerAdapter = new MarkerAdapter(this, markerMap);
             recyclerView.setAdapter(markerAdapter);
@@ -114,7 +116,6 @@ public class FeedActivity extends AppCompatActivity {
             }
         }
         mContext = this;
-
 
 
     }
@@ -186,8 +187,7 @@ public class FeedActivity extends AppCompatActivity {
 
             MenuItem item2 = menu.findItem(R.id.searchicon);
             item2.setVisible(false);
-        }
-        else if (mRole.equals("WORKER")) {
+        } else if (mRole.equals("WORKER")) {
             inflater.inflate(R.menu.worker_menu, menu);
         }
 

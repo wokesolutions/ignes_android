@@ -2,6 +2,7 @@ package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
+
     }
 
     @NonNull
@@ -106,6 +108,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             public void onClick(View v) {
                 Intent i = new Intent(holder.itemViewContext, NoteActivity.class);
 
+
+
                 Gson gson = new Gson();
                 String json = gson.toJson(taskItem);
 
@@ -114,7 +118,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.itemViewContext.startActivity(i);
             }
         });
-
     }
 
     @Override

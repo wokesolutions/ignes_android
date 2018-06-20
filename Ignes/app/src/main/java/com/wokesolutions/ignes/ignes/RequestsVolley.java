@@ -795,7 +795,7 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void addNoteRequest (String note, String idTask, final Context context){
+    public static void addNoteRequest (String note, String idTask, final Context context, final NoteActivity activity){
 
         final String mNote = note;
         final String mIdTask = idTask;
@@ -823,7 +823,7 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK: " + response);
                         Toast.makeText(context, "Note Added!", Toast.LENGTH_LONG).show();
-
+                        activity.recreate();
                     }
                 },
                 new Response.ErrorListener() {

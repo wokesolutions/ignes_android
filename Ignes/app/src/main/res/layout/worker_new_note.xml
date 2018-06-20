@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal|center"
-    android:layout_margin="5dp"
+    android:padding="15dp"
     android:orientation="vertical">
 
     <EditText
@@ -13,10 +13,8 @@
         android:hint="Write note here..."
         android:layout_marginBottom="30dp"
         android:fontFamily="@font/quicksand_light"
-        android:textStyle="bold"
-        android:inputType="textAutoCorrect"
-        android:textSize="20dp"
-        android:background="@color/backgroundColor"/>
+        android:inputType="textMultiLine"
+        android:textSize="20dp" />
 
     <Button
         android:id="@+id/note_done_button"

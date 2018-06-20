@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NoteActivity extends Activity {
+public class NoteActivity extends AppCompatActivity {
 
     private boolean mBackBool;
     private LinearLayout mNoteitem;
@@ -38,6 +41,12 @@ public class NoteActivity extends Activity {
         setContentView(R.layout.worker_notes);
 
         mContext = this;
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_notes);
+        setSupportActionBar(myToolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
 
         Intent intent = getIntent();
         Gson gson = new Gson();
@@ -69,7 +78,7 @@ public class NoteActivity extends Activity {
             list.add(values[i]);
         }
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_2, list);
+                android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,7 +113,7 @@ public class NoteActivity extends Activity {
         mAddNote_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                /*final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
                 mBuilder.setTitle("New Note");
                 mBuilder.setIcon(R.drawable.addnoteicon);
 
@@ -114,14 +123,19 @@ public class NoteActivity extends Activity {
                 final AlertDialog alert = mBuilder.create();
 
                 alert.show();
+                */
+                setContentView(R.layout.worker_new_note);
 
-                Button done_button = mView.findViewById(R.id.note_done_button);
-                final String newNote = mView.findViewById(R.id.note_new_text).toString();
-
+                Button done_button = findViewById(R.id.note_done_button);
                 done_button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RequestsVolley.addNoteRequest (newNote, mTask.getmId(), mContext);
+
+                        final EditText newNoteBox = findViewById(R.id.note_new_text);
+                        final String newNote = newNoteBox.getText().toString();
+
+                        System.out.println("NOTA ENVIADA: "+ newNote);
+                        RequestsVolley.addNoteRequest (newNote, mTask.getmId(), mContext, NoteActivity.this);
                     }
                 });
             }
@@ -136,6 +150,12 @@ public class NoteActivity extends Activity {
             recreate();
         else
             finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private class StableArrayAdapter extends ArrayAdapter<String> {

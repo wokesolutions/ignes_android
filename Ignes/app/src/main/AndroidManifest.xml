@@ -64,7 +64,7 @@
             android:theme="@style/WelcomeTheme" />
         <activity
             android:name=".NoteActivity"
-            android:theme="@style/WelcomeTheme" />
+            android:theme="@style/WorkerTheme" />
         <activity
             android:name=".ReportFormActivity"
             android:parentActivityName=".MapActivity"

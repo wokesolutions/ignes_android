@@ -574,7 +574,9 @@ public class RequestsVolley {
                                 editor.putString("userLevel", "USER");
                             else {
                                 editor.putString("userLevel", response.getString("level"));
-                                editor.putString("org_name", response.getString("Org"));
+
+                                if (response.has("Org"))
+                                    editor.putString("org_name", response.getString("Org"));
                             }
 
                             editor.apply();
@@ -796,7 +798,7 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void addNoteRequest (String note, String idTask, final Context context, final NoteActivity activity){
+    public static void addNoteRequest(String note, String idTask, final Context context, final NoteActivity activity) {
 
         final String mNote = note;
         final String mIdTask = idTask;
@@ -815,7 +817,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/task/addnote/"+mIdTask;
+        url = "https://hardy-scarab-200218.appspot.com/api/task/addnote/" + mIdTask;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

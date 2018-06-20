@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="created_by">CRIADO POR</string>
-    <string name="cellphone_e_mail_or_username">Telemóvel, e-mail ou nome de utilizador</string>
     <string name="password">Senha</string>
     <string name="sign_in">Entrar</string>
     <string name="don_t_have_an_account">Não tem uma conta?</string>

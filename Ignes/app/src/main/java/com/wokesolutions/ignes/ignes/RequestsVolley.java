@@ -795,6 +795,76 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
+    public static void addNoteRequest (String note, String idTask, final Context context){
+
+        final String mNote = note;
+        final String mIdTask = idTask;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
+
+        final JSONObject report = new JSONObject();
+
+        try {
+            report.put("note", mNote);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com/api/task/addnote/"+mIdTask;
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+                        Toast.makeText(context, "Note Added!", Toast.LENGTH_LONG).show();
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response.statusCode);
+
+                        if (response.statusCode == 400) {
+                        } else {
+                            Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", token);
+
+                return params;
+            }
+
+            @Override
+            public byte[] getBody() {
+                return report.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        setRetry(stringRequest);
+        queue.add(stringRequest);
+
+    }
+
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(

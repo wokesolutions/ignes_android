@@ -20,7 +20,7 @@ public class MarkerClass implements ClusterItem {
     private String mLocality;
     private byte[] mImgbyte;
     private Bitmap mImage_bitmap;
-
+    private String mId;
     private String mVote;
 
     public MarkerClass(double lat, double lng, String status, String address,
@@ -40,13 +40,17 @@ public class MarkerClass implements ClusterItem {
         mDislikes = dislikes;
         mLocality = locality;
         mImgbyte = null;
-
+        mId = marker_id;
         mVote ="";
     }
 
     @Override
     public LatLng getPosition() {
         return mPosition;
+    }
+
+    public String getmId() {
+        return mId;
     }
 
     public String getmLocality() {

@@ -78,8 +78,8 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             gravity.setVisibility(View.GONE);
             gravity_title.setVisibility(View.GONE);
         }
-       if (markerItem.getmGravity().equals("1"))
-           gravity_title.setTextColor(Color.parseColor("#E0DCBE"));
+        if (markerItem.getmGravity().equals("1"))
+            gravity_title.setTextColor(Color.parseColor("#E0DCBE"));
         if (markerItem.getmGravity().equals("2"))
             gravity_title.setTextColor(Color.parseColor("#CFD7C7"));
         if (markerItem.getmGravity().equals("3"))

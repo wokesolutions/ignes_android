@@ -172,7 +172,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        if(mRole.equals("USER")) {
+        if (mRole.equals("USER")) {
             // Add cluster items (markers) to the cluster manager.
             System.out.println("TAMANHO DA LISTA " + mReportMap.size());
 
@@ -193,8 +193,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mClusterManager.addItem(mReportMap.get(key));
                 mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
             }
-        }
-        else if(mRole.equals("WORKER")) {
+        } else if (mRole.equals("WORKER")) {
             // Add cluster items (markers) to the cluster manager.
             System.out.println("TAMANHO DA LISTA " + mWorkerTaskMap.size());
 
@@ -319,9 +318,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
 
-                String likes = jsonobject.getString("reportvotes_up");
+                String likes = "0";
+                if (jsonobject.has("reportvotes_up"))
+                    likes = jsonobject.getString("reportvotes_up");
 
-                String dislikes = jsonobject.getString("reportvotes_down");
+                String dislikes = "0";
+                if (jsonobject.has("reportvotes_down"))
+                    dislikes = jsonobject.getString("reportvotes_down");
 
                 String status = jsonobject.getString("report_status");
 
@@ -840,7 +843,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     class OwnIconRenderedWorker extends DefaultClusterRenderer<TaskClass> {
 
         public OwnIconRenderedWorker(Context context, GoogleMap map,
-                               ClusterManager<TaskClass> clusterManager) {
+                                     ClusterManager<TaskClass> clusterManager) {
             super(context, map, clusterManager);
         }
 

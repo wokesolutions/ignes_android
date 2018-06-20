@@ -74,7 +74,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean isReady;
     public List<Address> addresses;
     public RequestQueue queue;
-    public String mUsername;
+    public static String mUsername;
     public String teste;
     public String mRole;
     private GoogleMap mMap;

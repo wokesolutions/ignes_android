@@ -39,7 +39,11 @@ public class FeedActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton;
     private LinearLayout mMapButton;
+
     private TextView mLocality;
+    private TextView mOrganization;
+    private TextView mUsername;
+
     private LinearLayout mProfileButton;
     private Context mContext;
     private LinearLayout mWorkRoomButton;
@@ -87,6 +91,10 @@ public class FeedActivity extends AppCompatActivity {
             recyclerView.setAdapter(taskAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
+
+            mUsername = findViewById(R.id.feed_worker);
+            mUsername.setText(MapActivity.mUsername);
+
         }
         else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;

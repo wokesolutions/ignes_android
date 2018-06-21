@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -78,10 +79,12 @@ public class MarkerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        Gson gson = new Gson();
-        String json = intent.getExtras().getString("MarkerClass");
-        mMarker = gson.fromJson(json, MarkerClass.class);
+        String markerID = intent.getExtras().getString("MarkerClass");
 
+
+        mMarker = MapActivity.mReportMap.get(markerID);
+
+        Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
         String title = mMarker.getmTitle();
@@ -130,11 +133,11 @@ public class MarkerActivity extends AppCompatActivity {
 
         mProgressBar.setProgress(mLikes);
 
-        if(mMarker.getmVote().equals("up"))
+        if (mMarker.getmVote().equals("up"))
             mTouchLike = true;
-        if(mMarker.getmVote().equals("down"))
+        if (mMarker.getmVote().equals("down"))
             mTouchDislike = true;
-
+        Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
         if (mTouchLike)
             marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
         else
@@ -162,6 +165,7 @@ public class MarkerActivity extends AppCompatActivity {
                 mProgressBar.setProgress(mLikes);
                 marker_likes.setText("" + mLikes);
                 mMarker.setmLikes(String.valueOf(mLikes));
+                Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
 
             }
         });
@@ -186,6 +190,8 @@ public class MarkerActivity extends AppCompatActivity {
                 mMarker.setmDislikes(String.valueOf(mDislikes));
             }
         });
+
+        
     }
 
     @Override

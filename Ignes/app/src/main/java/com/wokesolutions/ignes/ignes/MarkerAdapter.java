@@ -106,10 +106,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             public void onClick(View v) {
                 Intent i = new Intent(holder.itemViewContext, MarkerActivity.class);
 
-                Gson gson = new Gson();
-                String json = gson.toJson(markerItem);
-
-                i.putExtra("MarkerClass", json);
+                i.putExtra("MarkerClass", markerItem.getmId());
 
                 holder.itemViewContext.startActivity(i);
             }

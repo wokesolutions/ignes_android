@@ -586,10 +586,11 @@ public class RequestsVolley {
                             else {
                                 editor.putString("userLevel", response.getString("level"));
 
-                                if (response.has("Org"))
+                                if (response.has("Org")) {
                                     editor.putString("org_name", response.getString("Org"));
+                                    System.out.println("NOME DA ORG" + (response.getString("Org")));
+                                }
 
-                                System.out.println("LOGIIIN CENAS " + (response.getString("Org")));
                             }
 
                             editor.apply();
@@ -637,8 +638,16 @@ public class RequestsVolley {
 
                     try {
                         result.put("token", response.headers.get("Authorization"));
+
                         result.put("activated", response.headers.get("Activated"));
+
                         result.put("level", response.headers.get("Level"));
+
+                        if (response.headers.get("Org") != null) {
+                            System.out.println("NOME DA ORG" + (response.headers.get("Org")));
+                            result.put("Org", response.headers.get("Org"));
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

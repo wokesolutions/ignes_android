@@ -690,14 +690,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        mWorkRoomButton = (LinearLayout) findViewById(R.id.botao_workroom);
-        mWorkRoomButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
-            }
-        });
-
         mTasksButton = (LinearLayout) findViewById(R.id.botao_feed);
         mTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override

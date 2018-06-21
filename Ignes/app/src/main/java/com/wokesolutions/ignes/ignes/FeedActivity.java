@@ -161,14 +161,6 @@ public class FeedActivity extends AppCompatActivity {
             }
         });
 
-        mWorkRoomButton = (LinearLayout) findViewById(R.id.botao_workroom);
-        mWorkRoomButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
-            }
-        });
-
         mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override

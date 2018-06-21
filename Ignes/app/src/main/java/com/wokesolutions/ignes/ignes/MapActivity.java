@@ -102,6 +102,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mLoggoutButton;
     private LinearLayout mProfileButton;
     private LinearLayout mFeedButton;
+    private LinearLayout mSettingsButton;
     private LinearLayout mWorkRoomButton;
     private LinearLayout mTasksButton;
     private SharedPreferences sharedPref;
@@ -664,6 +665,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 startActivity(new Intent(MapActivity.this, FeedActivity.class));
+            }
+        });
+
+        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
             }
         });
     }

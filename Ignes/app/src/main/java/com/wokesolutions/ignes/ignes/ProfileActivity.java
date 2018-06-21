@@ -40,6 +40,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
@@ -53,45 +54,31 @@ import java.util.Calendar;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
-    private Context context;
-
     public Uri mImageURI;
-
+    public RequestQueue queue;
+    private Context context;
     private Bitmap mThumbnail;
     private ImageView mImageView;
     private byte[] byteArray;
-
     private EditProfileTask mEditProfileTask = null;
-
     private SharedPreferences sharedPref;
-
     private DrawerLayout mDrawerLayout;
-
     private ActionBarDrawerToggle mMenu;
-
     private LinearLayout mLoggoutButton;
-
     private LinearLayout mFeedButton;
-
+    private LinearLayout mSettingsButton;
     private LinearLayout mMapButton;
-
     private LinearLayout mConfirmLayout;
-
     private String mUsername;
     private String mUserLevel;
     private int mRequestCode;
-
     private Button mAboutButton;
     private Button mLessAboutButton;
     private Button mConfirmAccountButton;
-
     private Button mEditButton;
     private Button mSaveButton;
-
     private LinearLayout mAboutLayout;
-
     private LinearLayout mEditAboutLayout;
-
     private TextView mDay;
     private TextView mGender;
     private TextView mAddress;
@@ -104,15 +91,33 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mLocality;
     private TextView mProfileName;
     private TextView mProfileLevel;
-
     private boolean backBool;
     private String isConfirmed;
-
     private RecyclerView recyclerView;
-
     private Map<String, MarkerClass> markerMap;
 
-    public RequestQueue queue;
+    public static Bitmap getScaledBitmap(String path, int newSize) {
+        File image = new File(path);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inInputShareable = true;
+        options.inPurgeable = true;
+
+        BitmapFactory.decodeFile(image.getPath(), options);
+        if ((options.outWidth == -1) || (options.outHeight == -1))
+            return null;
+
+        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
+                : options.outWidth;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = originalSize / newSize;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
+
+        return scaledBitmap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +129,9 @@ public class ProfileActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.profile_avatar);
 
         String storedAvatar = sharedPref.getString("Avatar", "404");
-        if(!storedAvatar.equals("404")) {
+        if (!storedAvatar.equals("404")) {
             byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(img,0, img.length);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
 
             RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
             roundedBitmap.setCircular(true);
@@ -238,6 +243,15 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+            }
+        });
     }
 
     public void checkIfAccountConfirmed() {
@@ -296,7 +310,6 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileName.setText(sharedPref.getString("user_name", ""));
     }
 
-
     private void onAboutClick() {
 
         mEditButton.setVisibility(View.VISIBLE);
@@ -323,7 +336,7 @@ public class ProfileActivity extends AppCompatActivity {
                 backBool = true;
 
                 mSaveButton = findViewById(R.id.save_button);
-                mImageView =  findViewById(R.id.avatar_picture);
+                mImageView = findViewById(R.id.avatar_picture);
 
                 final LinearLayout edit_avatar = findViewById(R.id.edit_avatar);
                 edit_avatar.setOnClickListener(new View.OnClickListener() {
@@ -502,10 +515,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                     //mThumbnail = getScaledBitmap(getRealPathFromURI(mImageURI), THUMBSIZE);
                     //mThumbnail = scaleImage(THUMBSIZE, getRealPathFromURI(mImageURI));
-                       mThumbnail = ThumbnailUtils.extractThumbnail(
-                                BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
-                                THUMBSIZE,
-                                THUMBSIZE);
+                    mThumbnail = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
+                            THUMBSIZE,
+                            THUMBSIZE);
 
                     System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());
 
@@ -550,29 +563,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 break;
         }
-    }
-
-    public static Bitmap getScaledBitmap(String path, int newSize) {
-        File image = new File(path);
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inInputShareable = true;
-        options.inPurgeable = true;
-
-        BitmapFactory.decodeFile(image.getPath(), options);
-        if ((options.outWidth == -1) || (options.outHeight == -1))
-            return null;
-
-        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                : options.outWidth;
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inSampleSize = originalSize / newSize;
-
-        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
-
-        return scaledBitmap;
     }
 
     public String getRealPathFromURI(Uri uri) {

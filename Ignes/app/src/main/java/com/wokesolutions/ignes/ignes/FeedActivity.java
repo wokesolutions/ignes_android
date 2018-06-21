@@ -45,6 +45,7 @@ public class FeedActivity extends AppCompatActivity {
     private TextView mUsername;
 
     private LinearLayout mProfileButton;
+    private LinearLayout mSettingsButton;
     private Context mContext;
     private LinearLayout mWorkRoomButton;
     private Location mCurrentLocation;
@@ -147,6 +148,15 @@ public class FeedActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(FeedActivity.this, SettingsActivity.class));
+            }
+        });
     }
 
     /*----- About Menu Bar -----*/
@@ -166,6 +176,15 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(FeedActivity.this, SettingsActivity.class));
             }
         });
     }

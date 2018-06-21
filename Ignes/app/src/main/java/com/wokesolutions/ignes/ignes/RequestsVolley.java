@@ -298,43 +298,27 @@ public class RequestsVolley {
             System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
             System.out.println("BYTEARRAY ENVIADO DA IMG: " + activity.imgByteArray.length);
 
-            if (activity.mReportType.equals("fast")) {
+            report.put("report_lat", mLat);
+            report.put("report_lng", mLng);
+            report.put("report_img", base64Img);
+            report.put("report_thumbnail", base64Thumbnail);
+            report.put("report_address", mAddress);
+            report.put("report_private", activity.mIsPrivate);
+            report.put("report_city", mDistrict);
+            report.put("report_locality", mLocality);
 
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_img", base64Img);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", activity.mIsPrivate);
+            if (activity.mReportType.equals("medium")) {
 
-            } else if (activity.mReportType.equals("medium")) {
-
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_img", base64Img);
                 report.put("report_title", mTitle);
                 report.put("report_gravity", mGravity);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", activity.mIsPrivate);
+
 
             } else if (activity.mReportType.equals("detailed")) {
 
-                report.put("report_lat", mLat);
-                report.put("report_lng", mLng);
-                report.put("report_thumbnail", base64Thumbnail);
-                report.put("report_img", base64Img);
                 report.put("report_title", mTitle);
                 report.put("report_gravity", mGravity);
                 report.put("report_description", mDescription);
-                report.put("report_address", mAddress);
-                report.put("report_city", mDistrict);
-                report.put("report_locality", mLocality);
-                report.put("report_private", activity.mIsPrivate);
+
             }
 
             System.out.println("REPORT JSON: " + report);

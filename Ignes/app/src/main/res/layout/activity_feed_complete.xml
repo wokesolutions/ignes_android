@@ -29,22 +29,23 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ocorrenciared" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp">
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ocorrenciared" />
-
-               <View
+                <View
                     android:layout_width="10dp"
                     android:layout_height="2dp"
                     android:layout_gravity="center"
@@ -55,9 +56,9 @@
                     android:id="@+id/marker_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_marginHorizontal="10dp"
                     android:fontFamily="@font/quicksand_light"
+                    android:gravity="center"
                     android:text="ADDRESS"
                     android:textColor="#000000"
                     android:textSize="15dp" />
@@ -73,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp">
@@ -135,9 +136,9 @@
 
                     <ImageView
                         android:id="@+id/marker_lock_img"
-                        android:layout_marginRight="5dp"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_marginRight="5dp"
                         android:src="@drawable/lockopen" />
 
                     <TextView
@@ -162,8 +163,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:gravity="center"
                     android:fontFamily="@font/quicksand_light"
+                    android:gravity="center"
                     android:inputType="textPersonName"
                     android:text="TITLE"
                     android:textColor="#000000"

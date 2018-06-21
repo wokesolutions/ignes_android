@@ -1,10 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:id="@+id/worker_note_item"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="5dp"
+    android:id="@+id/worker_note_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".NoteActivity">
@@ -24,28 +23,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorIgnesWorker"
-        android:padding="5dp"
         android:layout_marginBottom="5dp"
-        android:gravity="center_horizontal|center">
+        android:background="@color/colorIgnesWorker"
+        android:gravity="center_horizontal|center"
+        android:padding="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Note by "
             android:textAllCaps="true"
-            android:textSize="20dp"
-            android:textColor="@color/backgroundColor"/>
+            android:textColor="@color/backgroundColor"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/note_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_bold"
-            android:textSize="17dp"
-            android:textStyle="bold"
+            android:text="Username Creator"
             android:textColor="@color/backgroundColor"
-            android:text="Username Creator" />
+            android:textSize="17dp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <View
@@ -59,10 +58,11 @@
         android:id="@+id/note_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textAutoCorrect"
+        android:layout_margin="5dp"
         android:fontFamily="@font/quicksand_light"
-        android:textStyle="bold"
-        android:text="Nota aqui toda bonita" />
+        android:inputType="textAutoCorrect"
+        android:text="Nota aqui toda bonita"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"

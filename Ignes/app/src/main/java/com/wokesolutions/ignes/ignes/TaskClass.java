@@ -7,25 +7,25 @@ public class TaskClass extends MarkerClass {
 
     private List<NoteClass> notes;
     private String indications;
-    private String contacts;
+    private String phoneNumber;
 
     public TaskClass(double lat, double lng, String status, String address,
                      String date, String username, String description, String gravity,
                      String title, String likes, String dislikes, String locality,
-                     String marker_id, String indications, String contacts) {
+                     String marker_id, String indications, String phoneNumber) {
         super(lat, lng, status, address, date, username, description, gravity, title, likes, dislikes, locality, marker_id);
 
         notes = new LinkedList<>();
-        this.indications =indications;
-        this.contacts =contacts;
+        this.indications = indications;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getIndications() {
         return indications;
     }
 
-    public String getContacts() {
-        return contacts;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public List<NoteClass> getNotes() {

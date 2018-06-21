@@ -268,27 +268,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Contacts"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/contacts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/quicksand_light"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:fontFamily="@font/quicksand_light"
                 android:text="Skills"
                 android:textSize="15dp"
                 android:textStyle="bold" />

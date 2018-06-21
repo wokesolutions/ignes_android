@@ -248,7 +248,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
         try {
 
-
             System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
             //Map<String, MarkerClass> temp = new HashMap<>();
 
@@ -345,6 +344,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String name = jsonobject.getString("report_username");
 
+                String phonenumber ="";
+
+                if (jsonobject.has("useroptional_phone"))
+                    phonenumber = jsonobject.getString("useroptional_phone");
+
                 String gravity = "0";
                 if (jsonobject.has("report_gravity"))
                     gravity = jsonobject.getString("report_gravity");
@@ -361,12 +365,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("report_indications"))
                     title = jsonobject.getString("report_title");
 
-                String contacts = "";
-                if (jsonobject.has("report_contacts"))
-                    title = jsonobject.getString("report_title");
-
                 TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, locality, reportID, indications, contacts);
+                        description, gravity, title, likes, dislikes, locality, reportID, indications, phonenumber);
 
                 if (!mWorkerTaskMap.containsKey(reportID)) {
                     mWorkerTaskMap.put(reportID, report);

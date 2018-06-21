@@ -588,6 +588,8 @@ public class RequestsVolley {
 
                                 if (response.has("Org"))
                                     editor.putString("org_name", response.getString("Org"));
+
+                                System.out.println("LOGIIIN CENAS " + (response.getString("Org")));
                             }
 
                             editor.apply();

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,17 +45,19 @@ public class NoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.worker_notes);
 
+        mBackBool = false;
+
+
         mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_notes);
         setToolbar(myToolbar);
 
         Intent intent = getIntent();
-        Gson gson = new Gson();
-        String json = intent.getExtras().getString("TaskClass");
-        mTask = gson.fromJson(json, TaskClass.class);
 
-        mBackBool = false;
+        String taskID = intent.getExtras().getString("TaskClass");
+        mTask = MapActivity.mWorkerTaskMap.get(taskID);
+
         // mNoteitem = findViewById(R.id.worker_note_item);
         mAddNote_button = findViewById(R.id.note_add);
         mSharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
@@ -106,6 +109,7 @@ public class NoteActivity extends AppCompatActivity {
         mAddNote_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mBackBool = true;
                 setContentView(R.layout.worker_new_note);
 
                 Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_new_note);
@@ -134,6 +138,7 @@ public class NoteActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
     }
 
+    @Override
     public void onBackPressed() {
 
         if (mBackBool)
@@ -148,29 +153,6 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
-    /*   private class StableArrayAdapter extends ArrayAdapter<String> {
-
-           HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
-           public StableArrayAdapter(Context context, List<String> objects) {
-
-               for (int i = 0; i < objects.size(); ++i) {
-                   mIdMap.put(objects.get(i), i);
-               }
-           }
-
-           @Override
-           public long getItemId(int position) {
-               String item = getItem(position);
-               return mIdMap.get(item);
-           }
-
-           @Override
-           public boolean hasStableIds() {
-               return true;
-           }
-
-       }*/
     private class MyAdapter extends BaseAdapter {
 
         private Context context;

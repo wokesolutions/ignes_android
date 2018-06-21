@@ -108,12 +108,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             public void onClick(View v) {
                 Intent i = new Intent(holder.itemViewContext, NoteActivity.class);
 
-
-
-                Gson gson = new Gson();
-                String json = gson.toJson(taskItem);
-
-                i.putExtra("TaskClass", json);
+                i.putExtra("TaskClass", taskItem.getmId());
 
                 holder.itemViewContext.startActivity(i);
             }

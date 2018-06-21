@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -1001,6 +1002,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+            String distance = "";
+            String duration = "";
+
+           /* if (result.size() < 1) {
+                Toast.makeText(mContext, "No Points", Toast.LENGTH_SHORT).show();
+                return;
+            }*/
 
             // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {
@@ -1020,12 +1029,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     points.add(position);
                 }
+
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(7);
                 lineOptions.color(Color.RED);
 
             }
+
+            //tvDistanceDuration.setText("Distance:" + distance + ", Duration:" + duration);
+
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
         }

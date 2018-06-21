@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LogoutActivity extends AppCompatActivity {
@@ -30,7 +33,6 @@ public class LogoutActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         sendLogoutTask(token);
-        finish();
     }
 
     public void sendLogoutTask(String token) {
@@ -72,9 +74,9 @@ public class LogoutActivity extends AppCompatActivity {
 
                 URL url = new URL("https://hardy-scarab-200218.appspot.com/api/logout");
 
-                String s = RequestsREST.doGET(url, mToken, null);
+                HttpURLConnection s = RequestsREST.doPOST(url, new JSONObject(), mToken);
                 //Assumes from this side that the response is ok
-                return s;
+                return s.getResponseMessage();
             } catch (Exception e) {
                 return e.toString();
             }
@@ -83,6 +85,7 @@ public class LogoutActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final String result) {
+            System.out.println("RESULT DO LOGOUT -->>> "+ result);
             mSendLogoutTask = null;
             sharedPref.edit().remove("token").commit();
             System.out.println("User Logged Out");

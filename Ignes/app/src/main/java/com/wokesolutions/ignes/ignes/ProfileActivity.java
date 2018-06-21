@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -119,6 +120,19 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+
+        mImageView = findViewById(R.id.profile_avatar);
+
+        String storedAvatar = sharedPref.getString("Avatar", "404");
+        if(!storedAvatar.equals("404")) {
+            byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(img,0, img.length);
+
+            RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+            roundedBitmap.setCircular(true);
+            mImageView.setImageDrawable(roundedBitmap);
+        }
+
 
         queue = Volley.newRequestQueue(this);
 
@@ -525,12 +539,13 @@ public class ProfileActivity extends AppCompatActivity {
                     mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
                     byteArray = stream.toByteArray();
 
+                    String saveAvatarPicture = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
                     SharedPreferences.Editor editor = sharedPref.edit();
 
-                    //guardar base64 no shared prefs
+                    editor.putString("Avatar", saveAvatarPicture);
 
-
-                    System.out.println("BYTEARRAY ENVIADO DO THUMB: " + byteArray.length);
+                    editor.apply();
 
                 }
                 break;

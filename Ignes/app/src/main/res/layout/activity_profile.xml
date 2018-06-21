@@ -77,6 +77,7 @@
                         android:layout_weight="1">
 
                         <ImageView
+                            android:id="@+id/profile_avatar"
                             android:layout_width="wrap_content"
                             android:layout_height="90dp"
                             android:gravity="center"

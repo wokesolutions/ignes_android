@@ -79,7 +79,7 @@ public class MarkerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String markerID = intent.getExtras().getString("MarkerClass");
+        final String markerID = intent.getExtras().getString("MarkerClass");
 
 
         mMarker = MapActivity.mReportMap.get(markerID);
@@ -151,21 +151,31 @@ public class MarkerActivity extends AppCompatActivity {
         marker_button_likes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTouchLike = !mTouchLike;
 
                 if (mTouchLike) {
-                    mLikes++;
-                    marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
+                    mLikes--;
+                    mMarker.setmVote("neutro");
+                    marker_button_likes.setBackgroundResource(R.drawable.upicon);
 
                 } else {
-                    mLikes--;
-                    marker_button_likes.setBackgroundResource(R.drawable.upicon);
+                    mLikes++;
+                    if (mTouchDislike) {
+                        mDislikes--;
+                        marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
+                        mTouchDislike = false;
+                    }
+                    mMarker.setmVote("up");
+                    marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
                 }
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
+                marker_dislikes.setText("" + mDislikes);
                 marker_likes.setText("" + mLikes);
+                mMarker.setmDislikes(String.valueOf(mDislikes));
                 mMarker.setmLikes(String.valueOf(mLikes));
                 Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
+
+                mTouchLike = !mTouchLike;
 
             }
         });
@@ -173,25 +183,35 @@ public class MarkerActivity extends AppCompatActivity {
         marker_button_dislikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTouchDislike = !mTouchDislike;
 
                 if (mTouchDislike) {
-                    mDislikes++;
-                    marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
+                    mDislikes--;
+                    mMarker.setmVote("neutro");
+                    marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
                 } else {
-                    mDislikes--;
-                    marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
+                    mDislikes++;
+                    if (mTouchLike) {
+                        mLikes--;
+                        marker_button_likes.setBackgroundResource(R.drawable.upicon);
+                        mTouchLike = false;
+                    }
+                    mMarker.setmVote("down");
+                    marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
                 }
 
                 mProgressBar.setMax(mLikes + mDislikes);
                 mProgressBar.setProgress(mLikes);
+                marker_likes.setText("" + mLikes);
                 marker_dislikes.setText("" + mDislikes);
+                mMarker.setmLikes(String.valueOf(mLikes));
                 mMarker.setmDislikes(String.valueOf(mDislikes));
+
+                mTouchDislike = !mTouchDislike;
             }
         });
 
-        
+
     }
 
     @Override

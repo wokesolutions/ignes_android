@@ -1,5 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -19,11 +21,11 @@ import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
+public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
+    RequestQueue queue;
     private Context mContext;
     private Map<String, TaskClass> mMap;
-    RequestQueue queue;
 
     TaskAdapter(Context context, Map<String, TaskClass> map) {
         mContext = context;
@@ -52,7 +54,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
         final TaskClass taskItem = mMap.get(keys[position]);
 
-        if(taskItem.getmImg_bitmap()== null)
+        if (taskItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], taskItem, position);
 
         ImageView image = holder.task_image;
@@ -66,6 +68,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         ImageView img_status = holder.task_status_image;
         TextView indications = holder.task_indications;
         TextView contact = holder.task_contact;
+        LinearLayout directions_button = holder.task_directions_button;
 
         if (!taskItem.getmTitle().isEmpty())
             title.setText(taskItem.getmTitle());
@@ -96,9 +99,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
 
-        if(taskItem.getmStatus().equals("CLOSE"))
+        if (taskItem.getmStatus().equals("CLOSE"))
             img_status.setImageResource(R.drawable.lockclose);
-        if(taskItem.getmStatus().equals("OPEN"))
+        if (taskItem.getmStatus().equals("OPEN"))
             img_status.setImageResource(R.drawable.lockopen);
 
         image.setImageBitmap(taskItem.getmImg_bitmap());
@@ -113,11 +116,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.itemViewContext.startActivity(i);
             }
         });
+
+        directions_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapActivity.getDirections(MapActivity.mLatLng, taskItem.getPosition());
+                ((FeedActivity) mContext).finish();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mMap.size();
+    }
+
+    private void thumbnailRequest(String reportId, TaskClass task, final int position) {
+
+        RequestsVolley.thumbnailRequest(reportId, null, position, mContext, null, task, this);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -134,6 +150,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         TextView task_indications;
         Context itemViewContext;
         TextView task_contact;
+        LinearLayout task_directions_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -149,12 +166,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             task_status_image = itemView.findViewById(R.id.feed_lock_img);
             task_indications = itemView.findViewById(R.id.feed_info_marker);
             task_contact = itemView.findViewById(R.id.feed_contact);
-
-
+            task_directions_button = itemView.findViewById(R.id.gps_directions);
         }
-    }
-    private void thumbnailRequest(String reportId, TaskClass task, final int position) {
-
-        RequestsVolley.thumbnailRequest(reportId, null, position, mContext, null,task, this);
     }
 }

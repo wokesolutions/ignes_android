@@ -62,6 +62,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         TextView username = holder.task_username;
         TextView date = holder.task_date;
         TextView address = holder.task_address;
+        TextView description = holder.task_description;
         TextView gravity = holder.task_gravity;
         Button notes_button = holder.button_notes;
         TextView gravity_title = holder.task_gravity_title;
@@ -69,6 +70,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         TextView indications = holder.task_indications;
         TextView contact = holder.task_contact;
         LinearLayout directions_button = holder.task_directions_button;
+        LinearLayout contacts_layout = holder.task_contacts_layout;
+        LinearLayout indications_layout = holder.task_indications_layout;
 
         if (!taskItem.getmTitle().isEmpty())
             title.setText(taskItem.getmTitle());
@@ -78,8 +81,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         username.setText(taskItem.getmCreator_username());
         date.setText(taskItem.getmDate());
         address.setText(taskItem.getmAddress());
-        indications.setText(taskItem.getIndications());
-        contact.setText(taskItem.getContacts());
+
+        if (!taskItem.getIndications().equals(""))
+            indications.setText(taskItem.getIndications());
+        else
+            indications_layout.setVisibility(View.GONE);
+
+        if (!taskItem.getmDescription().equals(""))
+            description.setText(taskItem.getmDescription());
+        else
+            description.setVisibility(View.GONE);
+
+        if (!taskItem.getPhoneNumber().equals(""))
+            contact.setText(taskItem.getPhoneNumber());
+        else
+            contacts_layout.setVisibility(View.GONE);
 
         if (!taskItem.getmGravity().equals("0"))
             gravity.setText(taskItem.getmGravity());
@@ -87,6 +103,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             gravity.setVisibility(View.GONE);
             gravity_title.setVisibility(View.GONE);
         }
+
         if (taskItem.getmGravity().equals("1"))
             gravity_title.setTextColor(Color.parseColor("#E0DCBE"));
         if (taskItem.getmGravity().equals("2"))
@@ -98,9 +115,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (taskItem.getmGravity().equals("5"))
             gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
-
         if (taskItem.getmStatus().equals("CLOSE"))
             img_status.setImageResource(R.drawable.lockclose);
+
         if (taskItem.getmStatus().equals("OPEN"))
             img_status.setImageResource(R.drawable.lockopen);
 
@@ -146,17 +163,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         TextView task_date;
         TextView task_gravity;
         TextView task_gravity_title;
+        TextView task_description;
         Button button_notes;
         TextView task_indications;
         Context itemViewContext;
         TextView task_contact;
         LinearLayout task_directions_button;
+        LinearLayout task_contacts_layout;
+        LinearLayout task_indications_layout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemViewContext = itemView.getContext();
             task_image = itemView.findViewById(R.id.feed_image_marker);
             task_title = itemView.findViewById(R.id.feed_title_marker);
+            task_description = itemView.findViewById(R.id.feed_description_marker);
             task_address = itemView.findViewById(R.id.feed_address_marker);
             task_date = itemView.findViewById(R.id.feed_date_marker);
             task_username = itemView.findViewById(R.id.feed_username_marker);
@@ -167,6 +188,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             task_indications = itemView.findViewById(R.id.feed_info_marker);
             task_contact = itemView.findViewById(R.id.feed_contact);
             task_directions_button = itemView.findViewById(R.id.gps_directions);
+            task_contacts_layout = itemView.findViewById(R.id.contacts_layout);
+            task_indications_layout = itemView.findViewById(R.id.indications_layout);
         }
     }
 }

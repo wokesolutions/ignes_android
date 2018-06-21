@@ -76,7 +76,6 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mAddress;
     private TextView mName;
     private TextView mJob;
-    private TextView mContacts;
     private TextView mPhonenumber;
     private TextView mMonth;
     private TextView mYear;
@@ -149,7 +148,6 @@ public class ProfileActivity extends AppCompatActivity {
         mAddress = mAboutLayout.findViewById(R.id.address);
         mName = mAboutLayout.findViewById(R.id.name);
         mJob = mAboutLayout.findViewById(R.id.job);
-        mContacts = mAboutLayout.findViewById(R.id.contacts);
         mPhonenumber = mAboutLayout.findViewById(R.id.phonenumber);
         mDay = mAboutLayout.findViewById(R.id.day);
         mMonth = mAboutLayout.findViewById(R.id.month);
@@ -255,7 +253,6 @@ public class ProfileActivity extends AppCompatActivity {
         mAddress.setText(sharedPref.getString("user_address", ""));
         mName.setText(sharedPref.getString("user_name", ""));
         mJob.setText(sharedPref.getString("user_job", ""));
-        mContacts.setText(sharedPref.getString("user_contacts", ""));
         mPhonenumber.setText(sharedPref.getString("user_phone", ""));
         mDay.setText(sharedPref.getString("user_day", ""));
         mMonth.setText(sharedPref.getString("user_month", ""));
@@ -309,8 +306,6 @@ public class ProfileActivity extends AppCompatActivity {
                 edit_name.setText(mName.getText().toString());
                 final EditText edit_job = findViewById(R.id.edit_job);
                 edit_job.setText(mJob.getText().toString());
-                final EditText edit_contacts = findViewById(R.id.edit_contacts);
-                edit_contacts.setText(mContacts.getText().toString());
                 final EditText edit_phonenumber = findViewById(R.id.edit_phonenumber);
                 edit_phonenumber.setText(mPhonenumber.getText().toString());
                 final EditText edit_gender_self = findViewById(R.id.edit_gender_self);
@@ -343,7 +338,6 @@ public class ProfileActivity extends AppCompatActivity {
                         String new_year = edit_year.getText().toString();
                         String new_address = edit_address.getText().toString();
                         String new_name = edit_name.getText().toString();
-                        String new_contacts = edit_contacts.getText().toString();
                         String new_job = edit_job.getText().toString();
                         String new_phonenumber = edit_phonenumber.getText().toString();
                         String new_locality = edit_locality.getText().toString();
@@ -386,7 +380,6 @@ public class ProfileActivity extends AppCompatActivity {
                         mAddress.setText(new_address);
                         mName.setText(new_name);
                         mJob.setText(new_job);
-                        mContacts.setText(new_contacts);
                         mPhonenumber.setText(new_phonenumber);
                         mLocality.setText(new_locality);
                         mSkills.setText(new_skills);

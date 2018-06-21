@@ -2,6 +2,7 @@ package com.wokesolutions.ignes.ignes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -41,7 +42,7 @@ public class MarkerClass implements ClusterItem {
         mLocality = locality;
         mImgbyte = null;
         mId = marker_id;
-        mVote ="";
+        mVote = "";
     }
 
     @Override
@@ -93,16 +94,16 @@ public class MarkerClass implements ClusterItem {
         return mDislikes;
     }
 
+    public void setmDislikes(String mDislikes) {
+        this.mDislikes = mDislikes;
+    }
+
     public String getmLikes() {
         return mLikes;
     }
 
     public void setmLikes(String mLikes) {
         this.mLikes = mLikes;
-    }
-
-    public void setmDislikes(String mDislikes) {
-        this.mDislikes = mDislikes;
     }
 
     public Bitmap makeImg(byte[] thumbnail) {

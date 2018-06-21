@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:background="@drawable/shadow"
+            android:background="@drawable/worker_shadow"
             android:orientation="vertical">
 
             <LinearLayout
@@ -132,12 +132,14 @@
                             android:id="@+id/feed_address_marker"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:fontFamily="@font/quicksand_light"
                             android:inputType="textMultiLine"
                             android:text="ADDRESS"
                             android:textColor="#000000"
                             android:textSize="15dp" />
                     </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -217,7 +219,7 @@
                     android:gravity="right"
                     android:text="18/12/2018"
                     android:textColor="#000000"
-                    android:textSize="10dp" />
+                    android:textSize="12dp" />
 
                 <View
                     android:layout_width="10dp"
@@ -235,7 +237,7 @@
                     android:gravity="left"
                     android:text="18/12/2018"
                     android:textColor="#000000"
-                    android:textSize="10dp" />
+                    android:textSize="12dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -250,6 +252,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/contacts_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -258,8 +261,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="10dp"
                     android:background="#000000"
                     android:src="@drawable/phoneicon" />
@@ -272,25 +275,19 @@
                     android:inputType="textMultiLine"
                     android:text="catarinapm@gmail.com"
                     android:textColor="#000000"
-                    android:textSize="10dp"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/gps_directions"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
                 android:gravity="center"
+                android:background="@drawable/worker_button"
                 android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/directionsicon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -298,9 +295,16 @@
                     android:fontFamily="@font/quicksand_light"
                     android:inputType="textMultiLine"
                     android:text="Get Directions"
-                    android:textColor="#000000"
-                    android:textSize="10dp"
+                    android:textColor="#ffffff"
+                    android:textSize="17dp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+
+                    android:src="@drawable/mapicon" />
 
             </LinearLayout>
 
@@ -311,6 +315,7 @@
                 android:background="@color/backgroundColor" />
 
             <LinearLayout
+                android:id="@+id/indications_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -350,14 +355,13 @@
                 android:id="@+id/button_notes"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:background="@drawable/worker_button"
                 android:fontFamily="@font/quicksand_bold"
-                android:text="notes"
-                android:textColor="@color/backgroundColor"
-                android:textSize="10dp"
+                android:text="Read Task Notes"
+                android:textColor="@color/colorIgnesWorker"
+                android:textSize="17dp"
                 android:textStyle="bold" />
 
         </LinearLayout>

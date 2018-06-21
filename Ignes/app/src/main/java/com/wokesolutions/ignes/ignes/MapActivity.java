@@ -927,13 +927,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (gravity.equals("1"))
             markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
         else if (gravity.equals("2"))
-            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(80.0f);
         else if (gravity.equals("3"))
             markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
         else if (gravity.equals("4"))
             markerDescriptor = BitmapDescriptorFactory.defaultMarker(35.0f);
         else if (gravity.equals("5"))
-            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(3.0f);
 
         return markerDescriptor;
     }

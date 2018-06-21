@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.icu.text.SymbolTable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -41,12 +42,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,14 +83,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
+    public static String mUsername;
+    private static GoogleMap mMap;
+    private static Context mContext;
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
     public RequestQueue queue;
-    public static String mUsername;
     public String teste;
     public String mRole;
-    private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
     private ClusterManager<TaskClass> mWorkerClusterManager;
@@ -99,11 +104,86 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mFeedButton;
     private LinearLayout mWorkRoomButton;
     private LinearLayout mTasksButton;
-    private static Context mContext;
     private SharedPreferences sharedPref;
     private String mToken;
     private String mCurrentLocality;
     private List<String> orderedIds;
+
+    public static void getDirections(LatLng origin, LatLng dest) {
+
+        String url = getDirectionsUrl(origin, dest);
+
+        DownloadTask downloadTask = new DownloadTask();
+
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
+    }
+
+    /*----- About Google Maps -----*/
+
+    private static String getDirectionsUrl(LatLng origin, LatLng dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+
+        return url;
+    }
+
+    /**
+     * A method to download json data from url
+     */
+    private static String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Connecting to url
+            urlConnection.connect();
+
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        } catch (Exception e) {
+            Log.e("Exception downloading", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +253,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         addresses = null;
 
     }
-
-    /*----- About Google Maps -----*/
 
     private void setUpCluster(LatLng latLng) {
         // Position the map.
@@ -343,7 +421,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String name = jsonobject.getString("report_username");
 
-                String phonenumber ="";
+                String phonenumber = "";
 
                 if (jsonobject.has("useroptional_phone"))
                     phonenumber = jsonobject.getString("useroptional_phone");
@@ -620,7 +698,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -761,16 +838,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    public static void getDirections(LatLng origin, LatLng dest){
-
-        String url = getDirectionsUrl(origin, dest);
-
-        DownloadTask downloadTask = new DownloadTask();
-
-        // Start downloading json data from Google Directions API
-        downloadTask.execute(url);
-    }
-
     private void filterTask() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Search");
@@ -845,100 +912,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+    public BitmapDescriptor setMarkersColor(BitmapDescriptor markerDescriptor, String gravity) {
 
-        public OwnIconRendered(Context context, GoogleMap map,
-                               ClusterManager<MarkerClass> clusterManager) {
-            super(context, map, clusterManager);
-        }
+        if (gravity.equals("1"))
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        else if (gravity.equals("2"))
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+        else if (gravity.equals("3"))
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+        else if (gravity.equals("4"))
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(35.0f);
+        else if (gravity.equals("5"))
+            markerDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
 
-        @Override
-        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
-
-            super.onBeforeClusterItemRendered(item, markerOptions);
-        }
-    }
-
-    class OwnIconRenderedWorker extends DefaultClusterRenderer<TaskClass> {
-
-        public OwnIconRenderedWorker(Context context, GoogleMap map,
-                                     ClusterManager<TaskClass> clusterManager) {
-            super(context, map, clusterManager);
-        }
-
-        @Override
-        protected void onBeforeClusterItemRendered(TaskClass item, MarkerOptions markerOptions) {
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
-
-            super.onBeforeClusterItemRendered(item, markerOptions);
-        }
-    }
-
-    private static String getDirectionsUrl(LatLng origin, LatLng dest) {
-
-        // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-
-        // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-
-        // Sensor enabled
-        String sensor = "sensor=false";
-
-        // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor;
-
-        // Output format
-        String output = "json";
-
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-
-        return url;
-    }
-
-    /**
-     * A method to download json data from url
-     */
-    private static String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-
-            // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            // Connecting to url
-            urlConnection.connect();
-
-            // Reading data from url
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
-            Log.e("Exception downloading", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
+        return markerDescriptor;
     }
 
     // Fetches data from url passed
@@ -1041,6 +1028,61 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
+        }
+    }
+
+    public class OwnIconRendered extends DefaultClusterRenderer<MarkerClass> {
+
+        IconGenerator mClusterIconGenerator;
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<MarkerClass> clusterManager) {
+            super(context, map, clusterManager);
+
+            mClusterIconGenerator = new IconGenerator(context);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
+            super.onBeforeClusterItemRendered(item, markerOptions);
+
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+            BitmapDescriptor markerDescriptor = null;
+
+            System.out.println("COR AQUI! " + item.getmGravity());
+
+            markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+
+        }
+
+        @Override
+        protected int getColor(int clusterSize) {
+            return Color.parseColor("#AD363B");
+        }
+    }
+
+    public class OwnIconRenderedWorker extends DefaultClusterRenderer<TaskClass> {
+
+        public OwnIconRenderedWorker(Context context, GoogleMap map,
+                                     ClusterManager<TaskClass> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(TaskClass item, MarkerOptions markerOptions) {
+            super.onBeforeClusterItemRendered(item, markerOptions);
+
+            markerOptions.title("Marker " + item.getPosition());
+            markerOptions.snippet(item.getSnippet());
+            BitmapDescriptor markerDescriptor = null;
+
+            markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+        }
+
+        @Override
+        protected int getColor(int clusterSize) {
+            return Color.parseColor("#2F975F");
         }
     }
 }

@@ -11,5 +11,10 @@
     <color name="background_material_light">#fafafa</color>
     <color name="gravity_one">#54A562</color>
 
+    <color name="marker_one">#CCFF31</color>
+    <color name="marker_two">#2F975F</color>
+    <color name="marker_three">#FFCC31</color>
+    <color name="marker_four">#FF6431</color>
+    <color name="marker_five">#FF3131</color>
 </resources>
 

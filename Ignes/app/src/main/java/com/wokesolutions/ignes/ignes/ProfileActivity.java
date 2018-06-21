@@ -4,9 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,6 +44,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
@@ -40,6 +53,12 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     private Context context;
+
+    public Uri mImageURI;
+
+    private Bitmap mThumbnail;
+    private ImageView mImageView;
+    private byte[] byteArray;
 
     private EditProfileTask mEditProfileTask = null;
 
@@ -59,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String mUsername;
     private String mUserLevel;
+    private int mRequestCode;
 
     private Button mAboutButton;
     private Button mLessAboutButton;
@@ -289,6 +309,21 @@ public class ProfileActivity extends AppCompatActivity {
                 backBool = true;
 
                 mSaveButton = findViewById(R.id.save_button);
+                mImageView =  findViewById(R.id.avatar_picture);
+
+                final LinearLayout edit_avatar = findViewById(R.id.edit_avatar);
+                edit_avatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.err.println("Cliquei no avatar!");
+
+                        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        mRequestCode = 1;
+                        if (pickPhoto.resolveActivity(getPackageManager()) != null)
+                            startActivityForResult(pickPhoto, mRequestCode);
+                    }
+                });
 
                 final EditText edit_day = findViewById(R.id.edit_day);
                 edit_day.setText(mDay.getText().toString());
@@ -437,6 +472,99 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void confirmRequest(String insertedCode) {
         RequestsVolley.confirmRequest(insertedCode, context, this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        final int THUMBSIZE = 256;
+        final int QUALITY = 85;
+
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+
+                    mImageURI = data.getData();
+
+                    //mThumbnail = getScaledBitmap(getRealPathFromURI(mImageURI), THUMBSIZE);
+                    //mThumbnail = scaleImage(THUMBSIZE, getRealPathFromURI(mImageURI));
+                       mThumbnail = ThumbnailUtils.extractThumbnail(
+                                BitmapFactory.decodeFile(getRealPathFromURI(mImageURI)),
+                                THUMBSIZE,
+                                THUMBSIZE);
+
+                    System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());
+
+                    try {
+                        ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
+                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        System.out.println("EXIF: " + orientation);
+                        Matrix matrix = new Matrix();
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                            matrix.postRotate(90);
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                            matrix.postRotate(180);
+                        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                            matrix.postRotate(270);
+                        }
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
+
+                        System.out.println("BYTE COUNT 2 THUMB: " + mThumbnail.getByteCount());
+                    } catch (Exception e) {
+                        System.out.println("NO ORIENTATION FOUND");
+                        e.printStackTrace();
+                    }
+
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mThumbnail);
+                    roundedBitmap.setCircular(true);
+                    mImageView.setImageDrawable(roundedBitmap);
+
+                    //mImageView.setImageBitmap(mThumbnail);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
+                    byteArray = stream.toByteArray();
+
+                    SharedPreferences.Editor editor = sharedPref.edit();
+
+                    //guardar base64 no shared prefs
+
+
+                    System.out.println("BYTEARRAY ENVIADO DO THUMB: " + byteArray.length);
+
+                }
+                break;
+        }
+    }
+
+    public static Bitmap getScaledBitmap(String path, int newSize) {
+        File image = new File(path);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inInputShareable = true;
+        options.inPurgeable = true;
+
+        BitmapFactory.decodeFile(image.getPath(), options);
+        if ((options.outWidth == -1) || (options.outHeight == -1))
+            return null;
+
+        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
+                : options.outWidth;
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = originalSize / newSize;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
+
+        return scaledBitmap;
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
     public class EditProfileTask extends AsyncTask<Void, Void, String> {

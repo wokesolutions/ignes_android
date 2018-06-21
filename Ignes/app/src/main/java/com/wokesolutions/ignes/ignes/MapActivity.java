@@ -232,6 +232,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        general_menuButtons();
+
         if (mRole.equals("USER")) {
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
@@ -640,22 +642,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     /*----- About Menu Bar -----*/
-    private void user_menuButtons() {
-
+    private void general_menuButtons() {
         mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MapActivity.this, LogoutActivity.class));
                 finish();
-            }
-        });
-
-        mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
-        mProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
             }
         });
 
@@ -676,28 +669,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startActivity(new Intent(MapActivity.this, SettingsActivity.class));
             }
         });
+
+    }
+    private void user_menuButtons() {
+
+        mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
+        mProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
+            }
+        });
+
+
     }
 
     /*----- About Menu Bar -----*/
     private void worker_menuButtons() {
 
-        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
-
-        mTasksButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mTasksButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(MapActivity.this, FeedActivity.class));
-            }
-        });
+       System.out.println("SOU UM METODO INUTIL");
     }
 
     @Override

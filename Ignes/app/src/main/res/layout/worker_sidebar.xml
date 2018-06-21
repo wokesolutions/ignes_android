@@ -100,7 +100,7 @@
         android:background="#99000000" />
 
     <LinearLayout
-        android:id="@+id/botao1"
+        android:id="@+id/botao_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">

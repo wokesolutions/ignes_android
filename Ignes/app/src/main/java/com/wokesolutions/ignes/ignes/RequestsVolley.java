@@ -627,10 +627,11 @@ public class RequestsVolley {
 
                         result.put("level", response.headers.get("Level"));
 
-                        if (response.headers.get("Org") != null) {
+
+                        /*if (response.headers.get("Org") != null) {
                             System.out.println("NOME DA ORG" + (response.headers.get("Org")));
                             result.put("Org", response.headers.get("Org"));
-                        }
+                        }*/
 
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -52,8 +52,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
         final TaskClass taskItem = mMap.get(keys[position]);
 
-      /*  if(taskItem.getmImg_bitmap()== null)
-            thumbnailRequest((String) keys[position], taskItem, position);*/
+        if(taskItem.getmImg_bitmap()== null)
+            thumbnailRequest((String) keys[position], taskItem, position);
 
         ImageView image = holder.task_image;
         final TextView title = holder.task_title;
@@ -158,8 +158,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
         }
     }
-  /*  private void thumbnailRequest(String reportId, MarkerClass marker, final int position) {
+    private void thumbnailRequest(String reportId, TaskClass task, final int position) {
 
-        RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this);
-    }*/
+        RequestsVolley.thumbnailRequest(reportId, null, position, mContext, null,task, this);
+    }
 }

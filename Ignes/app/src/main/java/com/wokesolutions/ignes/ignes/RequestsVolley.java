@@ -51,10 +51,14 @@ public class RequestsVolley {
     private static String mIsFinish;
 
 
-    public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter) {
+    public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
+                                        TaskClass task, final TaskAdapter taskAdapter) {
 
         final String report = reportId;
-        final MarkerClass item = marker;
+
+        final MarkerClass mMarker = marker;
+
+        final TaskClass mTask = task;
 
         ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -80,9 +84,16 @@ public class RequestsVolley {
 
                             String base64 = response.getString("report_thumbnail");
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
-                            item.makeImg(data);
 
-                            markerAdapter.notifyItemChanged(position);
+                            if (mMarker != null) {
+                                mMarker.makeImg(data);
+                                markerAdapter.notifyItemChanged(position);
+
+                            } else if (mTask != null) {
+                                mTask.makeImg(data);
+                                taskAdapter.notifyItemChanged(position);
+                            }
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -720,6 +731,8 @@ public class RequestsVolley {
         final String mCursor = cursor;
 
         // RequestQueue queue = Volley.newRequestQueue(context);
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
 
         url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/" + mUsername + "?cursor=" + mCursor;
 
@@ -754,6 +767,14 @@ public class RequestsVolley {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", token);
+
+                return params;
+            }
+
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
 
                 System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);

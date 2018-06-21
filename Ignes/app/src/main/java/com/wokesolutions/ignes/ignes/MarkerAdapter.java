@@ -155,7 +155,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     private void thumbnailRequest(String reportId, MarkerClass marker, final int position) {
 
-        RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this);
+        RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null,null);
     }
 
 }

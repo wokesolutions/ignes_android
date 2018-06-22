@@ -48,6 +48,9 @@ public class RequestsVolley {
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
+    
+    private static final int L_EVERYWHERE = 1;
+    private static final int L_ONCE = 0;
 
     private static StringRequest stringRequest;
     private static JsonObjectRequest jsonRequest;
@@ -1109,6 +1112,60 @@ public class RequestsVolley {
         setRetry(stringRequest);
         queue.add(stringRequest);
 
+    }
+    public static void logoutRequest(String token, final Context context, final LogoutActivity logoutActivity, final SettingsActivity settingsActivity, int request) {
+
+        final String mToken = token;
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        String url = "";
+
+        if (request == L_EVERYWHERE)
+            url = "https://hardy-scarab-200218.appspot.com/api/logout/everywhere";
+        if (request == L_ONCE)
+            url = "https://hardy-scarab-200218.appspot.com/api/logout";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // resp
+                        SharedPreferences sharedPref = context.getSharedPreferences("Shared", MODE_PRIVATE);
+                        sharedPref.edit().remove("token").commit();
+                        System.out.println("User Logged Out");
+
+                        if (logoutActivity != null) {
+                            logoutActivity.startActivity(new Intent(logoutActivity, LoginActivity.class));
+                            logoutActivity.finish();
+                        }
+                        else if (settingsActivity != null) {
+                            settingsActivity.startActivity(new Intent(settingsActivity, LoginActivity.class));
+                            settingsActivity.finish();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERROR LOGOUT EVERYWHERE " + error);
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", mToken);
+
+                return params;
+            }
+
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
     }
 
     private static void setRetry(Request request) {

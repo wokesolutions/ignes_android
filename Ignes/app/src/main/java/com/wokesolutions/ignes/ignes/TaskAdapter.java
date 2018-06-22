@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
@@ -133,7 +135,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         directions_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapActivity.getDirections(MapActivity.mLatLng, taskItem.getPosition());
+               MapActivity.getDirections(taskItem.getPosition(), taskItem);
+               MapActivity.mGoogleMapsButtonLayout.setVisibility(View.VISIBLE);
                 ((FeedActivity) mContext).finish();
             }
         });
@@ -153,7 +156,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         ImageView task_status_image, task_image;
         TextView task_title, task_address, task_username, task_date, task_gravity,
-                task_gravity_title, task_description,task_indications,task_contact;
+                task_gravity_title, task_description, task_indications, task_contact;
         Button button_notes;
         Context itemViewContext;
         LinearLayout task_directions_button, task_contacts_layout, task_indications_layout;

@@ -365,7 +365,7 @@ public class RequestsVolley {
     }
 
     public static void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
-                                     String locality, int gravity, double lat, double lng, final Context context,
+                                     String locality, int gravity, double lat, double lng, int orientation, final Context context,
                                      final ReportFormActivity activity) {
 
         //final byte[] mThumbnail = thumbnail;
@@ -379,6 +379,7 @@ public class RequestsVolley {
         final String mDistrict = district;
         final String mAddress = address;
         final String mLocality = locality;
+        final int mOrientation = orientation;
 
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
@@ -409,6 +410,7 @@ public class RequestsVolley {
             report.put("report_private", activity.mIsPrivate);
             report.put("report_city", mDistrict);
             report.put("report_locality", mLocality);
+            report.put("report_imgorientation", mOrientation);
 
             if (activity.mReportType.equals("medium")) {
 

@@ -55,7 +55,7 @@ public class ReportFormActivity extends AppCompatActivity {
     String address, district, locality;
     double lat, lng;
     private Context context;
-    private int mRequestCode, mGravity;
+    private int mRequestCode, mGravity, orientation;
     private byte[] byteArray;
     private String mCurrentPhotoPath;
     private Bitmap mImage, mThumbnail;
@@ -325,7 +325,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     try {
                         ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
-                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
                         System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
@@ -370,7 +370,7 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     try {
                         ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
-                        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
                         System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
@@ -527,7 +527,7 @@ public class ReportFormActivity extends AppCompatActivity {
                                String locality, int gravity, double lat, double lng) {
 
         RequestsVolley.reportRequest(thumbnail, description, title, district, address,
-                locality, gravity, lat, lng, context, this);
+                locality, gravity, lat, lng, orientation, context, this);
 
     }
 }

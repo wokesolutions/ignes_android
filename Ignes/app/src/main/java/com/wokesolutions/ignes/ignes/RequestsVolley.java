@@ -259,7 +259,7 @@ public class RequestsVolley {
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
-                } else if (response.statusCode == 204) {
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
                 } else {
@@ -362,7 +362,7 @@ public class RequestsVolley {
 
                         Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
 
-                        if (response.statusCode == 400) {
+                        if (response.statusCode == BAD_REQUEST_ERROR) {
                             activity.showProgress(false);
                         } else {
                             Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
@@ -971,7 +971,7 @@ public class RequestsVolley {
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
-                } else if (response.statusCode == 204) {
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
                 } else {
@@ -1023,7 +1023,7 @@ public class RequestsVolley {
                         NetworkResponse response = error.networkResponse;
                         System.out.println("ADD NOTE volley -> ERRO "+ response.statusCode);
 
-                        if (response.statusCode == 400) {
+                        if (response.statusCode == BAD_REQUEST_ERROR) {
                         } else {
                             Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
 
@@ -1098,7 +1098,7 @@ public class RequestsVolley {
                         NetworkResponse response = error.networkResponse;
                         System.out.println("CHANGE PASSWORD volley -> ERRO " + response.statusCode);
 
-                        if (response.statusCode == 400) {
+                        if (response.statusCode == BAD_REQUEST_ERROR) {
                         } else {
                             Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
 

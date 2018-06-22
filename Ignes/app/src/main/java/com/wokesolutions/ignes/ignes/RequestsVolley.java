@@ -1,6 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -49,6 +53,7 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url;
     private static String mIsFinish;
+    private static  boolean resultBool;
 
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
@@ -885,10 +890,14 @@ public class RequestsVolley {
 
     }
 
-    public static void changePasswordRequest(String oldpass, String newpass, final Context context) {
+    public static void changePasswordRequest(String oldpass, String newpass, final Context context, View view,
+                                             EditText oldPass, android.support.v7.app.AlertDialog alert) {
 
+        final View mView = view;
+        final EditText mOldPassEditText = oldPass;
         final String mOldPass = oldpass;
         final String mNewPass = newpass;
+        final android.support.v7.app.AlertDialog mAlert = alert;
 
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
@@ -913,6 +922,7 @@ public class RequestsVolley {
                     public void onResponse(String response) {
                         // response
                         System.out.println("OK: " + response);
+                        mAlert.dismiss();
                         Toast.makeText(context, "Password Changed!", Toast.LENGTH_LONG).show();
                     }
                 },
@@ -928,6 +938,8 @@ public class RequestsVolley {
                             Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
 
                         }
+                        mOldPassEditText.setError("Invalid password");
+                        mView.requestFocus();
                     }
                 }
         ) {

@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -35,16 +38,24 @@ public class SettingsActivity extends AppCompatActivity {
     private LinearLayout mFeedButton;
     private LinearLayout mMapButton;
     private LinearLayout mProfileButton;
+    private LinearLayout mSettingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        mContext = this;
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userLevel", "");
+
+
+        if (mRole.equals("USER"))
+            setContentView(R.layout.activity_settings);
+        else if (mRole.equals("WORKER")) {
+            setTheme(R.style.WorkerTheme);
+            setContentView(R.layout.worker_settings);
+        }
+
+        mContext = this;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_settings);
         setSupportActionBar(myToolbar);
@@ -71,40 +82,39 @@ public class SettingsActivity extends AppCompatActivity {
 
                 alert.show();
 
-                final EditText oldPassword = mView.findViewById(R.id.current_password);
-                final EditText newPassword = mView.findViewById(R.id.new_password);
-                EditText confirmNewPassword = mView.findViewById(R.id.confirm_new_password);
+                TextView changepasswordAdvice = mView.findViewById(R.id.changepassword_advice);
 
                 Button changePassButton = mView.findViewById(R.id.submit_pass_change);
+                if(mRole.equals("WORKER")) {
+                    changePassButton.setBackgroundResource(R.drawable.worker_button);
+                    changepasswordAdvice.setTextColor(ContextCompat.getColor(mContext, R.color.colorIgnesWorker));
+                }
+
                 changePassButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String oldPass = oldPassword.getText().toString();
-                        String newPass = newPassword.getText().toString();
 
-                        System.err.println("OLD: " + oldPass + " NEW: " + newPass);
+                        attempPasswordChange(mView, alert);
 
-                        RequestsVolley.changePasswordRequest(oldPass, newPass, mContext);
                     }
                 });
             }
         });
 
+        general_menuButtons();
 
         if (mRole.equals("WORKER")) {
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
-            worker_menuButtons();
 
         } else if (mRole.equals("USER")) {
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
-
         }
 
     }
 
-    private void user_menuButtons() {
-
+    /*----- About Menu Bar -----*/
+    private void general_menuButtons() {
         mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +123,36 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
+        mFeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(SettingsActivity.this, FeedActivity.class));
+            }
+        });
+
+        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(SettingsActivity.this, SettingsActivity.class));
+            }
+        });
+
+        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
+        mMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+    }
+
+    private void user_menuButtons() {
 
         mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
         mProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -121,53 +161,64 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(SettingsActivity.this, ProfileActivity.class));
             }
         });
-
-        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
-        mMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mFeedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, FeedActivity.class));
-                finish();
-            }
-        });
     }
 
-    /*----- About Menu Bar -----*/
-    private void worker_menuButtons() {
+    private void attempPasswordChange(View view, AlertDialog alert) {
 
-        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
+        View focusView = null;
+        boolean cancel = false;
 
-        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
-        mMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        final EditText oldPassword = view.findViewById(R.id.current_password);
+        final EditText newPassword = view.findViewById(R.id.new_password);
+        EditText confirmNewPassword = view.findViewById(R.id.confirm_new_password);
 
-        mFeedButton = (LinearLayout) findViewById(R.id.botao_feed);
-        mFeedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, FeedActivity.class));
-                finish();
-            }
-        });
+        // Reset errors.
+        oldPassword.setError(null);
+        newPassword.setError(null);
+        confirmNewPassword.setError(null);
+
+        String oldPass = oldPassword.getText().toString();
+        String newPass = newPassword.getText().toString();
+        String newPassConfirmation = confirmNewPassword.getText().toString();
+
+        System.err.println("OLD: " + oldPass + " NEW: " + newPass);
+
+
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(oldPass)) {
+            oldPassword.setError(getString(R.string.error_field_required));
+            focusView = oldPassword;
+            cancel = true;
+        } else if (!isPasswordValid(newPass)) {
+            newPassword.setError(getString(R.string.error_invalid_password));
+            focusView = newPassword;
+            cancel = true;
+        } else if (!passwordEqualsConfirmation(newPass, newPassConfirmation)) {
+            confirmNewPassword.setError("Must be equal to password");
+            focusView = confirmNewPassword;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt register and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user register attempt.
+            // showProgress(true);
+            focusView = oldPassword;
+            RequestsVolley.changePasswordRequest(oldPass, newPass, mContext, focusView, oldPassword, alert);
+        }
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() > 5;
+    }
+
+    private boolean passwordEqualsConfirmation(String password, String confirmation) {
+        return password.equals(confirmation);
     }
 
     @Override

@@ -281,7 +281,7 @@ public class RequestsVolley {
         final double mLat = lat;
         final double mLng = lng;
         final String base64Img;
-       // final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
+        // final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
         final String mDescription = description;
         final int mGravity = gravity;
         final String mTitle = title;
@@ -686,9 +686,14 @@ public class RequestsVolley {
                             editor.putString("userLevel", response);
 
                         editor.apply();
-                        profileRequest(sharedPref.getString("username", ""), context, activity);
-                        //activity.startActivity(new Intent(activity, MapActivity.class));
-                        //activity.finish();
+
+                        String level = sharedPref.getString("userLevel", "");
+                        if (level.equals("USER"))
+                            profileRequest(sharedPref.getString("username", ""), context, activity);
+                        else {
+                            activity.startActivity(new Intent(activity, MapActivity.class));
+                            activity.finish();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -746,7 +751,7 @@ public class RequestsVolley {
         final String mUsername = username;
         final Context mContext = context;
         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-        final String token = sharedPref.getString("token","");
+        final String token = sharedPref.getString("token", "");
 
 
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -769,31 +774,36 @@ public class RequestsVolley {
                             editor.putString("user_email", response.getString("user_email"));
 
                             if (response.has("useroptional_name"))
-                                editor.putString("user_optionalname", response.getString("useroptional_name"));
+                                editor.putString("user_name", response.getString("useroptional_name"));
 
-                            if (response.has("useroptional_birth"))
-                                editor.putString("user_birthday", "useroptional_birth");
+                            if (response.has("useroptional_birth")) {
+                                String[] tokens = response.getString("useroptional_birth").split(" ");
+
+                                editor.putString("user_day", tokens[0]);
+                                editor.putString("user_month", tokens[1]);
+                                editor.putString("user_year", tokens[2]);
+                            }
 
                             if (response.has("useroptional_locality"))
-                                editor.putString("user_locality", "useroptional_locality");
+                                editor.putString("user_locality", response.getString("useroptional_locality"));
 
                             if (response.has("useroptional_phone")) {
-                                editor.putString("useroptional_phone", response.getString("useroptional_phone"));
+                                editor.putString("user_phone", response.getString("useroptional_phone"));
                             }
 
                             if (response.has("useroptional_address")) {
-                                editor.putString("useroptional_address", response.getString("useroptional_address"));
+                                editor.putString("user_address", response.getString("useroptional_address"));
                             }
 
                             if (response.has("useroptional_gender")) {
-                                editor.putString("useroptional_gender", response.getString("useroptional_gender"));
+                                editor.putString("user_gender", response.getString("useroptional_gender"));
                             }
 
                             if (response.has("useroptional_job")) {
-                                editor.putString("useroptional_job", response.getString("useroptional_job"));
+                                editor.putString("user_job", response.getString("useroptional_job"));
                             }
                             if (response.has("useroptional_skills")) {
-                                editor.putString("useroptional_skills", response.getString("useroptional_skills"));
+                                editor.putString("user_skills", response.getString("useroptional_skills"));
                             }
 
                             editor.putString("askForProfile", "NO");
@@ -850,7 +860,7 @@ public class RequestsVolley {
                     try {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                         result = new JSONObject(json);
-                        System.out.println("RESPONSE DO VIEW PROFILE NO PARSERESPONSE --->>> "+json);
+                        System.out.println("RESPONSE DO VIEW PROFILE NO PARSERESPONSE --->>> " + json);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                         result = new JSONObject();
@@ -1114,6 +1124,7 @@ public class RequestsVolley {
         queue.add(stringRequest);
 
     }
+
     public static void logoutRequest(String token, final Context context, final LogoutActivity logoutActivity,
                                      final SettingsActivity settingsActivity, int request) {
 
@@ -1140,8 +1151,7 @@ public class RequestsVolley {
                         if (logoutActivity != null) {
                             logoutActivity.startActivity(new Intent(logoutActivity, LoginActivity.class));
                             logoutActivity.finish();
-                        }
-                        else if (settingsActivity != null) {
+                        } else if (settingsActivity != null) {
                             settingsActivity.startActivity(new Intent(settingsActivity, LoginActivity.class));
                             settingsActivity.finish();
                         }

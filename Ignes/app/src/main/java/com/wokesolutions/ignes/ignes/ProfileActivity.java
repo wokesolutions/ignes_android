@@ -80,6 +80,8 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout mAboutLayout;
     private LinearLayout mEditAboutLayout;
     private TextView mDay;
+    private TextView mPoints;
+    private TextView mReportNum;
     private TextView mGender;
     private TextView mAddress;
     private TextView mName;
@@ -95,29 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String isConfirmed;
     private RecyclerView recyclerView;
     private Map<String, MarkerClass> markerMap;
-
-    public static Bitmap getScaledBitmap(String path, int newSize) {
-        File image = new File(path);
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        options.inInputShareable = true;
-        options.inPurgeable = true;
-
-        BitmapFactory.decodeFile(image.getPath(), options);
-        if ((options.outWidth == -1) || (options.outHeight == -1))
-            return null;
-
-        int originalSize = (options.outHeight > options.outWidth) ? options.outHeight
-                : options.outWidth;
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inSampleSize = originalSize / newSize;
-
-        Bitmap scaledBitmap = BitmapFactory.decodeFile(image.getPath(), opts);
-
-        return scaledBitmap;
-    }
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +163,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         mEditButton = mAboutLayout.findViewById(R.id.edit_button);
 
+        mPoints = findViewById(R.id.user_points);
+        mReportNum = findViewById(R.id.user_reports);
         mGender = mAboutLayout.findViewById(R.id.gender);
         mAddress = mAboutLayout.findViewById(R.id.address);
         mName = mAboutLayout.findViewById(R.id.name);
@@ -297,16 +279,20 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initializeProfile() {
 
+        mPoints.setText(sharedPref.getString("user_points", "Point Error"));
+        mReportNum.setText(sharedPref.getString("user_reportNum", "Report Error"));
+        mLocality.setText(sharedPref.getString("user_locality", ""));
+
         mGender.setText(sharedPref.getString("user_gender", ""));
         mAddress.setText(sharedPref.getString("user_address", ""));
         mName.setText(sharedPref.getString("user_name", ""));
         mJob.setText(sharedPref.getString("user_job", ""));
         mPhonenumber.setText(sharedPref.getString("user_phone", ""));
+
         mDay.setText(sharedPref.getString("user_day", ""));
         mMonth.setText(sharedPref.getString("user_month", ""));
         mYear.setText(sharedPref.getString("user_year", ""));
         mSkills.setText(sharedPref.getString("user_skills", ""));
-        mLocality.setText(sharedPref.getString("user_locality", ""));
         mProfileName.setText(sharedPref.getString("user_name", ""));
     }
 
@@ -573,7 +559,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public class EditProfileTask extends AsyncTask<Void, Void, String> {
-
 
         private final String mToken;
         private final String mPhone;

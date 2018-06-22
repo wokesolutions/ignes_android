@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,6 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url;
     private static String mIsFinish;
-    private static  boolean resultBool;
 
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
@@ -682,9 +682,9 @@ public class RequestsVolley {
                             editor.putString("userLevel", response);
 
                         editor.apply();
-
-                        activity.startActivity(new Intent(activity, MapActivity.class));
-                        activity.finish();
+                        profileRequest(sharedPref.getString("username", ""), context, activity);
+                        //activity.startActivity(new Intent(activity, MapActivity.class));
+                        //activity.finish();
                     }
                 },
                 new Response.ErrorListener() {
@@ -724,6 +724,150 @@ public class RequestsVolley {
         setRetry(stringRequest);
 
         queue.add(stringRequest);
+    }
+
+    public static void profileRequest(String username, Context context, final Activity activity) {
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() ||
+                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
+                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // If no connectivity, cancel task and update Callback with null data.
+            //activity.showProgress(false);
+            Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final String mUsername = username;
+        final Context mContext = context;
+        SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+        final String token = sharedPref.getString("token","");
+
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com/api/profile/view/" + mUsername;
+
+        jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+                        SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        try {
+                            editor.putString("user_points", String.valueOf(response.getInt("userpoints_points")));
+                            editor.putString("user_reportNum", String.valueOf(response.getInt("user_reports")));
+                            editor.putString("user_email", response.getString("user_email"));
+
+                            if (response.has("useroptional_name"))
+                                editor.putString("user_optionalname", response.getString("useroptional_name"));
+
+                            if (response.has("useroptional_birth"))
+                                editor.putString("user_birthday", "useroptional_birth");
+
+                            if (response.has("useroptional_locality"))
+                                editor.putString("user_locality", "useroptional_locality");
+
+                            if (response.has("useroptional_phone")) {
+                                editor.putString("useroptional_phone", response.getString("useroptional_phone"));
+                            }
+
+                            if (response.has("useroptional_address")) {
+                                editor.putString("useroptional_address", response.getString("useroptional_address"));
+                            }
+
+                            if (response.has("useroptional_gender")) {
+                                editor.putString("useroptional_gender", response.getString("useroptional_gender"));
+                            }
+
+                            if (response.has("useroptional_job")) {
+                                editor.putString("useroptional_job", response.getString("useroptional_job"));
+                            }
+                            if (response.has("useroptional_skills")) {
+                                editor.putString("useroptional_skills", response.getString("useroptional_skills"));
+                            }
+
+                            editor.putString("askForProfile", "NO");
+
+                            editor.apply();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        activity.startActivity(new Intent(activity, MapActivity.class));
+                        activity.finish();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("ERRO DO LOGIN: " + response + " " + response.statusCode);
+
+                        SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        if (response.statusCode == 403) {
+
+                        } else
+                            Toast.makeText(mContext, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+
+                        //activity.showProgress(false);
+                        editor.putString("askForProfile", "YES");
+                        editor.apply();
+
+                        activity.startActivity(new Intent(activity, MapActivity.class));
+                        activity.finish();
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", token);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                if (response.statusCode == 200) {
+
+                    JSONObject result;
+
+                    try {
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                        result = new JSONObject(json);
+                        System.out.println("RESPONSE DO VIEW PROFILE NO PARSERESPONSE --->>> "+json);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        result = new JSONObject();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        result = new JSONObject();
+                    }
+
+                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(jsonRequest);
+
+        queue.add(jsonRequest);
     }
 
     public static void votesRequest(final String username, final String cursor, final Context context, final MapActivity activity) {

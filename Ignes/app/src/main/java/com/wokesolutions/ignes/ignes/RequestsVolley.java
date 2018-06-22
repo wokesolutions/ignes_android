@@ -48,7 +48,7 @@ public class RequestsVolley {
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
-    
+
     private static final int L_EVERYWHERE = 1;
     private static final int L_ONCE = 0;
 
@@ -277,11 +277,11 @@ public class RequestsVolley {
                                      String locality, int gravity, double lat, double lng, final Context context,
                                      final ReportFormActivity activity) {
 
-        final byte[] mThumbnail = thumbnail;
+        //final byte[] mThumbnail = thumbnail;
         final double mLat = lat;
         final double mLng = lng;
         final String base64Img;
-        final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
+       // final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
         final String mDescription = description;
         final int mGravity = gravity;
         final String mTitle = title;
@@ -309,7 +309,7 @@ public class RequestsVolley {
             report.put("report_lat", mLat);
             report.put("report_lng", mLng);
             report.put("report_img", base64Img);
-            report.put("report_thumbnail", base64Thumbnail);
+            //report.put("report_thumbnail", base64Thumbnail);
             report.put("report_address", mAddress);
             report.put("report_private", activity.mIsPrivate);
             report.put("report_city", mDistrict);
@@ -357,6 +357,7 @@ public class RequestsVolley {
                         System.out.println("ERRO DO LOGIN: " + response.statusCode);
 
                         if (response.statusCode == 400) {
+                            activity.showProgress(false);
                         } else {
                             Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
                             activity.showProgress(false);
@@ -1113,7 +1114,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
 
     }
-    public static void logoutRequest(String token, final Context context, final LogoutActivity logoutActivity, final SettingsActivity settingsActivity, int request) {
+    public static void logoutRequest(String token, final Context context, final LogoutActivity logoutActivity,
+                                     final SettingsActivity settingsActivity, int request) {
 
         final String mToken = token;
 

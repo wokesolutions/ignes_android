@@ -1,6 +1,5 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,10 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -39,20 +35,13 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     private Bitmap mThumbnail;
     private ImageView mImageView;
     private byte[] byteArray;
-    private EditProfileTask mEditProfileTask = null;
     private SharedPreferences sharedPref;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -201,11 +189,6 @@ public class ProfileActivity extends AppCompatActivity {
         markerMap = new HashMap<>();
 
         userReportsRequest(mUsername, mToken, "", context, ProfileActivity.this);
-
-        /*markerAdapter = new MarkerAdapter(this, markerMap);
-        recyclerView.setAdapter(markerAdapter);
-        recyclerView.setNestedScrollingEnabled(false);*/
-
 
     }
 
@@ -505,11 +488,12 @@ public class ProfileActivity extends AppCompatActivity {
                             // form field with an error.
                             focusView.requestFocus();
                         } else {
-                            mEditProfileTask = new EditProfileTask(mPhonenumber.getText().toString(),
+                            RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
                                     mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
                                     mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
-                                    mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString());
-                            mEditProfileTask.execute((Void) null);
+                                    mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
+                                    ,mUsername, context, ProfileActivity.this );
+
                         }
                     }
                 });
@@ -629,123 +613,4 @@ public class ProfileActivity extends AppCompatActivity {
     public void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
         RequestsVolley.userReportsRequest(username, token, cursor, context, activity);
     }
-
-    public class EditProfileTask extends AsyncTask<Void, Void, String> {
-
-        private final String mToken;
-        private final String mPhone;
-        private final String mName;
-        private final String mGender;
-        private final String mAddress;
-        private final String mLocality;
-        private final String mZip;
-        private final String mDay;
-        private final String mMonth;
-        private final String mYear;
-        private final String mJob;
-        private final String mSkills;
-
-
-        EditProfileTask(String phone, String name, String gender, String address,
-                        String locality, String zip, String day, String month, String year, String job, String skills) {
-            mToken = sharedPref.getString("token", "");
-            mPhone = phone;
-            mName = name;
-            mGender = gender;
-            mAddress = address;
-            mLocality = locality;
-            mZip = zip;
-            mDay = day;
-            mMonth = month;
-            mYear = year;
-            mJob = job;
-            mSkills = skills;
-        }
-
-        /**
-         * Cancel background network operation if we do not have network connectivity.
-         */
-        @Override
-        protected void onPreExecute() {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo == null || !networkInfo.isConnected() ||
-                    (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                            && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-                // If no connectivity, cancel task and update Callback with null data.
-                cancel(true);
-            }
-
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                JSONObject json = new JSONObject();
-
-                json.put("useroptional_phone", mPhone);
-                json.put("useroptional_name", mName);
-                json.put("useroptional_gender", mGender);
-                json.put("useroptional_address", mAddress);
-                json.put("useroptional_locality", mLocality);
-                json.put("useroptional_zip", mZip);
-                json.put("useroptional_birth", mDay + " " + mMonth + " " + mYear);
-                json.put("useroptional_job", mJob);
-                json.put("useroptional_skills", mSkills);
-
-                System.out.println("JSON ->>>> : " + json);
-
-                URL url = new URL("https://hardy-scarab-200218.appspot.com/api/profile/update/" + mUsername);
-
-                HttpURLConnection s = RequestsREST.doPOST(url, json, mToken);
-
-                System.out.println("RESPOSTA DO EDIT - " + s.getResponseCode());
-
-                return s.getResponseMessage();
-
-            } catch (Exception e) {
-                return e.toString();
-            }
-        }
-
-
-        @Override
-        protected void onPostExecute(final String result) {
-            mEditProfileTask = null;
-
-            if (result.equals("OK")) {
-
-                Toast.makeText(context, "Your account has been successfully edited", Toast.LENGTH_LONG).show();
-                sharedPref = getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
-
-                SharedPreferences.Editor editor = sharedPref.edit();
-
-                editor.putString("user_phone", mPhone);
-                editor.putString("user_name", mName);
-                editor.putString("user_gender", mGender);
-                editor.putString("user_address", mAddress);
-                editor.putString("user_locality", mLocality);
-                editor.putString("user_zip", mZip);
-                editor.putString("user_day", mDay);
-                editor.putString("user_month", mMonth);
-                editor.putString("user_year", mYear);
-                editor.putString("user_job", mJob);
-                editor.putString("user_skills", mSkills);
-                editor.apply();
-
-                recreate();
-
-            } else {
-                System.out.println("ERRO A EDITAR CONTA: " + result);
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mEditProfileTask = null;
-
-        }
-    }
-
 }

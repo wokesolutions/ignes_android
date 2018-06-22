@@ -281,7 +281,6 @@ public class RequestsVolley {
         final Map<String, MarkerClass> userMap;
 
 
-
         String url = "https://hardy-scarab-200218.appspot.com/api/profile/reports/" + mUsername;
 
 
@@ -325,7 +324,7 @@ public class RequestsVolley {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<String, String>();
-                    params.put("Authorization", mToken);
+                params.put("Authorization", mToken);
                 return params;
             }
 
@@ -459,7 +458,7 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("REPORT volley -> ERRO "+ response.statusCode);
+                        System.out.println("REPORT volley -> ERRO " + response.statusCode);
 
                         Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
 
@@ -532,7 +531,7 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
 
-                        System.out.println("REGISTER volley -> ERRO "+ response.statusCode);
+                        System.out.println("REGISTER volley -> ERRO " + response.statusCode);
 
                         if (response.statusCode == activity.CONFLICT_ERROR) {
 
@@ -930,7 +929,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("PROFILE volley -> ERRO "+ response + " " + response.statusCode);
+                        System.out.println("PROFILE volley -> ERRO " + response + " " + response.statusCode);
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -1122,7 +1121,7 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ADD NOTE volley -> ERRO "+ response.statusCode);
+                        System.out.println("ADD NOTE volley -> ERRO " + response.statusCode);
 
                         if (response.statusCode == BAD_REQUEST_ERROR) {
                         } else {
@@ -1286,6 +1285,105 @@ public class RequestsVolley {
         setRetry(stringRequest);
 
         queue.add(stringRequest);
+    }
+
+    public static void editProfileRequest(String phone, String name, String gender, String address,
+                                          String locality, String zip, String day, String month, String year, String job,
+                                          String skills, String username, final Context context,
+                                          final ProfileActivity activity) {
+
+        final String mPhone = phone;
+        final String mName = name;
+        final String mGender = gender;
+        final String mAddress = address;
+        final String mLocality = locality;
+        final String mZip = zip;
+        final String mDay = day;
+        final String mMonth = month;
+        final String mYear = year;
+        final String mJob = job;
+        final String mSkills = skills;
+        final String mUsername = username;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        final JSONObject json = new JSONObject();
+
+        try {
+
+            json.put("useroptional_phone", mPhone);
+            json.put("useroptional_name", mName);
+            json.put("useroptional_gender", mGender);
+            json.put("useroptional_address", mAddress);
+            json.put("useroptional_locality", mLocality);
+            json.put("useroptional_zip", mZip);
+            json.put("useroptional_birth", mDay + " " + mMonth + " " + mYear);
+            json.put("useroptional_job", mJob);
+            json.put("useroptional_skills", mSkills);
+
+            System.out.println("JSON EDIT PROFILE ->  " + json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com/api/profile/update/" + mUsername;
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK EDIT PROFILE: " + response);
+
+                        Toast.makeText(context, "Your profile has been successfully edited", Toast.LENGTH_LONG).show();
+
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        editor.putString("user_phone", mPhone);
+                        editor.putString("user_name", mName);
+                        editor.putString("user_gender", mGender);
+                        editor.putString("user_address", mAddress);
+                        editor.putString("user_locality", mLocality);
+                        editor.putString("user_zip", mZip);
+                        editor.putString("user_day", mDay);
+                        editor.putString("user_month", mMonth);
+                        editor.putString("user_year", mYear);
+                        editor.putString("user_job", mJob);
+                        editor.putString("user_skills", mSkills);
+                        editor.apply();
+
+                        activity.recreate();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("EDIT PROFILE volley -> ERRO " + response.statusCode + "  " + error);
+
+                        Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
+
+                        Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", mToken);
+
+                return params;
+            }
+        };
+
+        setRetry(stringRequest);
+        queue.add(stringRequest);
+
     }
 
     private static void setRetry(Request request) {

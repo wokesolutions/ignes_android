@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -113,7 +114,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response);
+                        System.out.println("THUMBNAIL volley -> ERRO " + response);
 
 
                     }
@@ -185,7 +186,6 @@ public class RequestsVolley {
                     public void onResponse(JSONArray response) {
                         // response
                         System.out.println("OK: " + response);
-
 
                         activity.isReady = true;
 
@@ -358,7 +358,9 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response.statusCode);
+                        System.out.println("REPORT volley -> ERRO "+ response.statusCode);
+
+                        Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
 
                         if (response.statusCode == 400) {
                             activity.showProgress(false);
@@ -428,7 +430,8 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("RESPOSTA DO REGISTER: " + response.statusCode);
+
+                        System.out.println("REGISTER volley -> ERRO "+ response.statusCode);
 
                         if (response.statusCode == activity.CONFLICT_ERROR) {
 
@@ -498,7 +501,7 @@ public class RequestsVolley {
 
                         NetworkResponse response = error.networkResponse;
 
-                        System.out.println("ERRO DO CONFIRM: " + response);
+                        System.out.println("CONFIRM ACCOUNT volley -> ERRO " + response);
 
                         Toast.makeText(context, "Error with your confirmation!", Toast.LENGTH_LONG).show();
 
@@ -604,7 +607,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response);
+                        System.out.println("LOGIN volley -> ERRO " + response + " " + error);
 
                         if (response.statusCode == 403) {
                             activity.mPasswordView.setError(context.getString(R.string.error_incorrect_password));
@@ -703,7 +706,7 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        System.out.println("TOKEN INVALIDO");
+                        System.out.println("REPORT volley -> ERRO - TOKEN INVALIDO");
                         activity.startActivity(new Intent(activity, LoginActivity.class));
                         activity.finish();
                     }
@@ -826,7 +829,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response + " " + response.statusCode);
+                        System.out.println("PROFILE volley -> ERRO "+ response + " " + response.statusCode);
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -920,7 +923,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO MAP: " + error.toString());
+                        System.out.println("VOTES  volley -> ERRO " + error.toString());
 
                         if (error.toString().equals("com.android.volley.VolleyError: 204")) {
                             Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
@@ -1018,7 +1021,7 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO LOGIN: " + response.statusCode);
+                        System.out.println("ADD NOTE volley -> ERRO "+ response.statusCode);
 
                         if (response.statusCode == 400) {
                         } else {
@@ -1093,7 +1096,7 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ERRO DO CHANGEPASSWORD: " + response.statusCode);
+                        System.out.println("CHANGE PASSWORD volley -> ERRO " + response.statusCode);
 
                         if (response.statusCode == 400) {
                         } else {
@@ -1165,7 +1168,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERROR LOGOUT EVERYWHERE " + error);
+                        System.out.println("LOGOUT volley -> ERRO " + error);
                         Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 }

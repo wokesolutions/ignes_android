@@ -85,13 +85,13 @@ public class FeedActivity extends AppCompatActivity {
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        general_menuButtons();
 
         if (mRole.equals("WORKER")) {
             taskMap = MapActivity.mWorkerTaskMap;
             taskAdapter = new TaskAdapter(this, taskMap);
             recyclerView.setAdapter(taskAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
-            worker_menuButtons();
 
             mUsername = findViewById(R.id.feed_worker);
             mUsername.setText(MapActivity.mUsername);
@@ -103,7 +103,6 @@ public class FeedActivity extends AppCompatActivity {
                 TextView zero_tasks = findViewById(R.id.feed_worker_no_tasks);
                 zero_tasks.setVisibility(View.VISIBLE);
             }
-
 
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
@@ -127,23 +126,13 @@ public class FeedActivity extends AppCompatActivity {
 
     }
 
-
-    private void user_menuButtons() {
-
+    private void general_menuButtons() {
         mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, LogoutActivity.class));
                 finish();
-            }
-        });
-
-        mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
-        mProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
             }
         });
 
@@ -165,32 +154,13 @@ public class FeedActivity extends AppCompatActivity {
         });
     }
 
-    /*----- About Menu Bar -----*/
-    private void worker_menuButtons() {
+    private void user_menuButtons() {
 
-        mLoggoutButton = (LinearLayout) findViewById(R.id.botao_logout);
-        mLoggoutButton.setOnClickListener(new View.OnClickListener() {
+        mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
+        mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FeedActivity.this, LogoutActivity.class));
-                finish();
-            }
-        });
-
-        mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
-        mMapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mSettingsButton = (LinearLayout) findViewById(R.id.botao_settings);
-        mSettingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(FeedActivity.this, SettingsActivity.class));
+                startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
             }
         });
     }

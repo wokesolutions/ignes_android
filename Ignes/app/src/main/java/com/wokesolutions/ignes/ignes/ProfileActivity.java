@@ -97,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String isConfirmed;
     private RecyclerView recyclerView;
     private Map<String, MarkerClass> markerMap;
-    
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -24,6 +24,7 @@
                 android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
                 <ImageView
+                    android:id="@+id/avatar_icon_marker"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginRight="10dp"

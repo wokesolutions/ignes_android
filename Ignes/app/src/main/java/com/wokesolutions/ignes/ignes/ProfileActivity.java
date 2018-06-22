@@ -43,7 +43,10 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -51,6 +54,7 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -70,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout mMapButton;
     private LinearLayout mConfirmLayout;
     private String mUsername;
+    private String mToken;
     private String mUserLevel;
     private int mRequestCode;
     private Button mAboutButton;
@@ -95,8 +100,9 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mProfileLevel;
     private boolean backBool;
     private String isConfirmed;
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     private Map<String, MarkerClass> markerMap;
+    public MarkerAdapter markerAdapter;
 
 
     @Override
@@ -122,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
 
         mUsername = sharedPref.getString("username", "ERROR");
+        mToken = sharedPref.getString("token", "");
         mUserLevel = sharedPref.getString("userLevel", "NO LEVEL");
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
@@ -191,12 +198,73 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(manager);
-        markerMap = MapActivity.mReportMap;
-        MarkerAdapter markerAdapter = new MarkerAdapter(this, markerMap);
+        markerMap = new HashMap<>();
+
+        userReportsRequest(mUsername, mToken, "", context, ProfileActivity.this);
+
+        /*markerAdapter = new MarkerAdapter(this, markerMap);
         recyclerView.setAdapter(markerAdapter);
-        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setNestedScrollingEnabled(false);*/
 
 
+    }
+
+    public void teste(Map<String,MarkerClass> ola) {
+        markerMap = ola;
+    }
+
+    public void setUserMap(JSONArray markers) {
+        try {
+
+            System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
+            //Map<String, MarkerClass> temp = new HashMap<>();
+
+            JSONArray jsonarray = markers;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                String reportID = jsonobject.getString("Report");
+
+                double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+
+                double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+
+                String likes = jsonobject.getString("reportvotes_up");
+
+                String dislikes = jsonobject.getString("reportvotes_down");
+
+                String status = jsonobject.getString("report_status");
+
+                String address = jsonobject.getString("report_address");
+
+                String date = jsonobject.getString("report_creationtimeformatted");
+
+                String name = jsonobject.getString("report_username");
+
+                String gravity = "0";
+                if (jsonobject.has("report_gravity"))
+                    gravity = jsonobject.getString("report_gravity");
+
+                String description = "";
+                if (jsonobject.has("report_description"))
+                    description = jsonobject.getString("report_description");
+
+                String title = "";
+                if (jsonobject.has("report_title"))
+                    title = jsonobject.getString("report_title");
+
+                MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
+                        description, gravity, title, likes, dislikes, "teste", reportID);
+
+                if (!markerMap.containsKey(reportID)) {
+                    markerMap.put(reportID, report);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /*----- About Menu Bar -----*/
@@ -556,6 +624,10 @@ public class ProfileActivity extends AppCompatActivity {
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
+    }
+
+    public void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
+        RequestsVolley.userReportsRequest(username, token, cursor, context, activity);
     }
 
     public class EditProfileTask extends AsyncTask<Void, Void, String> {

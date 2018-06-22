@@ -1062,7 +1062,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             else
                 markerOptions.title("Quick Report");
 
-          //  markerOptions.snippet(item.getSnippet());
+            //  markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
 
             System.out.println("COR AQUI! " + item.getmGravity());

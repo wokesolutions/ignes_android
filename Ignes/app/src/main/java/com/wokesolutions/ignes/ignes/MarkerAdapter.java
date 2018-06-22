@@ -11,17 +11,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 
 import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
 
+    RequestQueue queue;
     private Context mContext;
     private Map<String, MarkerClass> mMap;
-    RequestQueue queue;
 
     MarkerAdapter(Context context, Map<String, MarkerClass> map) {
         mContext = context;
@@ -49,7 +49,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         final MarkerClass markerItem = mMap.get(keys[position]);
 
-        if(markerItem.getmImg_bitmap()== null)
+        if (markerItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], markerItem, position);
 
         ImageView image = holder.marker_image;
@@ -90,9 +90,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
 
-        if(markerItem.getmStatus().equals("CLOSE"))
+        if (markerItem.getmStatus().equals("CLOSE"))
             img_status.setImageResource(R.drawable.lockclose);
-        if(markerItem.getmStatus().equals("OPEN"))
+        if (markerItem.getmStatus().equals("OPEN"))
             img_status.setImageResource(R.drawable.lockopen);
 
 
@@ -111,7 +111,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 holder.itemViewContext.startActivity(i);
             }
         });
-
     }
 
     @Override
@@ -119,17 +118,16 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         return mMap.size();
     }
 
+    private void thumbnailRequest(String reportId, MarkerClass marker, final int position) {
+
+        RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null, null);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView marker_status_image;
-        ImageView marker_image;
-        TextView marker_title;
-        TextView marker_interacts;
-        TextView marker_address;
-        TextView marker_username;
-        TextView marker_date;
-        TextView marker_gravity;
-        TextView marker_gravity_title;
+        ImageView marker_status_image, marker_image;
+        TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
+                marker_gravity, marker_gravity_title;
         Button button_more;
         Context itemViewContext;
 
@@ -146,13 +144,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_status_image = itemView.findViewById(R.id.feed_lock_img);
-
         }
-    }
-
-    private void thumbnailRequest(String reportId, MarkerClass marker, final int position) {
-
-        RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null,null);
     }
 
 }

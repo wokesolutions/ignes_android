@@ -12,38 +12,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 public class MarkerActivity extends AppCompatActivity {
 
-    private ImageView marker_image;
-    private ImageView marker_status_image;
-    private TextView marker_title;
-    private TextView marker_description;
-    private TextView marker_address;
-    private TextView marker_username;
-    private TextView marker_date;
-    private TextView marker_gravity;
-    private TextView marker_status;
-    private TextView marker_likes;
-    private TextView marker_dislikes;
-    private TextView marker_comments;
-    private TextView marker_gravity_title;
-    private Button marker_button_likes;
-    private Button marker_button_dislikes;
-
+    private ImageView marker_image, marker_status_image;
+    private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
+            marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments, marker_gravity_title;
+    private Button marker_button_likes, marker_button_dislikes;
     private EditText marker_comment;
-
     private ProgressBar mProgressBar;
-
     private MarkerClass mMarker;
-
-    private int mLikes;
-    private int mDislikes;
-
-    //falta receber se a pessoa tem like ou dislike no marker
-    private boolean mTouchLike;
-    private boolean mTouchDislike;
+    private int mLikes, mDislikes;
+    private boolean mTouchLike,  mTouchDislike;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

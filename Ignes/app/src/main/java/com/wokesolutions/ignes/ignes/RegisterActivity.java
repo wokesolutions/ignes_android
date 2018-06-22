@@ -8,37 +8,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
 
 public class RegisterActivity extends AppCompatActivity {
 
     public int CONFLICT_ERROR = 409;
     public EditText mUsername;
-    /**
-     * Keep track of the registration task to ensure we can cancel it if requested.
-     */
     private Context context;
-    private TextView tx;
-    private TextView ty;
-    private View mRegister_form;
-    private View mRegister_username_form;
-    private View mRegister_email_form;
-    private View mRegister_password_form;
-    private Button mUsername_button;
-    private Button mEmail_button;
-    private Button mPassword_button;
-    private Button mSignUp_button;
-    private EditText mEmail;
-    private EditText mPassword;
-    private EditText mPasswordConfirm;
-
+    private View mRegister_username_form, mRegister_email_form, mRegister_password_form;
+    private Button mUsername_button, mEmail_button, mPassword_button, mSignUp_button;
+    private EditText mEmail, mPassword,  mPasswordConfirm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mRegister_form = (View) findViewById(R.id.register_form);
         mRegister_username_form = (View) findViewById(R.id.register_username_form);
         mRegister_email_form = (View) findViewById(R.id.register_email_form);
         mRegister_password_form = (View) findViewById(R.id.register_password_form);
@@ -125,11 +109,6 @@ public class RegisterActivity extends AppCompatActivity {
         return password.equals(confirmation);
     }
 
-    /**
-     * Attempts to register the account specified by the register form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual register attempt is made.
-     */
     private void attemptRegister() {
         // Reset errors.
         mEmail.setError(null);

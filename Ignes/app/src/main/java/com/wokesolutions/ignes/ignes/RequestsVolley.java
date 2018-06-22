@@ -1,7 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -27,8 +25,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,8 +52,7 @@ public class RequestsVolley {
     private static StringRequest stringRequest;
     private static JsonObjectRequest jsonRequest;
     private static JsonArrayRequest arrayRequest;
-    private static String url;
-    private static String mIsFinish;
+    private static String url, mIsFinish;
 
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
@@ -195,12 +190,12 @@ public class RequestsVolley {
                         else if (activity.mRole.equals("WORKER"))
                             activity.setWorkerMarkers(response, mLat, mLng, mLocality);
 
-                        if (activity.teste.equals("FINISHED")) {
+                        if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
                             activity.votesRequest(activity.mUsername, "");
                         } else {
                             System.out.println("Continuar a pedir...");
-                            activity.mapRequest(mLat, mLng, 10000, mToken, activity.teste);
+                            activity.mapRequest(mLat, mLng, 10000, mToken, mIsFinish);
                         }
                     }
                 },
@@ -238,9 +233,9 @@ public class RequestsVolley {
                     try {
 
                         if (response.headers.get("Cursor") != null)
-                            activity.teste = response.headers.get("Cursor");
+                            mIsFinish = response.headers.get("Cursor");
                         else
-                            activity.teste = "FINISHED";
+                            mIsFinish = "FINISHED";
 
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
@@ -311,7 +306,6 @@ public class RequestsVolley {
                         System.out.println("ERRO DO USER REPORTS: " + error.toString());
 
                         Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
-                        activity.teste(MapActivity.mReportMap);
                         activity.markerAdapter = new MarkerAdapter(context, MapActivity.mReportMap);
                         activity.recyclerView.setAdapter(activity.markerAdapter);
                         activity.recyclerView.setNestedScrollingEnabled(false);
@@ -1226,8 +1220,7 @@ public class RequestsVolley {
 
     }
 
-    public static void logoutRequest(String token, final Context context, final LogoutActivity logoutActivity,
-                                     final SettingsActivity settingsActivity, int request) {
+    public static void logoutRequest(String token, final Context context, final Activity activity, int request) {
 
         final String mToken = token;
 
@@ -1249,13 +1242,8 @@ public class RequestsVolley {
                         sharedPref.edit().remove("token").commit();
                         System.out.println("User Logged Out");
 
-                        if (logoutActivity != null) {
-                            logoutActivity.startActivity(new Intent(logoutActivity, LoginActivity.class));
-                            logoutActivity.finish();
-                        } else if (settingsActivity != null) {
-                            settingsActivity.startActivity(new Intent(settingsActivity, LoginActivity.class));
-                            settingsActivity.finish();
-                        }
+                        activity.startActivity(new Intent(activity, LoginActivity.class));
+                        activity.finish();
                     }
                 },
                 new Response.ErrorListener() {

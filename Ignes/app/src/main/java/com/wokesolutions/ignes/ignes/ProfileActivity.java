@@ -33,7 +33,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -47,46 +46,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
+
     public Uri mImageURI;
     public RequestQueue queue;
-    private Context context;
+    private Context mContext;
     private Bitmap mThumbnail;
     private ImageView mImageView;
     private byte[] byteArray;
     private SharedPreferences sharedPref;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private LinearLayout mLoggoutButton;
-    private LinearLayout mFeedButton;
-    private LinearLayout mSettingsButton;
-    private LinearLayout mMapButton;
+    private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton;
     private LinearLayout mConfirmLayout;
-    private String mUsername;
-    private String mToken;
-    private String mUserLevel;
+    private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
-    private Button mAboutButton;
-    private Button mLessAboutButton;
-    private Button mConfirmAccountButton;
-    private Button mEditButton;
-    private Button mSaveButton;
-    private LinearLayout mAboutLayout;
-    private LinearLayout mEditAboutLayout;
-    private TextView mDay;
-    private TextView mPoints;
-    private TextView mReportNum;
-    private TextView mGender;
-    private TextView mAddress;
-    private TextView mName;
-    private TextView mJob;
-    private TextView mPhonenumber;
-    private TextView mMonth;
-    private TextView mYear;
-    private TextView mSkills;
-    private TextView mLocality;
-    private TextView mProfileName;
-    private TextView mProfileLevel;
-    private TextView mUsernameEditText;
+    private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton, mSaveButton;
+    private LinearLayout mAboutLayout,  mEditAboutLayout;
+    private TextView mDay, mMonth, mYear;
+    private TextView mPoints, mReportNum, mGender, mAddress, mName, mJob, mPhonenumber, mSkills,
+            mLocality, mProfileName, mProfileLevel, mUsernameEditText;
     private boolean backBool;
     private String isConfirmed;
     public RecyclerView recyclerView;
@@ -156,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity {
         mEditAboutLayout = findViewById(R.id.edit_about_layout);
         mConfirmLayout = findViewById(R.id.confirm_account_layout);
 
-        context = this;
+        mContext = this;
 
         mEditButton = mAboutLayout.findViewById(R.id.edit_button);
 
@@ -188,16 +166,12 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
-        LinearLayoutManager manager = new LinearLayoutManager(context);
+        LinearLayoutManager manager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(manager);
         markerMap = new HashMap<>();
 
-        userReportsRequest(mUsername, mToken, "", context, ProfileActivity.this);
+        userReportsRequest(mUsername, mToken, "", mContext, ProfileActivity.this);
 
-    }
-
-    public void teste(Map<String,MarkerClass> ola) {
-        markerMap = ola;
     }
 
     public void setUserMap(JSONArray markers) {
@@ -260,8 +234,7 @@ public class ProfileActivity extends AppCompatActivity {
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, LogoutActivity.class));
-                finish();
+                RequestsVolley.logoutRequest(mToken, mContext, ProfileActivity.this,0);
             }
         });
         mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
@@ -521,7 +494,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
                                     mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
                                     mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
-                                    ,mUsername, context, ProfileActivity.this );
+                                    ,mUsername, mContext, ProfileActivity.this );
 
                         }
                     }
@@ -565,7 +538,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void confirmRequest(String insertedCode) {
-        RequestsVolley.confirmRequest(insertedCode, context, this);
+        RequestsVolley.confirmRequest(insertedCode, mContext, this);
     }
 
     @Override

@@ -82,18 +82,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
+
     public static Map<String, MarkerClass> mReportMap;
     public static Map<String, TaskClass> mWorkerTaskMap;
+
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
     private static GoogleMap mMap;
     private static Context mContext;
+
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
     public RequestQueue queue;
-    public String teste;
     public String mRole;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
@@ -102,15 +104,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean mGps;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private LinearLayout mLoggoutButton;
-    private LinearLayout mProfileButton;
-    private LinearLayout mFeedButton;
-    private LinearLayout mSettingsButton;
-    private LinearLayout mWorkRoomButton;
-    private LinearLayout mTasksButton;
+    private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
     private SharedPreferences sharedPref;
-    private String mToken;
-    private String mCurrentLocality;
+    private String mToken, mCurrentLocality;
     private List<String> orderedIds;
 
     public static void getDirections(LatLng origin, LatLng dest) {
@@ -207,7 +203,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         mContext = this;
-        teste = "";
         queue = Volley.newRequestQueue(this);
         isReady = false;
         orderedIds = new LinkedList<>();
@@ -293,7 +288,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public void onClusterItemInfoWindowClick(MarkerClass markerClass) {
                         System.out.println("ESTOU DENTRO DO MARKEEERR HELLLOOO");
-
                         Intent i = new Intent(MapActivity.this, MarkerActivity.class);
                         i.putExtra("MarkerClass", markerClass.getmId());
                         startActivity(i);
@@ -665,8 +659,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapActivity.this, LogoutActivity.class));
-                finish();
+                RequestsVolley.logoutRequest(mToken, mContext, MapActivity.this, 0);
             }
         });
 

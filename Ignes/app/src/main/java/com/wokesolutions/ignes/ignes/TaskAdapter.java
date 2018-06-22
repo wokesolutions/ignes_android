@@ -1,9 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -155,22 +151,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView task_status_image;
-        ImageView task_image;
-        TextView task_title;
-        TextView task_address;
-        TextView task_username;
-        TextView task_date;
-        TextView task_gravity;
-        TextView task_gravity_title;
-        TextView task_description;
+        ImageView task_status_image, task_image;
+        TextView task_title, task_address, task_username, task_date, task_gravity,
+                task_gravity_title, task_description,task_indications,task_contact;
         Button button_notes;
-        TextView task_indications;
         Context itemViewContext;
-        TextView task_contact;
-        LinearLayout task_directions_button;
-        LinearLayout task_contacts_layout;
-        LinearLayout task_indications_layout;
+        LinearLayout task_directions_button, task_contacts_layout, task_indications_layout;
 
         public ViewHolder(View itemView) {
             super(itemView);

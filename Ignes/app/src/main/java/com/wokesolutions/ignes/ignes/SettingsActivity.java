@@ -26,23 +26,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int L_EVERYWHERE = 1;
 
-    private Button mChangePasswordButton;
-    private Button mLogoutAllButton;
-
+    private Button mChangePasswordButton, mLogoutAllButton;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Context mContext;
-
-    private String mRole;
-    private String mToken;
-
+    private String mRole, mToken;
     private SharedPreferences sharedPref;
-
-    private LinearLayout mLoggoutButton;
-    private LinearLayout mFeedButton;
-    private LinearLayout mMapButton;
-    private LinearLayout mProfileButton;
-    private LinearLayout mSettingsButton;
+    private LinearLayout mLoggoutButton, mFeedButton, mMapButton, mProfileButton, mSettingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +99,7 @@ public class SettingsActivity extends AppCompatActivity {
         mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestsVolley.logoutRequest(mToken, mContext, null, SettingsActivity.this, L_EVERYWHERE);
+                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this, L_EVERYWHERE);
             }
         });
 
@@ -134,8 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingsActivity.this, LogoutActivity.class));
-                finish();
+                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this,0);
             }
         });
 

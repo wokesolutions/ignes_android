@@ -33,25 +33,17 @@ public class FeedActivity extends AppCompatActivity {
     Map<String, MarkerClass> markerMap;
     Map<String, TaskClass> taskMap;
 
-
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private LinearLayout mLoggoutButton;
-    private LinearLayout mMapButton;
 
-    private TextView mLocality;
-    private TextView mOrganization;
-    private TextView mUsername;
-
-    private LinearLayout mProfileButton;
-    private LinearLayout mSettingsButton;
+    private LinearLayout mLoggoutButton, mMapButton;
+    private TextView mLocality, mOrganization, mUsername;
+    private LinearLayout mProfileButton, mSettingsButton;
     private Context mContext;
-    private LinearLayout mWorkRoomButton;
     private Location mCurrentLocation;
     private SharedPreferences sharedPref;
-    private String mRole;
-
+    private String mRole, mToken;
     private MarkerAdapter markerAdapter;
     private TaskAdapter taskAdapter;
 
@@ -62,6 +54,7 @@ public class FeedActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userLevel", "");
+        mToken = sharedPref.getString("token", "");
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_feed);
@@ -131,8 +124,7 @@ public class FeedActivity extends AppCompatActivity {
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FeedActivity.this, LogoutActivity.class));
-                finish();
+                RequestsVolley.logoutRequest(mToken, mContext, FeedActivity.this, 0);
             }
         });
 

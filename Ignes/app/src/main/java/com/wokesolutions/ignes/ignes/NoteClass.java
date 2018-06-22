@@ -2,9 +2,7 @@ package com.wokesolutions.ignes.ignes;
 
 public class NoteClass {
 
-    private String user;
-    private String text;
-    private String date;
+    private String user, text, date;
 
     public NoteClass(String user, String text, String date){
         this.user=user;

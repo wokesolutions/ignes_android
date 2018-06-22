@@ -9,20 +9,11 @@ import com.google.maps.android.clustering.ClusterItem;
 public class MarkerClass implements ClusterItem {
 
     private LatLng mPosition;
-    private String mStatus;
-    private String mAddress;
-    private String mDate;
-    private String mCreator_username;
-    private String mDescription;
-    private String mGravity;
-    private String mTitle;
-    private String mLikes;
-    private String mDislikes;
-    private String mLocality;
+    private String mStatus, mAddress, mDate, mCreator_username,
+            mDescription, mGravity, mTitle, mLikes, mDislikes, mLocality;
     private byte[] mImgbyte;
     private Bitmap mImage_bitmap;
-    private String mId;
-    private String mVote;
+    private String mId, mVote;
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,

@@ -48,6 +48,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
@@ -280,9 +282,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             while (it.hasNext()) {
                 String key = (String) it.next();
                 System.out.println("ITEM " + key);
+                final MarkerClass item = mReportMap.get(key);
                 mClusterManager.cluster();
-                mClusterManager.addItem(mReportMap.get(key));
+                mClusterManager.addItem(item);
                 mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
+                mClusterManager.setOnClusterInfoWindowClickListener(new ClusterManager.OnClusterInfoWindowClickListener<MarkerClass>() {
+                    @Override
+                    public void onClusterInfoWindowClick(Cluster<MarkerClass> cluster) {
+                        Intent i = new Intent(MapActivity.this, MarkerActivity.class);
+                        i.putExtra("MarkerClass", item.getmId());
+                        startActivity(i);
+                    }
+                });
+
             }
         } else if (mRole.equals("WORKER")) {
             // Add cluster items (markers) to the cluster manager.
@@ -301,8 +313,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             while (it.hasNext()) {
                 String key = (String) it.next();
                 System.out.println("ITEM " + key);
+                final TaskClass item = mWorkerTaskMap.get(key);
                 mWorkerClusterManager.cluster();
-                mWorkerClusterManager.addItem(mWorkerTaskMap.get(key));
+                mWorkerClusterManager.addItem(item);
                 mWorkerClusterManager.setRenderer(new OwnIconRenderedWorker(mContext, mMap, mWorkerClusterManager));
             }
         }
@@ -671,6 +684,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
     }
+
     private void user_menuButtons() {
 
         mProfileButton = (LinearLayout) findViewById(R.id.botao_profile);
@@ -687,7 +701,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /*----- About Menu Bar -----*/
     private void worker_menuButtons() {
 
-       System.out.println("SOU UM METODO INUTIL");
+        System.out.println("SOU UM METODO INUTIL");
     }
 
     @Override
@@ -1038,20 +1052,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected void onBeforeClusterItemRendered(MarkerClass item, MarkerOptions markerOptions) {
             super.onBeforeClusterItemRendered(item, markerOptions);
 
-            markerOptions.title("Marker " + item.getPosition());
-            markerOptions.snippet(item.getSnippet());
+            if (!item.getmTitle().equals(""))
+                markerOptions.title("Report: " + item.getmTitle());
+            else
+                markerOptions.title("Quick Report");
+
+            //  markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
 
             System.out.println("COR AQUI! " + item.getmGravity());
 
             markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
-
         }
 
         @Override
         protected int getColor(int clusterSize) {
             return Color.parseColor("#AD363B");
         }
+
     }
 
     public class OwnIconRenderedWorker extends DefaultClusterRenderer<TaskClass> {

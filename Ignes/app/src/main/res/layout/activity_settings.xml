@@ -38,8 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shadow"
-                android:paddingHorizontal="5dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:paddingHorizontal="5dp">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -55,6 +55,30 @@
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
                     android:text="Change Password" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shadow"
+                android:gravity="center"
+                android:layout_marginTop="3dp"
+                android:paddingHorizontal="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/logoutwveryicon" />
+
+                <Button
+                    android:id="@+id/logout_all_button"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_light"
+                    android:gravity="left|center"
+                    android:inputType="textCapSentences"
+                    android:text="Logout everywhere logged in" />
             </LinearLayout>
         </LinearLayout>
 

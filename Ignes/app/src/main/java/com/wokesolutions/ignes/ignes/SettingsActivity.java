@@ -24,17 +24,21 @@ import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private static final int L_EVERYWHERE = 1;
+
     private Button mChangePasswordButton;
+    private Button mLogoutAllButton;
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Context mContext;
 
     private String mRole;
+    private String mToken;
 
     private SharedPreferences sharedPref;
 
     private LinearLayout mLoggoutButton;
-    private LinearLayout mWorkRoomButton;
     private LinearLayout mFeedButton;
     private LinearLayout mMapButton;
     private LinearLayout mProfileButton;
@@ -46,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userLevel", "");
-
+        mToken = sharedPref.getString("token", "");
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_settings);
@@ -67,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mChangePasswordButton = findViewById(R.id.changepassword_button);
+        mLogoutAllButton = findViewById(R.id.logout_all_button);
 
         mChangePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
                 TextView changepasswordAdvice = mView.findViewById(R.id.changepassword_advice);
 
                 Button changePassButton = mView.findViewById(R.id.submit_pass_change);
-                if(mRole.equals("WORKER")) {
+                if (mRole.equals("WORKER")) {
                     changePassButton.setBackgroundResource(R.drawable.worker_button);
                     changepasswordAdvice.setTextColor(ContextCompat.getColor(mContext, R.color.colorIgnesWorker));
                 }
@@ -94,12 +99,22 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        attempPasswordChange(mView, alert);
+                        attemptPasswordChange(mView, alert);
 
                     }
                 });
             }
         });
+
+        mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestsVolley.logoutRequest(mToken, mContext, null, SettingsActivity.this, L_EVERYWHERE);
+            }
+        });
+
+
+        // logoutRequest(token, mContext, LogoutActivity.this,null, L_ONCE);
 
         general_menuButtons();
 
@@ -163,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void attempPasswordChange(View view, AlertDialog alert) {
+    private void attemptPasswordChange(View view, AlertDialog alert) {
 
         View focusView = null;
         boolean cancel = false;
@@ -182,7 +197,6 @@ public class SettingsActivity extends AppCompatActivity {
         String newPassConfirmation = confirmNewPassword.getText().toString();
 
         System.err.println("OLD: " + oldPass + " NEW: " + newPass);
-
 
 
         // Check for a valid password, if the user entered one.
@@ -258,4 +272,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -99,6 +99,12 @@ public class FeedActivity extends AppCompatActivity {
             mOrganization = findViewById(R.id.feed_org);
             mOrganization.setText(sharedPref.getString("org_name", ""));
 
+            if (taskMap.isEmpty()) {
+                TextView zero_tasks = findViewById(R.id.feed_worker_no_tasks);
+                zero_tasks.setVisibility(View.VISIBLE);
+            }
+
+
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
             markerAdapter = new MarkerAdapter(this, markerMap);

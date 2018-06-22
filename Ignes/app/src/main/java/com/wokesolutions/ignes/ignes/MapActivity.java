@@ -45,6 +45,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -286,11 +287,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mClusterManager.cluster();
                 mClusterManager.addItem(item);
                 mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
-                mClusterManager.setOnClusterInfoWindowClickListener(new ClusterManager.OnClusterInfoWindowClickListener<MarkerClass>() {
+
+                mMap.setOnInfoWindowClickListener(mClusterManager);
+                mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MarkerClass>() {
                     @Override
-                    public void onClusterInfoWindowClick(Cluster<MarkerClass> cluster) {
+                    public void onClusterItemInfoWindowClick(MarkerClass markerClass) {
+                        System.out.println("ESTOU DENTRO DO MARKEEERR HELLLOOO");
+
                         Intent i = new Intent(MapActivity.this, MarkerActivity.class);
-                        i.putExtra("MarkerClass", item.getmId());
+                        i.putExtra("MarkerClass", markerClass.getmId());
                         startActivity(i);
                     }
                 });
@@ -1057,7 +1062,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             else
                 markerOptions.title("Quick Report");
 
-            //  markerOptions.snippet(item.getSnippet());
+          //  markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
 
             System.out.println("COR AQUI! " + item.getmGravity());

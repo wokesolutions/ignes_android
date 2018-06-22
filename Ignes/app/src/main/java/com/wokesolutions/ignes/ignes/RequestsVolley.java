@@ -298,6 +298,8 @@ public class RequestsVolley {
             InputStream imageStream = activity.getContentResolver().openInputStream(activity.mImageURI);
 
             Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+            int w = bitmap.getWidth();
+            int h = bitmap.getHeight();
             ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 70, imgStream);
             activity.imgByteArray = imgStream.toByteArray();
@@ -310,6 +312,8 @@ public class RequestsVolley {
             report.put("report_lng", mLng);
             report.put("report_img", base64Img);
             //report.put("report_thumbnail", base64Thumbnail);
+            report.put("report_imgheight", h);
+            report.put("report_imgwidth", w);
             report.put("report_address", mAddress);
             report.put("report_private", activity.mIsPrivate);
             report.put("report_city", mDistrict);

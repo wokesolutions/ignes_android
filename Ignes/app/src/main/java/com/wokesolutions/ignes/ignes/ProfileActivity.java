@@ -86,11 +86,13 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mLocality;
     private TextView mProfileName;
     private TextView mProfileLevel;
+    private TextView mUsernameEditText;
     private boolean backBool;
     private String isConfirmed;
     public RecyclerView recyclerView;
     private Map<String, MarkerClass> markerMap;
     public MarkerAdapter markerAdapter;
+    private String storedAvatar;
 
 
     @Override
@@ -102,7 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.profile_avatar);
 
-        String storedAvatar = sharedPref.getString("Avatar", "404");
+        storedAvatar = sharedPref.getString("Avatar", "404");
         if (!storedAvatar.equals("404")) {
             byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
@@ -169,12 +171,14 @@ public class ProfileActivity extends AppCompatActivity {
         mMonth = mAboutLayout.findViewById(R.id.month);
         mYear = mAboutLayout.findViewById(R.id.year);
         mSkills = mAboutLayout.findViewById(R.id.skills);
+        mUsernameEditText = mAboutLayout.findViewById(R.id.username);
         mLocality = findViewById(R.id.locality);
         mProfileName = findViewById(R.id.profile_name);
         mProfileLevel = findViewById(R.id.profile_userLevel);
 
         mProfileName.setHint(mUsername);
         mProfileLevel.setText(mUserLevel);
+        mUsernameEditText.setText(mUsername);
 
         initializeProfile();
 
@@ -344,7 +348,7 @@ public class ProfileActivity extends AppCompatActivity {
         mMonth.setText(sharedPref.getString("user_month", ""));
         mYear.setText(sharedPref.getString("user_year", ""));
         mSkills.setText(sharedPref.getString("user_skills", ""));
-        mProfileName.setText(sharedPref.getString("user_name", ""));
+        mProfileName.setText(sharedPref.getString("user_name", mUsername));
     }
 
     private void onAboutClick() {
@@ -374,6 +378,21 @@ public class ProfileActivity extends AppCompatActivity {
 
                 mSaveButton = findViewById(R.id.save_button);
                 mImageView = findViewById(R.id.avatar_picture);
+                mUsernameEditText = findViewById(R.id.username);
+
+                mUsernameEditText.setText(mUsername);
+
+                if (!storedAvatar.equals("404")) {
+                    byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                    roundedBitmap.setCircular(true);
+                    mImageView.setImageDrawable(roundedBitmap);
+                }
+
+
+
 
                 final LinearLayout edit_avatar = findViewById(R.id.edit_avatar);
                 edit_avatar.setOnClickListener(new View.OnClickListener() {
@@ -409,18 +428,28 @@ public class ProfileActivity extends AppCompatActivity {
                 edit_phonenumber.setText(mPhonenumber.getText().toString());
                 final EditText edit_gender_self = findViewById(R.id.edit_gender_self);
 
+                //RadioGroup edit_gender = findViewById(R.id.edit_gender);
+                final RadioButton checkBox_female = findViewById(R.id.checkbox_female);
+                final RadioButton checkBox_male = findViewById(R.id.checkbox_male);
+                final RadioButton checkBox_other = findViewById(R.id.checkbox_other);
+
+                String gender = sharedPref.getString("user_gender", "");
+
+                switch (gender) {
+                    case "Female":
+                        checkBox_female.toggle();
+                        break;
+                    case "Male":
+                        checkBox_male.toggle();
+                        break;
+                    case "Prefer to self describe":
+                        checkBox_other.toggle();
+                }
 
                 mSaveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         String new_gender = "";
-
-
-                        RadioGroup edit_gender = findViewById(R.id.edit_gender);
-                        RadioButton checkBox_female = findViewById(R.id.checkbox_female);
-                        RadioButton checkBox_male = findViewById(R.id.checkbox_male);
-                        RadioButton checkBox_other = findViewById(R.id.checkbox_other);
 
                         if (checkBox_female.isChecked())
                             new_gender = "Female";

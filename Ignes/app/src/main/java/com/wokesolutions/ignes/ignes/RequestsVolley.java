@@ -310,10 +310,7 @@ public class RequestsVolley {
 
                         System.out.println("ERRO DO USER REPORTS: " + error.toString());
 
-                        if (error.toString().equals("com.android.volley.VolleyError: 204")) {
-                            Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
-                        } else
-                            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
                         activity.teste(MapActivity.mReportMap);
                         activity.markerAdapter = new MarkerAdapter(context, MapActivity.mReportMap);
                         activity.recyclerView.setAdapter(activity.markerAdapter);
@@ -462,12 +459,13 @@ public class RequestsVolley {
 
                         Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
 
-                        if (response.statusCode == BAD_REQUEST_ERROR) {
+                        if (response.statusCode == BAD_REQUEST_ERROR)
                             activity.showProgress(false);
-                        } else {
-                            Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
+                        else
                             activity.showProgress(false);
-                        }
+
+                        Toast.makeText(context, "Ups, failed to send report!", Toast.LENGTH_LONG).show();
+
                     }
                 }
         ) {
@@ -603,7 +601,7 @@ public class RequestsVolley {
 
                         System.out.println("CONFIRM ACCOUNT volley -> ERRO " + response);
 
-                        Toast.makeText(context, "Error with your confirmation!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error confirming your account!", Toast.LENGTH_LONG).show();
 
                     }
                 }
@@ -934,10 +932,6 @@ public class RequestsVolley {
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
 
-                        if (response.statusCode == 403) {
-
-                        } else
-                            Toast.makeText(mContext, "Ups something went wrong!", Toast.LENGTH_LONG).show();
 
                         //activity.showProgress(false);
                         editor.putString("askForProfile", "YES");
@@ -1125,7 +1119,7 @@ public class RequestsVolley {
 
                         if (response.statusCode == BAD_REQUEST_ERROR) {
                         } else {
-                            Toast.makeText(context, "Ups your report went wrong!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Ups, failed to send note!", Toast.LENGTH_LONG).show();
 
                         }
                     }
@@ -1200,7 +1194,7 @@ public class RequestsVolley {
 
                         if (response.statusCode == BAD_REQUEST_ERROR) {
                         } else {
-                            Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Ups, could not change the password!", Toast.LENGTH_LONG).show();
 
                         }
                         mOldPassEditText.setError("Invalid password");
@@ -1367,7 +1361,7 @@ public class RequestsVolley {
 
                         Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
 
-                        Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Ups, error editing profile!", Toast.LENGTH_LONG).show();
 
                     }
                 }

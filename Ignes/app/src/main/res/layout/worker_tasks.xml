@@ -53,7 +53,7 @@
                         android:layout_height="60dp"
                         android:layout_gravity="center"
                         android:layout_marginVertical="10dp"
-                        android:src="@drawable/ocorrenciared" />
+                        android:src="@drawable/workertasksfeedicon" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

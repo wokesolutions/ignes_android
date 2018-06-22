@@ -12,6 +12,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -89,9 +90,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
+    public static LinearLayout mGoogleMapsButtonLayout;
     private static GoogleMap mMap;
     private static Context mContext;
-
+    private static Button mGoogleMapsButton;
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
@@ -109,17 +111,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String mToken, mCurrentLocality;
     private List<String> orderedIds;
 
-    public static void getDirections(LatLng origin, LatLng dest) {
-
-        String url = getDirectionsUrl(origin, dest);
-
-        DownloadTask downloadTask = new DownloadTask();
-
-        // Start downloading json data from Google Directions API
-        downloadTask.execute(url);
-    }
-
-    /*----- About Google Maps -----*/
 
     private static String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -144,9 +135,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return url;
     }
 
-    /**
-     * A method to download json data from url
-     */
     private static String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
@@ -185,21 +173,50 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return data;
     }
 
+    public static void getDirections(LatLng dest, TaskClass taskClass) {
+        setGoogleMapsApp(taskClass);
+        String url = getDirectionsUrl(mLatLng, dest);
+        DownloadTask downloadTask = new DownloadTask();
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
+    }
+
+    public static void setGoogleMapsApp(final TaskClass task) {
+
+        mGoogleMapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" + MapActivity.mCurrentLocation.getLatitude()
+                        + "," + MapActivity.mCurrentLocation.getLongitude() + "&daddr=" + task.getPosition().latitude +
+                        "," + task.getPosition().longitude;
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+
+                mContext.startActivity(Intent.createChooser(intent, "Select an application"));
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+
         mToken = sharedPref.getString("token", "");
         mUsername = sharedPref.getString("username", "ERROR");
         mRole = sharedPref.getString("userLevel", "");
+
         System.out.println("MROOOOOLE-> " + mRole);
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_map);
+
         else if (mRole.equals("WORKER")) {
             setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_map);
+
+            mGoogleMapsButtonLayout = findViewById(R.id.googlemapsbutton_layout);
+            mGoogleMapsButton = findViewById(R.id.googlemaps_button);
         }
 
         mContext = this;
@@ -216,26 +233,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLatLng = null;
         mReportMap = new HashMap<>();
         mWorkerTaskMap = new HashMap<>();
-        //  mReportList = new LinkedList<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-
         setSupportActionBar(myToolbar);
 
         /*----- About Menu Bar -----*/
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_map);
-
         mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mMenu);
         mMenu.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         general_menuButtons();
 
         if (mRole.equals("USER")) {
+
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
+
         } else if (mRole.equals("WORKER")) {
+
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
             worker_menuButtons();
         }

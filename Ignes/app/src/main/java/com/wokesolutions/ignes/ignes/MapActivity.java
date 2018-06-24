@@ -48,6 +48,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.Cluster;
@@ -94,6 +95,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static GoogleMap mMap;
     private static Context mContext;
     private static Button mGoogleMapsButton;
+    private Button mFinishTaskPathButton;
+    private static Polyline mMapPollyLine;
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
@@ -110,7 +113,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private List<String> orderedIds;
-
 
     private static String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -179,6 +181,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         DownloadTask downloadTask = new DownloadTask();
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+
     }
 
     public static void setGoogleMapsApp(final TaskClass task) {
@@ -217,6 +220,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             mGoogleMapsButtonLayout = findViewById(R.id.googlemapsbutton_layout);
             mGoogleMapsButton = findViewById(R.id.googlemaps_button);
+            mFinishTaskPathButton = findViewById(R.id.finish_task_path);
+
+            mFinishTaskPathButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mGoogleMapsButtonLayout.setVisibility(View.GONE);
+                    mMapPollyLine.remove();
+
+                    Toast.makeText(mContext, "Finish Path", Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
         mContext = this;
@@ -1013,11 +1027,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             String distance = "";
             String duration = "";
 
-           /* if (result.size() < 1) {
-                Toast.makeText(mContext, "No Points", Toast.LENGTH_SHORT).show();
-                return;
-            }*/
-
             // Traversing through all the routes
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
@@ -1044,10 +1053,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             }
 
-            //tvDistanceDuration.setText("Distance:" + distance + ", Duration:" + duration);
-
-            // Drawing polyline in the Google Map for the i-th route
-            mMap.addPolyline(lineOptions);
+            mMapPollyLine = mMap.addPolyline(lineOptions);
         }
     }
 

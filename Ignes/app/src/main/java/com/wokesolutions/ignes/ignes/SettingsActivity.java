@@ -123,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        attemptRadiusChange(mView);
+                        attemptRadiusChange(mView, alert);
 
                     }
                 });
@@ -250,27 +250,26 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void attemptRadiusChange(View view) {
+    private void attemptRadiusChange(View view, AlertDialog alert) {
 
         View focusView = null;
         boolean cancel = false;
 
-        final EditText newPassword = view.findViewById(R.id.new_radius);
+        final EditText newRadius = view.findViewById(R.id.new_radius);
 
         // Reset errors.
-        newPassword.setError(null);
+        newRadius.setError(null);
 
-        String newRadius = newPassword.getText().toString();
+        String newRad = newRadius.getText().toString();
 
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(newRadius)) {
-            newPassword.setError(getString(R.string.error_field_required));
-            focusView = newPassword;
+        if (TextUtils.isEmpty(newRad)) {
+            newRadius.setError(getString(R.string.error_field_required));
+            focusView = newRadius;
             cancel = true;
-        } else if (Integer.parseInt(newRadius) <= 10 && Integer.parseInt(newRadius) > 0) {
-            newPassword.setError(getString(R.string.error_invalid_password));
-            focusView = newPassword;
+        } else if (! (Integer.parseInt(newRad) <= 10 && Integer.parseInt(newRad) > 0)) {
+            newRadius.setError("Only allowed radius between 1 and 10 km.");
             cancel = true;
+            focusView = newRadius;
         }
 
         if (cancel) {
@@ -282,10 +281,9 @@ public class SettingsActivity extends AppCompatActivity {
             // perform the user register attempt.
             // showProgress(true);
             SharedPreferences.Editor editor = sharedPref.edit();
-
-            editor.putString("userRadius", newRadius);
-
+            editor.putString("userRadius", newRad);
             editor.apply();
+            alert.dismiss();
         }
     }
 

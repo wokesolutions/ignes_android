@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|start"
                 android:layout_margin="10dp"
-                android:background="@drawable/worker_shadow_about"
+                android:background="#30000000"
                 android:padding="5dp"
                 android:visibility="gone">
 
@@ -48,6 +48,20 @@
                     android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:background="@drawable/googlemapsicon" />
+
+                <Button
+                    android:id="@+id/finish_task_path"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/worker_shadow_about"
+                    android:fontFamily="@font/quicksand_light"
+                    android:padding="5dp"
+                    android:text="Finish Path View"
+                    android:textColor="@color/colorIgnesWorker"
+                    android:textSize="10dp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

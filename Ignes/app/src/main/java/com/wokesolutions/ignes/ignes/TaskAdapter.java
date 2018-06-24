@@ -67,7 +67,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         ImageView img_status = holder.task_status_image;
         TextView indications = holder.task_indications;
         TextView contact = holder.task_contact;
-        LinearLayout directions_button = holder.task_directions_button;
+        Button directions_button = holder.task_directions_button;
         LinearLayout contacts_layout = holder.task_contacts_layout;
         LinearLayout indications_layout = holder.task_indications_layout;
 
@@ -157,9 +157,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         ImageView task_status_image, task_image;
         TextView task_title, task_address, task_username, task_date, task_gravity,
                 task_gravity_title, task_description, task_indications, task_contact;
-        Button button_notes;
+        Button button_notes, task_directions_button;
         Context itemViewContext;
-        LinearLayout task_directions_button, task_contacts_layout, task_indications_layout;
+        LinearLayout task_contacts_layout, task_indications_layout;
 
         public ViewHolder(View itemView) {
             super(itemView);

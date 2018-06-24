@@ -279,8 +279,8 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+
             <LinearLayout
-                android:id="@+id/gps_directions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -289,11 +289,13 @@
                 android:background="@drawable/worker_button"
                 android:orientation="horizontal">
 
-                <TextView
+                <Button
+                    android:id="@+id/gps_directions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_light"
-                    android:inputType="textMultiLine"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:inputType="text"
                     android:text="Get Directions"
                     android:textColor="#ffffff"
                     android:textSize="17dp"

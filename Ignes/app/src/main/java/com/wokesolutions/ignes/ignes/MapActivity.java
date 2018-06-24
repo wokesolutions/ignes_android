@@ -101,7 +101,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean isReady;
     public List<Address> addresses;
     public RequestQueue queue;
-    public String mRole;
+    public String mRole, mUserRadius;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
     private ClusterManager<TaskClass> mWorkerClusterManager;
@@ -208,6 +208,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mToken = sharedPref.getString("token", "");
         mUsername = sharedPref.getString("username", "ERROR");
         mRole = sharedPref.getString("userLevel", "");
+
+        if(!sharedPref.getString("userRadius", "").isEmpty())
+             mUserRadius = sharedPref.getString("userRadius", "");
+        else
+            mUserRadius = "5";
 
         System.out.println("MROOOOOLE-> " + mRole);
 
@@ -649,7 +654,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        mapRequest(loc.latitude, loc.longitude, 10000, mToken, "");
+                        mapRequest(loc.latitude, loc.longitude, Integer.parseInt(mUserRadius), mToken, "");
                     }
                 }
             });

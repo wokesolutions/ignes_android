@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:fontFamily="@font/quicksand_light"
+        android:text="Define your own radius here:"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/new_radius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/quicksand_light"
+        android:hint="Radius (km)"
+        android:textColorHint="#20000000" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="@color/backgroundColor" />
+
+    <TextView
+        android:id="@+id/changeradius_advice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:fontFamily="@font/quicksand_light"
+        android:text="Our default value for radius to show reports is 5 km from your current location. Maximum radius allowed is 10 km."
+        android:textColor="@color/colorIgnesPrimary"
+        android:inputType="textMultiLine"
+        android:textSize="10dp"
+        android:textStyle="bold" />
+
+
+    <Button
+        android:id="@+id/submit_radius"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/quicksand_bold"
+        android:text="Submit"
+        android:textColor="@color/backgroundColor"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

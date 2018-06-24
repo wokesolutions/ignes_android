@@ -26,7 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int L_EVERYWHERE = 1;
 
-    private Button mChangePasswordButton, mLogoutAllButton;
+    private Button mChangePasswordButton, mLogoutAllButton, mChangeRadiusButton;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Context mContext;
@@ -62,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         mChangePasswordButton = findViewById(R.id.changepassword_button);
         mLogoutAllButton = findViewById(R.id.logout_all_button);
+        mChangeRadiusButton = findViewById(R.id.set_radius_button);
 
         mChangePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +97,40 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        mChangeRadiusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                mBuilder.setTitle("Change Radius");
+                mBuilder.setIcon(R.drawable.radius_icon);
+
+                LayoutInflater inflater = SettingsActivity.this.getLayoutInflater();
+                final View mView = inflater.inflate(R.layout.change_radius, null);
+                mBuilder.setView(mView);
+                final AlertDialog alert = mBuilder.create();
+
+                alert.show();
+
+                TextView changeRadiusAdvice = mView.findViewById(R.id.changeradius_advice);
+                Button changeRadiusButton = mView.findViewById(R.id.submit_radius);
+
+                if (mRole.equals("WORKER")) {
+                    changeRadiusButton.setBackgroundResource(R.drawable.worker_button);
+                    changeRadiusAdvice.setTextColor(ContextCompat.getColor(mContext, R.color.colorIgnesWorker));
+                }
+
+                changeRadiusButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        attemptRadiusChange(mView);
+
+                    }
+                });
+
+            }
+        });
+
         mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +150,6 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
         }
-
     }
 
     /*----- About Menu Bar -----*/
@@ -124,7 +158,7 @@ public class SettingsActivity extends AppCompatActivity {
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this,0);
+                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this, 0);
             }
         });
 
@@ -215,6 +249,46 @@ public class SettingsActivity extends AppCompatActivity {
             RequestsVolley.changePasswordRequest(oldPass, newPass, mContext, focusView, oldPassword, alert);
         }
     }
+
+    private void attemptRadiusChange(View view) {
+
+        View focusView = null;
+        boolean cancel = false;
+
+        final EditText newPassword = view.findViewById(R.id.new_radius);
+
+        // Reset errors.
+        newPassword.setError(null);
+
+        String newRadius = newPassword.getText().toString();
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(newRadius)) {
+            newPassword.setError(getString(R.string.error_field_required));
+            focusView = newPassword;
+            cancel = true;
+        } else if (Integer.parseInt(newRadius) <= 10 && Integer.parseInt(newRadius) > 0) {
+            newPassword.setError(getString(R.string.error_invalid_password));
+            focusView = newPassword;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt register and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user register attempt.
+            // showProgress(true);
+            SharedPreferences.Editor editor = sharedPref.edit();
+
+            editor.putString("userRadius", newRadius);
+
+            editor.apply();
+        }
+    }
+
 
     private boolean isPasswordValid(String password) {
         return password.length() > 5;

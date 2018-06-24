@@ -170,7 +170,7 @@ public class RequestsVolley {
         if (activity.mRole.equals("USER")) {
             url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
                     + "lat=" + activity.mCurrentLocation.getLatitude() + "&lng=" + activity.mCurrentLocation.getLongitude()
-                    + "&radius=" + 5 + "&cursor=" + mCursor;
+                    + "&radius=" + mRadius + "&cursor=" + mCursor;
         } else if (activity.mRole.equals("WORKER")) {
             url = "https://hardy-scarab-200218.appspot.com/api/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
         }

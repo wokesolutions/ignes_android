@@ -654,7 +654,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        mapRequest(loc.latitude, loc.longitude, Integer.parseInt(mUserRadius), mToken, "");
+                        mapRequest(loc.latitude, loc.longitude, Double.parseDouble(mUserRadius), mToken, "");
                     }
                 }
             });
@@ -905,7 +905,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
                         mCurrentLocality = addresses.get(0).getLocality();
-                        mapRequest(lat, lng, 10000, mToken, "");
+                        mapRequest(lat, lng, Double.parseDouble(mUserRadius), mToken, "");
                     } else
                         Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
@@ -915,7 +915,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    public void mapRequest(double lat, double lng, int radius, String token, String cursor) {
+    public void mapRequest(double lat, double lng, double radius, String token, String cursor) {
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
 

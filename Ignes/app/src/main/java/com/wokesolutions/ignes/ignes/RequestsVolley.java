@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -149,15 +150,15 @@ public class RequestsVolley {
 
     }
 
-    public static void mapRequest(double lat, double lng, int radius, String token, String cursor, final Context context, final MapActivity activity) {
+    public static void mapRequest(double lat, double lng, double radius, String token, String cursor, final Context context, final MapActivity activity) {
 
         final double mLat = lat;
         final double mLng = lng;
-        final int mRadius = radius;
+        final double mRadius = radius;
         final String mToken = token;
         final String mCursor = cursor;
 
-
+        System.out.println("RAIOOOOO: ->>> " + mRadius);
         try {
             activity.addresses = activity.mCoder.getFromLocation(lat, lng, 1);
         } catch (IOException e) {

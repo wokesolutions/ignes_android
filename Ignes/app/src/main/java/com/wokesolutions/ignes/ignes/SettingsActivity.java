@@ -266,7 +266,7 @@ public class SettingsActivity extends AppCompatActivity {
             newRadius.setError(getString(R.string.error_field_required));
             focusView = newRadius;
             cancel = true;
-        } else if (! (Integer.parseInt(newRad) <= 10 && Integer.parseInt(newRad) > 0)) {
+        } else if (! (Double.parseDouble(newRad) <= 10 && Double.parseDouble(newRad) > 0)) {
             newRadius.setError("Only allowed radius between 1 and 10 km.");
             cancel = true;
             focusView = newRadius;

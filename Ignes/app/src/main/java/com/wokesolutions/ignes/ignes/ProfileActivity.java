@@ -217,7 +217,7 @@ public class ProfileActivity extends AppCompatActivity {
                     title = jsonobject.getString("report_title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, "teste", reportID);
+                        description, gravity, title, likes, dislikes, "", reportID);
 
                 if (!markerMap.containsKey(reportID)) {
                     markerMap.put(reportID, report);
@@ -616,8 +616,4 @@ public class ProfileActivity extends AppCompatActivity {
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
     }
-
-    /*public void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
-        RequestsVolley.userReportsRequest(username, token, cursor, context, activity);
-    }*/
 }

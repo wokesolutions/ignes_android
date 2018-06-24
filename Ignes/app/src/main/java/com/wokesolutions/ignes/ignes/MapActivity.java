@@ -209,8 +209,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mUsername = sharedPref.getString("username", "ERROR");
         mRole = sharedPref.getString("userLevel", "");
 
-        if(!sharedPref.getString("userRadius", "").isEmpty())
-             mUserRadius = sharedPref.getString("userRadius", "");
+        if (!sharedPref.getString("userRadius", "").isEmpty())
+            mUserRadius = sharedPref.getString("userRadius", "");
         else
             mUserRadius = "5";
 
@@ -905,7 +905,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         double lat = addresses.get(0).getLatitude();
                         double lng = addresses.get(0).getLongitude();
                         mCurrentLocality = addresses.get(0).getLocality();
-                        mapRequest(lat, lng, Double.parseDouble(mUserRadius), mToken, "");
+                        locationReportsRequest(lat, lng, mCurrentLocality, mToken, "");
                     } else
                         Toast.makeText(mContext, "Can't find location, please try a more detailed one", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
@@ -918,8 +918,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void mapRequest(double lat, double lng, double radius, String token, String cursor) {
 
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
+    }
 
-        //votesRequest(mUsername, "");
+    public void locationReportsRequest(double lat, double lng, String location, String token, String cursor) {
+
+        RequestsVolley.locationReportsRequest(lat, lng, location, token, cursor, mContext, this);
     }
 
     public void votesRequest(String username, String cursor) {

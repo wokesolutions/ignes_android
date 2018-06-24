@@ -194,7 +194,7 @@ public class FeedActivity extends AppCompatActivity {
 
         try {
             JSONObject json = new JSONObject();
-            json.put("Report", "Zy5yb3hvMTUyOTY5NDk1OTQ3Mg==");
+            json.put("Report", "Y2F0YXJpbmFwbTE1Mjk3MjA5NzE5MzE=");
             json.put("vote", "down");
             JSONArray array = new JSONArray();
             array.put(json);
@@ -214,13 +214,11 @@ public class FeedActivity extends AppCompatActivity {
            /* for (int i = 0; i < 4; i++)
                 markerAdapter.notifyItemChanged(i);*/
 
-            /*try {
+           /* try {
                 JSONObject json = new JSONObject();
-                json.put("Report", "Zy5yb3hvMTUyOTY5NDk1OTQ3Mg==");
-                json.put("vote", "down");
-                JSONArray array = new JSONArray();
-                array.put(json);
-                RequestsVolley.sendAllVotesRequest(array, mToken, mContext);
+                json.put("report1", "Y2F0YXJpbmFwbTE1Mjk3MjA5NzE5MzE= down");
+
+                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
             } catch (JSONException e) {
                 e.printStackTrace();
             }*/

@@ -103,7 +103,7 @@ public class FeedActivity extends AppCompatActivity {
 
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
-            markerAdapter = new MarkerAdapter(this, markerMap);
+            markerAdapter = new MarkerAdapter(this, markerMap,false);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();

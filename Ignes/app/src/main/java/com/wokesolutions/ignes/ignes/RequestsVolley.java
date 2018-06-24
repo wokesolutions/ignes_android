@@ -280,7 +280,7 @@ public class RequestsVolley {
         System.out.println("PEDIR REPORTS DE --->>>" + mLocation);
 
 
-        String url = url = "https://hardy-scarab-200218.appspot.com/api/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
+        String url = "https://hardy-scarab-200218.appspot.com/api/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -397,7 +397,7 @@ public class RequestsVolley {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserMap(response);
-                            activity.markerAdapter = new MarkerAdapter(context, activity.markerMap);
+                            activity.markerAdapter = new MarkerAdapter(context, activity.markerMap, true);
                             activity.recyclerView.setAdapter(activity.markerAdapter);
                             activity.recyclerView.setNestedScrollingEnabled(false);
 

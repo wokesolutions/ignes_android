@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
     public RecyclerView recyclerView;
-    public Map<String, MarkerClass> markerMap;
+    public static Map<String, MarkerClass> markerMap;
     public MarkerAdapter markerAdapter;
     private String storedAvatar;
 

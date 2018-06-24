@@ -8,26 +8,85 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="10dp"
         android:fontFamily="@font/quicksand_light"
         android:text="Define your own radius here:"
         android:textSize="15dp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/new_radius"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:backgroundTint="@android:color/transparent"
-        android:fontFamily="@font/quicksand_light"
-        android:hint="Radius (km)"
-        android:textColorHint="#20000000" />
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:fontFamily="@font/quicksand_light"
+                android:text="Kilometers" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
+                android:text="Meters" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
+                android:text="10" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
+                android:text="500" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
+                android:text="5" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand_light"
+                android:text="50" />
+
+        </LinearLayout>
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginVertical="5dp"
+        android:layout_marginVertical="10dp"
         android:background="@color/backgroundColor" />
 
     <TextView
@@ -37,9 +96,9 @@
         android:layout_gravity="right"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:fontFamily="@font/quicksand_light"
-        android:text="Our default value for radius to show reports is 5 km from your current location. Maximum radius allowed is 10 km."
-        android:textColor="@color/colorIgnesPrimary"
         android:inputType="textMultiLine"
+        android:text="Our default value for radius to show reports is 5 km from your current location."
+        android:textColor="@color/colorIgnesPrimary"
         android:textSize="10dp"
         android:textStyle="bold" />
 

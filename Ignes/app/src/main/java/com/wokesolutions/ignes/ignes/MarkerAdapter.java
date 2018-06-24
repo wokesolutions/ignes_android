@@ -23,11 +23,14 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     RequestQueue queue;
     private Context mContext;
     private Map<String, MarkerClass> mMap;
+    private boolean mIsProfile;
 
-    MarkerAdapter(Context context, Map<String, MarkerClass> map) {
+    MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile) {
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
+        mIsProfile = isProfile;
+
     }
 
     @NonNull
@@ -108,6 +111,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 Intent i = new Intent(holder.itemViewContext, MarkerActivity.class);
 
                 i.putExtra("MarkerClass", markerItem.getmId());
+                i.putExtra("IsProfile", mIsProfile);
 
                 holder.itemViewContext.startActivity(i);
             }

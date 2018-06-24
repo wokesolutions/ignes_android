@@ -22,7 +22,7 @@ public class MarkerActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private MarkerClass mMarker;
     private int mLikes, mDislikes;
-    private boolean mTouchLike,  mTouchDislike;
+    private boolean mTouchLike, mTouchDislike;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +59,12 @@ public class MarkerActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         final String markerID = intent.getExtras().getString("MarkerClass");
+        final boolean isProfile = intent.getExtras().getBoolean("IsProfile");
 
-
-        mMarker = MapActivity.mReportMap.get(markerID);
+        if (isProfile)
+            mMarker = ProfileActivity.markerMap.get(markerID);
+        else
+            mMarker = MapActivity.mReportMap.get(markerID);
 
         Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());

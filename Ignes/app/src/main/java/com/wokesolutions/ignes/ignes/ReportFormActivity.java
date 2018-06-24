@@ -330,11 +330,15 @@ public class ReportFormActivity extends AppCompatActivity {
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                             matrix.postRotate(90);
+                            orientation = 90;
                         } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
                             matrix.postRotate(180);
+                            orientation = 180;
                         } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                             matrix.postRotate(270);
-                        }
+                            orientation = 270;
+                        } else
+                            orientation = 0;
                         mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
 
                     } catch (Exception e) {

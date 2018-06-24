@@ -16,6 +16,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class NoteActivity extends AppCompatActivity {
@@ -24,10 +32,12 @@ public class NoteActivity extends AppCompatActivity {
     private LinearLayout mNoteitem;
     private Button mAddNote_button;
     private String mUsername;
+    private String mToken;
     private SharedPreferences mSharedPref;
     private TaskClass mTask;
     private Context mContext;
     private TextView mTaskTitle;
+    public RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +46,12 @@ public class NoteActivity extends AppCompatActivity {
 
         mBackBool = false;
 
+        mSharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mToken = mSharedPref.getString("token", "");
+
 
         mContext = this;
+        queue = Volley.newRequestQueue(this);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_notes);
         setToolbar(myToolbar);
@@ -57,6 +71,8 @@ public class NoteActivity extends AppCompatActivity {
             mTaskTitle.setText(mTask.getmTitle());
         else
             mTaskTitle.setVisibility(View.GONE);
+
+        RequestsVolley.taskNotesRequest(taskID, mToken, "", mContext, NoteActivity.this);
 
 
         final ListView listview = (ListView) findViewById(R.id.listview);
@@ -119,6 +135,22 @@ public class NoteActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    public void setNotesList(JSONArray jsonArray) {
+
+        try {
+            JSONArray jsonarray = jsonArray;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                System.out.println("OLÁ DENTRO DO SET NOTES LIST");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setToolbar(Toolbar toolbar) {

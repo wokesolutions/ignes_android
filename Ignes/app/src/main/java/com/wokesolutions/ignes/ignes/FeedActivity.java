@@ -23,6 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Map;
 
 
@@ -184,6 +188,23 @@ public class FeedActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    /*@Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("Report", "Zy5yb3hvMTUyOTY5NDk1OTQ3Mg==");
+            json.put("vote", "down");
+            JSONArray array = new JSONArray();
+            array.put(json);
+            RequestsVolley.sendAllVotesRequest(array, mToken, mContext);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }*/
+
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;
@@ -192,6 +213,17 @@ public class FeedActivity extends AppCompatActivity {
             recreate();
            /* for (int i = 0; i < 4; i++)
                 markerAdapter.notifyItemChanged(i);*/
+
+            /*try {
+                JSONObject json = new JSONObject();
+                json.put("Report", "Zy5yb3hvMTUyOTY5NDk1OTQ3Mg==");
+                json.put("vote", "down");
+                JSONArray array = new JSONArray();
+                array.put(json);
+                RequestsVolley.sendAllVotesRequest(array, mToken, mContext);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }*/
         }
 
         if (item.getItemId() == R.id.reporticon) {

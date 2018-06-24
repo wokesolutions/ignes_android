@@ -18,9 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -62,7 +64,34 @@ public class SettingsActivity extends AppCompatActivity {
 
         mChangePasswordButton = findViewById(R.id.changepassword_button);
         mLogoutAllButton = findViewById(R.id.logout_all_button);
-        mChangeRadiusButton = findViewById(R.id.set_radius_button);
+
+        setChangePassword();
+
+        if (mRole.equals("USER"))
+            setChangeRadius();
+
+        mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this, L_EVERYWHERE);
+            }
+        });
+
+
+        // logoutRequest(token, mContext, LogoutActivity.this,null, L_ONCE);
+
+        general_menuButtons();
+
+        if (mRole.equals("WORKER")) {
+            getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
+
+        } else if (mRole.equals("USER")) {
+            getSupportActionBar().setIcon(R.drawable.ignesred);
+            user_menuButtons();
+        }
+    }
+
+    private void setChangePassword() {
 
         mChangePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +126,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setChangeRadius() {
+
+        mChangeRadiusButton = findViewById(R.id.set_radius_button);
+
         mChangeRadiusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,45 +146,52 @@ public class SettingsActivity extends AppCompatActivity {
 
                 alert.show();
 
-                TextView changeRadiusAdvice = mView.findViewById(R.id.changeradius_advice);
                 Button changeRadiusButton = mView.findViewById(R.id.submit_radius);
-
-                if (mRole.equals("WORKER")) {
-                    changeRadiusButton.setBackgroundResource(R.drawable.worker_button);
-                    changeRadiusAdvice.setTextColor(ContextCompat.getColor(mContext, R.color.colorIgnesWorker));
-                }
 
                 changeRadiusButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        attemptRadiusChange(mView, alert);
+                        boolean isCheck = false;
 
+                        CheckBox radius_10km = mView.findViewById(R.id.radius_10km);
+                        CheckBox radius_5km = mView.findViewById(R.id.radius_5km);
+                        CheckBox radius_500m = mView.findViewById(R.id.radius_500m);
+                        CheckBox radius_50m = mView.findViewById(R.id.radius_50m);
+
+                        String newRad = "";
+
+                        if (radius_10km.isChecked()) {
+                            newRad = "10";
+                            isCheck = true;
+                        } else if (radius_5km.isChecked()) {
+                            newRad = "5";
+                            isCheck = true;
+                        } else if (radius_500m.isChecked()) {
+                            newRad = "0.5";
+                            isCheck = true;
+                        } else if (radius_50m.isChecked()) {
+                            newRad = "0.05";
+                            isCheck = true;
+                        }
+
+
+                        if (isCheck) {
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("userRadius", newRad);
+                            editor.apply();
+                            alert.dismiss();
+                            Toast.makeText(mContext, "Your radius has been modified!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(mContext, "Nothing selected!", Toast.LENGTH_LONG).show();
+
+                        }
                     }
                 });
 
             }
         });
 
-        mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RequestsVolley.logoutRequest(mToken, mContext, SettingsActivity.this, L_EVERYWHERE);
-            }
-        });
-
-
-        // logoutRequest(token, mContext, LogoutActivity.this,null, L_ONCE);
-
-        general_menuButtons();
-
-        if (mRole.equals("WORKER")) {
-            getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
-
-        } else if (mRole.equals("USER")) {
-            getSupportActionBar().setIcon(R.drawable.ignesred);
-            user_menuButtons();
-        }
     }
 
     /*----- About Menu Bar -----*/
@@ -249,44 +291,6 @@ public class SettingsActivity extends AppCompatActivity {
             RequestsVolley.changePasswordRequest(oldPass, newPass, mContext, focusView, oldPassword, alert);
         }
     }
-
-    private void attemptRadiusChange(View view, AlertDialog alert) {
-
-        View focusView = null;
-        boolean cancel = false;
-
-        final EditText newRadius = view.findViewById(R.id.new_radius);
-
-        // Reset errors.
-        newRadius.setError(null);
-
-        String newRad = newRadius.getText().toString();
-
-        if (TextUtils.isEmpty(newRad)) {
-            newRadius.setError(getString(R.string.error_field_required));
-            focusView = newRadius;
-            cancel = true;
-        } else if (! (Double.parseDouble(newRad) <= 10 && Double.parseDouble(newRad) > 0)) {
-            newRadius.setError("Only allowed radius between 1 and 10 km.");
-            cancel = true;
-            focusView = newRadius;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt register and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user register attempt.
-            // showProgress(true);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("userRadius", newRad);
-            editor.apply();
-            alert.dismiss();
-        }
-    }
-
 
     private boolean isPasswordValid(String password) {
         return password.length() > 5;

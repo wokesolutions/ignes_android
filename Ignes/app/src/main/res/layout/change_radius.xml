@@ -48,12 +48,14 @@
             android:orientation="vertical">
 
             <CheckBox
+                android:id="@+id/radius_10km"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_light"
                 android:text="10" />
 
             <CheckBox
+                android:id="@+id/radius_500m"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_light"
@@ -68,12 +70,14 @@
             android:orientation="vertical">
 
             <CheckBox
+                android:id="@+id/radius_5km"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_light"
                 android:text="5" />
 
             <CheckBox
+                android:id="@+id/radius_50m"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_light"

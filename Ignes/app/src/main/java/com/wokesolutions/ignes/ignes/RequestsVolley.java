@@ -276,7 +276,7 @@ public class RequestsVolley {
         final Map<String, MarkerClass> userMap;
 
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/profile/reports/" + mUsername;
+        String url = "https://hardy-scarab-200218.appspot.com/api/profile/reports/" + mUsername + "?cursor="+mCursor;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -288,14 +288,18 @@ public class RequestsVolley {
 
                         System.out.println("RESPONSE DATA: ->>> " + response);
 
+
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserMap(response);
+                            activity.markerAdapter = new MarkerAdapter(context, activity.markerMap);
+                            activity.recyclerView.setAdapter(activity.markerAdapter);
+                            activity.recyclerView.setNestedScrollingEnabled(false);
 
                         } else {
                             System.out.println("Continuar a pedir...");
-                            activity.userReportsRequest(mUsername, mToken, mCursor, context, activity);
+                            activity.userReportsRequest(mIsFinish);
                         }
                     }
                 },
@@ -306,9 +310,6 @@ public class RequestsVolley {
                         System.out.println("ERRO DO USER REPORTS: " + error.toString());
 
                         Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
-                        activity.markerAdapter = new MarkerAdapter(context, MapActivity.mReportMap);
-                        activity.recyclerView.setAdapter(activity.markerAdapter);
-                        activity.recyclerView.setNestedScrollingEnabled(false);
                     }
                 }
         ) {
@@ -332,6 +333,8 @@ public class RequestsVolley {
                             mIsFinish = response.headers.get("Cursor");
                         else
                             mIsFinish = "FINISHED";
+
+                        System.out.println("CURSOR DE AHBFAHDB: " + mIsFinish);
 
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 

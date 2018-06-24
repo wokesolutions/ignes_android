@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
     public RecyclerView recyclerView;
-    private Map<String, MarkerClass> markerMap;
+    public Map<String, MarkerClass> markerMap;
     public MarkerAdapter markerAdapter;
     private String storedAvatar;
 
@@ -170,7 +170,7 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         markerMap = new HashMap<>();
 
-        userReportsRequest(mUsername, mToken, "", mContext, ProfileActivity.this);
+        userReportsRequest("");
 
     }
 
@@ -202,7 +202,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String date = jsonobject.getString("report_creationtimeformatted");
 
-                String name = jsonobject.getString("report_username");
+                String name = mUsername;
 
                 String gravity = "0";
                 if (jsonobject.has("report_gravity"))
@@ -605,6 +605,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    public void userReportsRequest(String cursor) {
+        RequestsVolley.userReportsRequest(mUsername, mToken, cursor, mContext, this);
+
+    }
+
     public String getRealPathFromURI(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
@@ -612,7 +617,7 @@ public class ProfileActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
-    public void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
+    /*public void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
         RequestsVolley.userReportsRequest(username, token, cursor, context, activity);
-    }
+    }*/
 }

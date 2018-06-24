@@ -195,7 +195,7 @@ public class RequestsVolley {
                             activity.votesRequest(activity.mUsername, "");
                         } else {
                             System.out.println("Continuar a pedir...");
-                            activity.mapRequest(mLat, mLng, 10000, mToken, mIsFinish);
+                            activity.mapRequest(mLat, mLng, mRadius, mToken, mIsFinish);
                         }
                     }
                 },

@@ -561,7 +561,7 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-        public static void sendAllVotesRequest(JSONArray votes, String token, final Context context) {
+    public static void sendAllVotesRequest(JSONArray votes, String token, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -763,6 +763,82 @@ public class RequestsVolley {
         queue.add(stringRequest);
 
     }
+
+    public static void postCommentRequest( String report, String comment, final Context context,
+                                     final MarkerActivity activity) {
+
+        final String mComment = comment;
+        final String mReport = report;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
+
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+                jsonObject.put("reportcomment_text", mComment);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/"+mReport;
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK COMMENT");
+                        Toast.makeText(context, "Comment added!", Toast.LENGTH_LONG).show();
+                        activity.marker_comment.setText("");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("POST COMMENT volley -> ERRO " + response.statusCode);
+
+                        Log.e("COMMENT volley -> ERRO ", "" + response.statusCode);
+
+                        if(response.statusCode == 403) {
+                            Toast.makeText(context, "No permission to comment!", Toast.LENGTH_LONG).show();
+                            System.out.println("POST COMMENT volley -> User sem permissao para comentar " + response.statusCode);
+                        }
+
+                        Toast.makeText(context, "Ups, failed on comment report!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", token);
+
+                return params;
+            }
+
+            @Override
+            public byte[] getBody() {
+                return jsonObject.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        setRetry(stringRequest);
+        queue.add(stringRequest);
+
+    }
+
 
     public static void registerRequest(String username, String password, String email, final Context context,
                                        final RegisterActivity activity) {

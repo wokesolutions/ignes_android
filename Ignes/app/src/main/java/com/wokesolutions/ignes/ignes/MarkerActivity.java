@@ -1,5 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,18 +12,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MarkerActivity extends AppCompatActivity {
 
     private ImageView marker_image, marker_status_image;
     private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
-            marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments, marker_gravity_title;
-    private Button marker_button_likes, marker_button_dislikes;
-    private EditText marker_comment;
+            marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number, marker_gravity_title;
+    private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
+    public static EditText marker_comment;
     private ProgressBar mProgressBar;
     private MarkerClass mMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
+    private Context mContext;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +39,10 @@ public class MarkerActivity extends AppCompatActivity {
 
         mProgressBar = findViewById(R.id.marker_progress_likes);
 
+        mContext = this;
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
-
+        marker_button_post_comment = findViewById(R.id.marker_comment_post_button);
         marker_status_image = findViewById(R.id.marker_lock_img);
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
@@ -50,7 +54,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_status = findViewById(R.id.marker_status);
         marker_likes = findViewById(R.id.marker_likes_number);
         marker_dislikes = findViewById(R.id.marker_dislikes_number);
-        marker_comments = findViewById(R.id.marker_comments_number);
+        marker_comments_number = findViewById(R.id.marker_comments_number);
         marker_gravity_title = findViewById(R.id.marker_gravity_title);
         marker_comment = findViewById(R.id.marker_comment);
         marker_comment.setFocusable(false);
@@ -67,6 +71,7 @@ public class MarkerActivity extends AppCompatActivity {
             mMarker = MapActivity.mReportMap.get(markerID);
 
         Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
+
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
         String title = mMarker.getmTitle();
@@ -86,6 +91,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_username.setText(mMarker.getmCreator_username());
 
         String gravity = mMarker.getmGravity();
+
         if (!gravity.equals("0"))
             marker_gravity.setText(gravity);
         else {
@@ -108,6 +114,7 @@ public class MarkerActivity extends AppCompatActivity {
         mDislikes = Integer.parseInt(mMarker.getmDislikes());
 
         int totalProgress = mLikes + mDislikes;
+
         if (totalProgress == 0)
             mProgressBar.setMax(1);
         else
@@ -117,9 +124,12 @@ public class MarkerActivity extends AppCompatActivity {
 
         if (mMarker.getmVote().equals("up"))
             mTouchLike = true;
+
         if (mMarker.getmVote().equals("down"))
             mTouchDislike = true;
+
         Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
+
         if (mTouchLike)
             marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
         else
@@ -130,37 +140,15 @@ public class MarkerActivity extends AppCompatActivity {
         else
             marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
-        marker_button_likes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                if (mTouchLike) {
-                    mLikes--;
-                    mMarker.setmVote("neutro");
-                    marker_button_likes.setBackgroundResource(R.drawable.upicon);
+        setPostComment(markerID);
 
-                } else {
-                    mLikes++;
-                    if (mTouchDislike) {
-                        mDislikes--;
-                        marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
-                        mTouchDislike = false;
-                    }
-                    mMarker.setmVote("up");
-                    marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
-                }
-                mProgressBar.setMax(mLikes + mDislikes);
-                mProgressBar.setProgress(mLikes);
-                marker_dislikes.setText("" + mDislikes);
-                marker_likes.setText("" + mLikes);
-                mMarker.setmDislikes(String.valueOf(mDislikes));
-                mMarker.setmLikes(String.valueOf(mLikes));
-                Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
+        setButtonLikes();
 
-                mTouchLike = !mTouchLike;
+        setButtonDislikes();
+    }
 
-            }
-        });
+    private void setButtonDislikes() {
 
         marker_button_dislikes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +182,57 @@ public class MarkerActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void setButtonLikes() {
+        marker_button_likes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (mTouchLike) {
+                    mLikes--;
+                    mMarker.setmVote("neutro");
+                    marker_button_likes.setBackgroundResource(R.drawable.upicon);
+
+                } else {
+                    mLikes++;
+                    if (mTouchDislike) {
+                        mDislikes--;
+                        marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
+                        mTouchDislike = false;
+                    }
+                    mMarker.setmVote("up");
+                    marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
+                }
+                mProgressBar.setMax(mLikes + mDislikes);
+                mProgressBar.setProgress(mLikes);
+                marker_dislikes.setText("" + mDislikes);
+                marker_likes.setText("" + mLikes);
+                mMarker.setmDislikes(String.valueOf(mDislikes));
+                mMarker.setmLikes(String.valueOf(mLikes));
+                Log.e("LIKES DISLIKES HERE-> ", mMarker.getmLikes() + "    " + mMarker.getmDislikes());
+
+                mTouchLike = !mTouchLike;
+
+            }
+        });
+    }
+
+    private void setPostComment(final String id) {
+
+        marker_button_post_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                System.out.println("COMMMMENNNNTTT" + marker_comment.getText().toString());
+                String text = marker_comment.getText().toString();
+
+                if (!text.equals("")) {
+                    RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
+                } else
+                    Toast.makeText(mContext, "Empty comment", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

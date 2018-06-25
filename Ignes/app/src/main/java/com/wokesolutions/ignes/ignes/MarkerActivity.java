@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,8 +44,32 @@ public class MarkerActivity extends AppCompatActivity {
     private MarkerClass mMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
-    private LinearLayout mListCommentsLayout, mNumbCommentsLayout;
+    private LinearLayout mNumbCommentsLayout;
     private Context mContext;
+    private ArrayList<CommentClass> arrayList;
+    private ListView listview;
+    private boolean isClicked;
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +82,9 @@ public class MarkerActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
         mContext = this;
+        isClicked = false;
         mProgressBar = findViewById(R.id.marker_progress_likes);
-        mListCommentsLayout = findViewById(R.id.list_comments_layout);
+        // mListCommentsLayout = findViewById(R.id.list_comments_layout);
         mNumbCommentsLayout = findViewById(R.id.comments_layout);
 
         marker_button_likes = findViewById(R.id.likes_button);
@@ -80,6 +106,9 @@ public class MarkerActivity extends AppCompatActivity {
         marker_comment = findViewById(R.id.marker_comment);
         marker_comment.setFocusable(false);
         marker_comment.setFocusableInTouchMode(true);
+
+        arrayList = new ArrayList<>();
+        listview = (ListView) findViewById(R.id.listview_comments);
 
         Intent intent = getIntent();
 
@@ -166,7 +195,12 @@ public class MarkerActivity extends AppCompatActivity {
         mNumbCommentsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListCommentsLayout.setVisibility(View.VISIBLE);
+                if (isClicked)
+                    listview.setVisibility(View.GONE);
+                else
+                    listview.setVisibility(View.VISIBLE);
+
+                isClicked = !isClicked;
             }
         });
         setPostComment(markerID);
@@ -261,6 +295,11 @@ public class MarkerActivity extends AppCompatActivity {
 
                 if (!text.equals("")) {
                     RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
+                    arrayList.add(new CommentClass("", "", "", text));
+                    listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
+                    setListViewHeightBasedOnChildren(listview);
+                    new MarkerActivity.MyAdapter(mContext, arrayList).notifyDataSetChanged();
+
                 } else
                     Toast.makeText(mContext, "Empty comment", Toast.LENGTH_LONG).show();
             }
@@ -268,10 +307,8 @@ public class MarkerActivity extends AppCompatActivity {
     }
 
     public void setListComments(JSONArray comments) {
-
-        ArrayList<CommentClass> arrayList = new ArrayList<CommentClass>();
-        ListView listview = (ListView) findViewById(R.id.listview_comments);
         CommentClass commentClass;
+        arrayList.clear();
 
         try {
 
@@ -293,7 +330,7 @@ public class MarkerActivity extends AppCompatActivity {
             }
 
             listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
-
+            setListViewHeightBasedOnChildren(listview);
 
         } catch (JSONException e) {
             e.printStackTrace();

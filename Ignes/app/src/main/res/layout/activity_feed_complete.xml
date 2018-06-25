@@ -316,11 +316,11 @@
 
                 </LinearLayout>
 
-
-                <include
-                    android:id="@+id/list_comments_layout"
-                    layout="@layout/marker_list_comments"
-                    android:visibility="gone" />
+                    <ListView
+                        android:id="@+id/listview_comments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"/>
 
 
                 <View

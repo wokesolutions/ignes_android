@@ -26,6 +26,7 @@ public class MarkerActivity extends AppCompatActivity {
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
     private Context mContext;
+    private static String markerID;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +63,7 @@ public class MarkerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        final String markerID = intent.getExtras().getString("MarkerClass");
+        markerID = intent.getExtras().getString("MarkerClass");
         final boolean isProfile = intent.getExtras().getBoolean("IsProfile");
 
         if (isProfile)
@@ -167,6 +168,7 @@ public class MarkerActivity extends AppCompatActivity {
                         mTouchLike = false;
                     }
                     mMarker.setmVote("down");
+                    FeedActivity.votesMap.put(markerID, "down");
                     marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
                 }
 
@@ -202,6 +204,7 @@ public class MarkerActivity extends AppCompatActivity {
                         mTouchDislike = false;
                     }
                     mMarker.setmVote("up");
+                    FeedActivity.votesMap.put(markerID, "up");
                     marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
                 }
                 mProgressBar.setMax(mLikes + mDislikes);

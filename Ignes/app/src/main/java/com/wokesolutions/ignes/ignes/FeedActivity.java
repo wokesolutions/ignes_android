@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -36,6 +37,8 @@ public class FeedActivity extends AppCompatActivity {
 
     Map<String, MarkerClass> markerMap;
     Map<String, TaskClass> taskMap;
+
+    public static Map<String, String> votesMap;
 
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
@@ -67,6 +70,7 @@ public class FeedActivity extends AppCompatActivity {
             setContentView(R.layout.worker_tasks);
         }
 
+        votesMap = new HashMap<>();
 
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -188,22 +192,24 @@ public class FeedActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    /*@Override
+    @Override
     protected void onStop() {
         super.onStop();
 
         try {
+
             JSONObject json = new JSONObject();
-            json.put("Report", "Y2F0YXJpbmFwbTE1Mjk3MjA5NzE5MzE=");
-            json.put("vote", "up");
-            JSONArray array = new JSONArray();
-            array.put(json);
-            RequestsVolley.sendAllVotesRequest(array, mToken, mContext);
+
+            for(String key : votesMap.keySet()) {
+                json.put(key,votesMap.get(key));
+            }
+
+            RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-    }*/
+    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))

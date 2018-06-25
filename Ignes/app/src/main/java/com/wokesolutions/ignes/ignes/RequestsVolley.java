@@ -66,7 +66,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com//api/report/comment/get/" + mReportId + "?cursor=" + mCursor;
+        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/get/" + mReportId + "?cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -1443,14 +1443,14 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        System.out.println("OK: " + response);
+                        System.out.println("VOTES OK: " + response);
 
                         if (mIsFinish.equals("FINISHED")) {
-                            System.out.println("ACABARAM OS REPORTS");
+                            System.out.println("ACABARAM OS VOTOS");
 
                             activity.setUserVotes(response);
                         } else {
-                            System.out.println("Continuar a pedir...");
+                            System.out.println("Continuar a pedir votos...");
                             activity.votesRequest(mUsername, mCursor);
                         }
                     }
@@ -1494,7 +1494,7 @@ public class RequestsVolley {
 
                         JSONArray jsonArray = new JSONArray(json);
 
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+                        System.out.println("RESPONSE VOTES HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 

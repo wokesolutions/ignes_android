@@ -56,6 +56,100 @@ public class RequestsVolley {
     private static String url, mIsFinish;
 
 
+    public static void reportCommentsRequest(String reportId, String cursor, final Context context, final MarkerActivity activity) {
+
+        final String mReportId = reportId;
+        final String mCursor = cursor;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com//api/report/comment/get/" + mReportId + "?cursor=" + mCursor;
+
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK REPORT COMMENTS : " + response);
+
+                        if (mIsFinish.equals("FINISHED")) {
+                            System.out.println("ACABARAM OS COMMENTS");
+                            activity.setListComments(response);
+                        } else {
+                            System.out.println("Continuar a pedir...");
+                            reportCommentsRequest(mReportId, mIsFinish, context, activity);
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO REPORT COMMENTS: " + error.networkResponse.toString());
+
+                        Toast.makeText(context, "Something went wrong on loading comments!", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("Authorization", mToken);
+
+                return params;
+            }
+
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        if (response.headers.get("Cursor") != null)
+                            mIsFinish = response.headers.get("Cursor");
+                        else
+                            mIsFinish = "FINISHED";
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(arrayRequest);
+
+        queue.add(arrayRequest);
+    }
+
+
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
                                         TaskClass task, final TaskAdapter taskAdapter) {
 
@@ -764,8 +858,8 @@ public class RequestsVolley {
 
     }
 
-    public static void postCommentRequest( String report, String comment, final Context context,
-                                     final MarkerActivity activity) {
+    public static void postCommentRequest(String report, String comment, final Context context,
+                                          final MarkerActivity activity) {
 
         final String mComment = comment;
         final String mReport = report;
@@ -776,7 +870,7 @@ public class RequestsVolley {
         final JSONObject jsonObject = new JSONObject();
 
         try {
-                jsonObject.put("reportcomment_text", mComment);
+            jsonObject.put("reportcomment_text", mComment);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -784,7 +878,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/"+mReport;
+        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/" + mReport;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -805,7 +899,7 @@ public class RequestsVolley {
 
                         Log.e("COMMENT volley -> ERRO ", "" + response.statusCode);
 
-                        if(response.statusCode == 403) {
+                        if (response.statusCode == 403) {
                             Toast.makeText(context, "No permission to comment!", Toast.LENGTH_LONG).show();
                             System.out.println("POST COMMENT volley -> User sem permissao para comentar " + response.statusCode);
                         }

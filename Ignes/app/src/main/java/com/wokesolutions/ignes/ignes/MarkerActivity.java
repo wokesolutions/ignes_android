@@ -1,32 +1,49 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class MarkerActivity extends AppCompatActivity {
 
+    public static EditText marker_comment;
+    private static String markerID;
     private ImageView marker_image, marker_status_image;
     private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
             marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number, marker_gravity_title;
+    private TextView comment_owner, comment_date, comment_text;
     private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
-    public static EditText marker_comment;
     private ProgressBar mProgressBar;
     private MarkerClass mMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
     private Context mContext;
-    private static String markerID;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +55,9 @@ public class MarkerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
+        mContext = this;
         mProgressBar = findViewById(R.id.marker_progress_likes);
 
-        mContext = this;
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
         marker_button_post_comment = findViewById(R.id.marker_comment_post_button);
@@ -141,6 +158,7 @@ public class MarkerActivity extends AppCompatActivity {
         else
             marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
+        RequestsVolley.reportCommentsRequest(markerID,"", mContext, this);
 
         setPostComment(markerID);
 
@@ -238,9 +256,92 @@ public class MarkerActivity extends AppCompatActivity {
         });
     }
 
+    public void setListComments(JSONArray comments) {
+
+        ArrayList<CommentClass> arrayList = new ArrayList<CommentClass>();
+        ListView listview = (ListView) findViewById(R.id.listview_comments);
+        CommentClass commentClass;
+
+        try {
+
+            JSONArray jsonarray = comments;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                String commentID = jsonobject.getString("ReportComment");
+
+                String textComment = jsonobject.getString("reportcomment_text");
+                String ownerComment = jsonobject.getString("reportcomment_user");
+                String dateComment = jsonobject.getString("reportcomment_time");
+
+                commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
+
+                arrayList.add(commentClass);
+            }
+
+            listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //array ReportComment - id do comment
+    // reportcomment_text , user, time
+    // user_profpictn
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private class MyAdapter extends BaseAdapter {
+
+        private Context context;
+        private ArrayList<CommentClass> comments;
+
+        public MyAdapter(Context context, ArrayList<CommentClass> comments) {
+            this.context = context;
+            this.comments = comments;
+        }
+
+        @Override
+        public int getCount() {
+            return comments.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return comments.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = (View) inflater.inflate(
+                        R.layout.activity_comment_item, null);
+            }
+
+            comment_owner = findViewById(R.id.comment_ownername);
+            comment_date = findViewById(R.id.comment_date);
+            comment_text = findViewById(R.id.comment_text);
+
+            comment_text.setText(comments.get(position).mText);
+            comment_date.setText(comments.get(position).mDate);
+            comment_owner.setText(comments.get(position).mOwner);
+
+            return convertView;
+        }
     }
 }

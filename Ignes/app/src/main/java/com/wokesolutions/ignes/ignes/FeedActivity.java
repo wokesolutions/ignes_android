@@ -217,17 +217,6 @@ public class FeedActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.refreshicon) {
             recreate();
-           /* for (int i = 0; i < 4; i++)
-                markerAdapter.notifyItemChanged(i);*/
-
-           /*try {
-                JSONObject json = new JSONObject();
-                json.put("report1", "Y2F0YXJpbmFwbTE1Mjk3MjA5NzE5MzE= down");
-
-                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
         }
 
         if (item.getItemId() == R.id.reporticon) {

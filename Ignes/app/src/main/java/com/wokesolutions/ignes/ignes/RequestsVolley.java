@@ -561,11 +561,11 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void sendAllVotesRequest(JSONArray votes, String token, final Context context) {
+    public static void sendAllVotesRequest(JSONObject votes, String token, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        final JSONArray mVotes = votes;
+        final JSONObject mVotes = votes;
         final String mToken = token;
 
 

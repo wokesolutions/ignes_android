@@ -38,8 +38,6 @@ public class FeedActivity extends AppCompatActivity {
     Map<String, MarkerClass> markerMap;
     Map<String, TaskClass> taskMap;
 
-    public static Map<String, String> votesMap;
-
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
@@ -70,7 +68,7 @@ public class FeedActivity extends AppCompatActivity {
             setContentView(R.layout.worker_tasks);
         }
 
-        votesMap = new HashMap<>();
+        MapActivity.votesMap.clear();
 
         recyclerView = (RecyclerView) findViewById(R.id.feed_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -196,13 +194,13 @@ public class FeedActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (!votesMap.isEmpty())
+        if (!MapActivity.votesMap.isEmpty())
             try {
 
                 JSONObject json = new JSONObject();
 
-                for (String key : votesMap.keySet()) {
-                    json.put(key, votesMap.get(key));
+                for (String key : MapActivity.votesMap.keySet()) {
+                    json.put(key, MapActivity.votesMap.get(key));
                 }
 
                 RequestsVolley.sendAllVotesRequest(json, mToken, mContext);

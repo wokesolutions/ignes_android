@@ -92,6 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
             mImageView.setImageDrawable(roundedBitmap);
         }
 
+        MapActivity.votesMap.clear();
 
         queue = Volley.newRequestQueue(this);
 
@@ -603,6 +604,25 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (!MapActivity.votesMap.isEmpty())
+            try {
+
+                JSONObject json = new JSONObject();
+
+                for (String key : MapActivity.votesMap.keySet()) {
+                    json.put(key, MapActivity.votesMap.get(key));
+                }
+
+                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
 
     public void userReportsRequest(String cursor) {

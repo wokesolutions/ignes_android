@@ -87,6 +87,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public static Map<String, MarkerClass> mReportMap;
     public static Map<String, TaskClass> mWorkerTaskMap;
+    public static Map<String, String> votesMap;
 
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
@@ -252,6 +253,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLatLng = null;
         mReportMap = new HashMap<>();
         mWorkerTaskMap = new HashMap<>();
+        votesMap = new HashMap<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);

@@ -333,9 +333,9 @@ public class MarkerActivity extends AppCompatActivity {
                         R.layout.activity_comment_item, null);
             }
 
-            comment_owner = findViewById(R.id.comment_ownername);
-            comment_date = findViewById(R.id.comment_date);
-            comment_text = findViewById(R.id.comment_text);
+            comment_owner = convertView.findViewById(R.id.comment_ownername);
+            comment_date = convertView.findViewById(R.id.comment_date);
+            comment_text = convertView.findViewById(R.id.comment_text);
 
             comment_text.setText(comments.get(position).mText);
             comment_date.setText(comments.get(position).mDate);

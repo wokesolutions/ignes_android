@@ -107,7 +107,7 @@ public class FeedActivity extends AppCompatActivity {
 
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
-            markerAdapter = new MarkerAdapter(this, markerMap,false);
+            markerAdapter = new MarkerAdapter(this, markerMap, false);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
@@ -193,22 +193,22 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        try {
+        if (!votesMap.isEmpty())
+            try {
 
-            JSONObject json = new JSONObject();
+                JSONObject json = new JSONObject();
 
-            for(String key : votesMap.keySet()) {
-                json.put(key,votesMap.get(key));
+                for (String key : votesMap.keySet()) {
+                    json.put(key, votesMap.get(key));
+                }
+
+                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

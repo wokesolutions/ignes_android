@@ -230,6 +230,7 @@
                     android:weightSum="2">
 
                     <LinearLayout
+                        android:id="@+id/comments_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -293,7 +294,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="30dp"
+                        android:layout_marginRight="20dp"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
 
@@ -315,13 +316,12 @@
 
                 </LinearLayout>
 
-                <ListView
-                    android:id="@+id/listview_comments"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp">
 
-                </ListView>
+                <include
+                    android:id="@+id/list_comments_layout"
+                    layout="@layout/marker_list_comments"
+                    android:visibility="gone" />
+
 
                 <View
                     android:layout_width="match_parent"
@@ -334,17 +334,17 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:focusableInTouchMode="true"
-                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     android:weightSum="3">
 
                     <ImageView
                         android:id="@+id/marker_user_profile_pic"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
+                        android:layout_gravity="bottom"
                         android:layout_weight=".5"
                         android:padding="3dp"
-                        android:layout_gravity="bottom"
                         android:src="@drawable/userdefaultavatar" />
 
                     <EditText
@@ -364,9 +364,9 @@
                         style="@style/Base.Widget.AppCompat.Button.Borderless"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
+                        android:layout_gravity="bottom"
                         android:layout_weight=".5"
                         android:text="post"
-                        android:layout_gravity="bottom"
                         android:textColor="@color/colorIgnesPrimary"
                         android:textSize="10dp" />
 

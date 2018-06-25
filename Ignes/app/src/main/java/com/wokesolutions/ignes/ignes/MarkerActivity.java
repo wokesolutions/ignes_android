@@ -43,6 +43,7 @@ public class MarkerActivity extends AppCompatActivity {
     private MarkerClass mMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
+    private LinearLayout mListCommentsLayout, mNumbCommentsLayout;
     private Context mContext;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,8 @@ public class MarkerActivity extends AppCompatActivity {
 
         mContext = this;
         mProgressBar = findViewById(R.id.marker_progress_likes);
+        mListCommentsLayout = findViewById(R.id.list_comments_layout);
+        mNumbCommentsLayout = findViewById(R.id.comments_layout);
 
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
@@ -158,8 +161,14 @@ public class MarkerActivity extends AppCompatActivity {
         else
             marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
-        RequestsVolley.reportCommentsRequest(markerID,"", mContext, this);
+        RequestsVolley.reportCommentsRequest(markerID, "", mContext, this);
 
+        mNumbCommentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListCommentsLayout.setVisibility(View.VISIBLE);
+            }
+        });
         setPostComment(markerID);
 
         setButtonLikes();
@@ -176,6 +185,7 @@ public class MarkerActivity extends AppCompatActivity {
                 if (mTouchDislike) {
                     mDislikes--;
                     mMarker.setmVote("neutro");
+                    FeedActivity.votesMap.put(markerID, "neutral");
                     marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
                 } else {
@@ -212,6 +222,7 @@ public class MarkerActivity extends AppCompatActivity {
                 if (mTouchLike) {
                     mLikes--;
                     mMarker.setmVote("neutro");
+                    FeedActivity.votesMap.put(markerID, "neutral");
                     marker_button_likes.setBackgroundResource(R.drawable.upicon);
 
                 } else {
@@ -283,6 +294,7 @@ public class MarkerActivity extends AppCompatActivity {
 
             listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
 
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -310,7 +322,10 @@ public class MarkerActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
+
+            marker_comments_number.setText("" + comments.size());
             return comments.size();
+
         }
 
         @Override
@@ -343,5 +358,7 @@ public class MarkerActivity extends AppCompatActivity {
 
             return convertView;
         }
+
+
     }
 }

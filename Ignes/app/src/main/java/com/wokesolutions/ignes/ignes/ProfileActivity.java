@@ -122,13 +122,13 @@ public class ProfileActivity extends AppCompatActivity {
         });
         mAboutButton = findViewById(R.id.profile_about_button);
         mLessAboutButton = findViewById(R.id.profile_less_button);
+
         mAboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAboutClick();
             }
         });
-
 
         mAboutLayout = findViewById(R.id.about_layout);
         mEditAboutLayout = findViewById(R.id.edit_about_layout);

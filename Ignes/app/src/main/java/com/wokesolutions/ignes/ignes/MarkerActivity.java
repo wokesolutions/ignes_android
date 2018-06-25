@@ -219,7 +219,7 @@ public class MarkerActivity extends AppCompatActivity {
                 if (mTouchDislike) {
                     mDislikes--;
                     mMarker.setmVote("neutro");
-                    FeedActivity.votesMap.put(markerID, "neutral");
+                    MapActivity.votesMap.put(markerID, "neutral");
                     marker_button_dislikes.setBackgroundResource(R.drawable.downicon);
 
                 } else {
@@ -230,7 +230,7 @@ public class MarkerActivity extends AppCompatActivity {
                         mTouchLike = false;
                     }
                     mMarker.setmVote("down");
-                    FeedActivity.votesMap.put(markerID, "down");
+                    MapActivity.votesMap.put(markerID, "down");
                     marker_button_dislikes.setBackgroundResource(R.drawable.downicongrey);
                 }
 
@@ -256,7 +256,7 @@ public class MarkerActivity extends AppCompatActivity {
                 if (mTouchLike) {
                     mLikes--;
                     mMarker.setmVote("neutro");
-                    FeedActivity.votesMap.put(markerID, "neutral");
+                    MapActivity.votesMap.put(markerID, "neutral");
                     marker_button_likes.setBackgroundResource(R.drawable.upicon);
 
                 } else {
@@ -267,7 +267,7 @@ public class MarkerActivity extends AppCompatActivity {
                         mTouchDislike = false;
                     }
                     mMarker.setmVote("up");
-                    FeedActivity.votesMap.put(markerID, "up");
+                    MapActivity.votesMap.put(markerID, "up");
                     marker_button_likes.setBackgroundResource(R.drawable.upicongrey);
                 }
                 mProgressBar.setMax(mLikes + mDislikes);

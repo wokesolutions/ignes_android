@@ -878,7 +878,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/" + mReport;
+        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/post" + mReport;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

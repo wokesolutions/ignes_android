@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -472,7 +471,6 @@ public class RequestsVolley {
         final String mUsername = username;
         final String mToken = token;
         final String mCursor = cursor;
-        final Map<String, MarkerClass> userMap;
 
 
         String url = "https://hardy-scarab-200218.appspot.com/api/profile/reports/" + mUsername + "?cursor=" + mCursor;
@@ -492,7 +490,7 @@ public class RequestsVolley {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserMap(response);
-                            activity.markerAdapter = new MarkerAdapter(context, activity.markerMap, true);
+                            activity.markerAdapter = new MarkerAdapter(context, MapActivity.userMarkerMap, true);
                             activity.recyclerView.setAdapter(activity.markerAdapter);
                             activity.recyclerView.setNestedScrollingEnabled(false);
 
@@ -880,7 +878,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/post" + mReport;
+        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/post/" + mReport;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1073,9 +1071,10 @@ public class RequestsVolley {
         activity.queue.add(stringRequest);
     }
 
-    /*public static void userAvatarRequest(List reportId) {
+    public static void userAvatarRequest(String username, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
+                                        TaskClass task, final TaskAdapter taskAdapter) {
 
-        final String report = reportId;
+        final String mUsername = username;
 
         final MarkerClass mMarker = marker;
 
@@ -1093,7 +1092,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/" + report;
+        String url = "https://hardy-scarab-200218.appspot.com/api/profile/getprofilepic/" + mUsername;
 
         jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1103,15 +1102,15 @@ public class RequestsVolley {
                         System.out.println("OK: " + response);
                         try {
 
-                            String base64 = response.getString("report_thumbnail");
+                            String base64 = response.getString(mUsername);
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
 
                             if (mMarker != null) {
-                                mMarker.makeImg(data);
+                                mMarker.makeAvatar(data);
                                 markerAdapter.notifyItemChanged(position);
 
                             } else if (mTask != null) {
-                                mTask.makeImg(data);
+                                mTask.makeAvatar(data);
                                 taskAdapter.notifyItemChanged(position);
                             }
 
@@ -1157,14 +1156,14 @@ public class RequestsVolley {
                 }
             }
         };
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+        jsonRequest.setRetryPolicy(new DefaultRetryPolicy(
                 DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
                 1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        queue.add(postRequest);
+        queue.add(jsonRequest);
 
-    }*/
+    }
 
     public static void loginRequest(String username, String password, final Context context, final LoginActivity activity) {
 

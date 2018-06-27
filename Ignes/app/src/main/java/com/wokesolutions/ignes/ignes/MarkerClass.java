@@ -12,7 +12,9 @@ public class MarkerClass implements ClusterItem {
     private String mStatus, mAddress, mDate, mCreator_username,
             mDescription, mGravity, mTitle, mLikes, mDislikes, mLocality;
     private byte[] mImgbyte;
+    private byte[] mAvatarbyte;
     private Bitmap mImage_bitmap;
+    private Bitmap mAvatar_bitmap;
     private String mId, mVote;
 
     public MarkerClass(double lat, double lng, String status, String address,
@@ -32,6 +34,7 @@ public class MarkerClass implements ClusterItem {
         mDislikes = dislikes;
         mLocality = locality;
         mImgbyte = null;
+        mAvatarbyte = null;
         mId = marker_id;
         mVote = "";
     }
@@ -115,6 +118,15 @@ public class MarkerClass implements ClusterItem {
         return mImage_bitmap;
     }
 
+    public Bitmap makeAvatar(byte[] avatar) {
+        mAvatarbyte = avatar;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        mAvatar_bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length, options);
+
+        return mAvatar_bitmap;
+    }
+
     public byte[] getmImgbyte() {
         return mImgbyte;
     }
@@ -129,5 +141,9 @@ public class MarkerClass implements ClusterItem {
 
     public void setmVote(String mVote) {
         this.mVote = mVote;
+    }
+
+    public byte[] getmAvatarbyte() {
+        return mAvatarbyte;
     }
 }

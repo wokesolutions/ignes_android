@@ -1,10 +1,12 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import java.util.List;
 import java.util.Map;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
@@ -24,11 +27,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     RequestQueue queue;
     private Context mContext;
     private Map<String, TaskClass> mMap;
+    private String newStatus;
+    final String[] values = new String[]{"Aberto","Em progresso", "Fechado"};
 
     TaskAdapter(Context context, Map<String, TaskClass> map) {
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
+        newStatus = "";
 
     }
 
@@ -63,8 +69,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         TextView description = holder.task_description;
         TextView gravity = holder.task_gravity;
         Button notes_button = holder.button_notes;
+        final Button status_button = holder.button_status;
         TextView gravity_title = holder.task_gravity_title;
-        ImageView img_status = holder.task_status_image;
+        final ImageView img_status = holder.task_status_image;
         TextView indications = holder.task_indications;
         TextView contact = holder.task_contact;
         Button directions_button = holder.task_directions_button;
@@ -116,8 +123,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (taskItem.getmStatus().equals("CLOSE"))
             img_status.setImageResource(R.drawable.lockclose);
 
-        if (taskItem.getmStatus().equals("OPEN"))
+        if (taskItem.getmStatus().equals("OPEN")) {
             img_status.setImageResource(R.drawable.lockopen);
+        }
+        status_button.setText("Aberto");
 
         image.setImageBitmap(taskItem.getmImg_bitmap());
 
@@ -129,6 +138,44 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 i.putExtra("TaskClass", taskItem.getmId());
 
                 holder.itemViewContext.startActivity(i);
+            }
+        });
+
+        status_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                mBuilder.setTitle("Change Report Status");
+                mBuilder.setIcon(R.drawable.ocorrenciared);
+
+                mBuilder.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        System.out.println("The wrong button was tapped: " + values[whichButton]);
+                        newStatus = values[whichButton];
+                        System.out.println("New status: " + newStatus);
+                    }
+                });
+
+                mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (newStatus.equals("Em progresso"))
+                            status_button.setText("Em progresso");
+                        else if(newStatus.equals("Fechado")) {
+                            status_button.setText("Fechado");
+                            img_status.setImageResource(R.drawable.lockclose);
+
+                        }
+                        else if(newStatus.equals("Aberto")) {
+                            status_button.setText("Aberto");
+                            img_status.setImageResource(R.drawable.lockopen);
+                        }
+                    }
+                });
+
+                mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {}
+                }).show();
             }
         });
 
@@ -157,7 +204,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         ImageView task_status_image, task_image;
         TextView task_title, task_address, task_username, task_date, task_gravity,
                 task_gravity_title, task_description, task_indications, task_contact;
-        Button button_notes, task_directions_button;
+        Button button_notes, task_directions_button, button_status;
         Context itemViewContext;
         LinearLayout task_contacts_layout, task_indications_layout;
 
@@ -172,6 +219,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             task_username = itemView.findViewById(R.id.feed_username_marker);
             task_gravity = itemView.findViewById(R.id.feed_gravity_marker);
             button_notes = itemView.findViewById(R.id.button_notes);
+            button_status = itemView.findViewById(R.id.button_status);
             task_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             task_status_image = itemView.findViewById(R.id.feed_lock_img);
             task_indications = itemView.findViewById(R.id.feed_info_marker);

@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
+
+
         // Set up the login form.
         mIdentificationView = (EditText) findViewById(R.id.login_identification);
 
@@ -121,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 5;
+        return password.length() > 3;
     }
 
     /**

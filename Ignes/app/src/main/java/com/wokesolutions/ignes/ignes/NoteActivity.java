@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +39,9 @@ public class NoteActivity extends AppCompatActivity {
     private Context mContext;
     private TextView mTaskTitle;
     public RequestQueue queue;
+    private ArrayList<NoteClass> arrayList;
+    private ListView listview;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +78,9 @@ public class NoteActivity extends AppCompatActivity {
 
         RequestsVolley.taskNotesRequest(taskID, mToken, "", mContext, NoteActivity.this);
 
-
-        final ListView listview = (ListView) findViewById(R.id.listview);
-        String[] values = new String[]{"Android", "iPhone", "WindowsMobile",
+        arrayList = new ArrayList<>();
+        listview = (ListView) findViewById(R.id.listview);
+        /*String[] values = new String[]{"Android", "iPhone", "WindowsMobile",
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
                 "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
                 "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
@@ -85,10 +89,10 @@ public class NoteActivity extends AppCompatActivity {
         final ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < values.length; ++i) {
             list.add(values[i]);
-        }
+        }*/
       /*  final StableArrayAdapter adapter = new StableArrayAdapter(this,
                 worker_list_note_item, list);*/
-        listview.setAdapter(new MyAdapter(this, list));
+       // listview.setAdapter(new MyAdapter(this, list));
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -138,7 +142,8 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     public void setNotesList(JSONArray jsonArray) {
-
+        NoteClass noteClass;
+        arrayList.clear();
         try {
             JSONArray jsonarray = jsonArray;
 
@@ -146,11 +151,25 @@ public class NoteActivity extends AppCompatActivity {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
+                String noteID = jsonobject.getString("Note");
+
+                String textComment = jsonobject.getString("note_text");
+                String ownerComment = jsonobject.getString("note_worker");
+                String dateComment = jsonobject.getString("note_time");
+
+                noteClass = new NoteClass(ownerComment, textComment, dateComment);
+
+                arrayList.add(noteClass);
+
                 System.out.println("OLÁ DENTRO DO SET NOTES LIST");
+
+                listview.setAdapter(new NoteActivity.MyAdapter(mContext, arrayList));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        System.out.println("OLÁ DENTRO DO SET NOTES LIST");
+
     }
 
     public void setToolbar(Toolbar toolbar) {
@@ -178,20 +197,22 @@ public class NoteActivity extends AppCompatActivity {
 
         private Context context;
         private ArrayList<String> mobiles;
+        private ArrayList<NoteClass> notes;
 
-        public MyAdapter(Context context, ArrayList<String> mobiles) {
+        public MyAdapter(Context context, ArrayList<NoteClass> notes) {
             this.context = context;
-            this.mobiles = mobiles;
+            this.notes = notes;
+            //this.mobiles = mobiles;
         }
 
         @Override
         public int getCount() {
-            return mobiles.size();
+            return notes.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mobiles.get(position);
+            return notes.get(position);
         }
 
         @Override
@@ -210,9 +231,13 @@ public class NoteActivity extends AppCompatActivity {
                         R.layout.worker_list_note_item, null);
             }
 
-            TextView name = (TextView) convertView.findViewById(R.id.note_text);
+            TextView note_subtext = (TextView) convertView.findViewById(R.id.note_text);
+            TextView note_date = (TextView) convertView.findViewById(R.id.note_creation_date);
+            TextView note_creator = (TextView) convertView.findViewById(R.id.note_creator_name);
 
-            name.setText(mobiles.get(position));
+            note_subtext.setText(notes.get(position).getText());
+            note_date.setText(notes.get(position).getDate());
+            note_creator.setText(notes.get(position).getUser());
 
             return convertView;
         }

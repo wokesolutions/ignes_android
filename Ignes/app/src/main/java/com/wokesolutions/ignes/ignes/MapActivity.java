@@ -88,6 +88,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, MarkerClass> mReportMap;
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
+    public static Map<String, MarkerClass> userMarkerMap;
 
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
@@ -205,7 +206,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
-
         mToken = sharedPref.getString("token", "");
         mUsername = sharedPref.getString("username", "ERROR");
         mRole = sharedPref.getString("userLevel", "");
@@ -254,6 +254,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mReportMap = new HashMap<>();
         mWorkerTaskMap = new HashMap<>();
         votesMap = new HashMap<>();
+        userMarkerMap = new HashMap<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -423,12 +424,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mReportMap.put(reportID, report);
                     orderedIds.add(reportID);
                 }
+                if (!userMarkerMap.containsKey(reportID)) {
+                    if (name.equals(mUsername)) {
+                        userMarkerMap.put(reportID, report);
+                    }
+                }
 
-                /*if(!mReportList.contains(report))
-                    mReportList.add(report);*/
             }
-
-            //  mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
 
@@ -947,6 +949,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     if (mReportMap.containsKey(idReport)) {
                         MarkerClass markerClass = mReportMap.get(idReport);
+                        markerClass.setmVote(vote);
+                    }
+                    if (userMarkerMap.containsKey(idReport)) {
+                        MarkerClass markerClass = userMarkerMap.get(idReport);
                         markerClass.setmVote(vote);
                     }
                 }

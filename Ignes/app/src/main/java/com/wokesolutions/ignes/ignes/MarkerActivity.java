@@ -41,7 +41,7 @@ public class MarkerActivity extends AppCompatActivity {
     private TextView comment_owner, comment_date, comment_text;
     private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
     private ProgressBar mProgressBar;
-    private MarkerClass mMarker;
+    private MarkerClass mMarker, mSecondMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
     private LinearLayout mNumbCommentsLayout;
@@ -115,10 +115,14 @@ public class MarkerActivity extends AppCompatActivity {
         markerID = intent.getExtras().getString("MarkerClass");
         final boolean isProfile = intent.getExtras().getBoolean("IsProfile");
 
-        if (isProfile)
-            mMarker = ProfileActivity.markerMap.get(markerID);
-        else
+        if (isProfile) {
+            mMarker = MapActivity.userMarkerMap.get(markerID);
+            mSecondMarker = MapActivity.mReportMap.get(markerID);
+        }
+        else {
             mMarker = MapActivity.mReportMap.get(markerID);
+            mSecondMarker = MapActivity.userMarkerMap.get(markerID);
+        }
 
         Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
 
@@ -295,6 +299,7 @@ public class MarkerActivity extends AppCompatActivity {
 
                 if (!text.equals("")) {
                     RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
+                    //TODO meter esta parte do lado do volley para nao fazer sempre
                     arrayList.add(new CommentClass("", "", "", text));
                     listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
                     setListViewHeightBasedOnChildren(listview);
@@ -336,10 +341,6 @@ public class MarkerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    //array ReportComment - id do comment
-    // reportcomment_text , user, time
-    // user_profpictn
 
     @Override
     public boolean onSupportNavigateUp() {

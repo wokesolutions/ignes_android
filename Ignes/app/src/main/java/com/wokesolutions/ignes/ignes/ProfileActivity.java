@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
     public RecyclerView recyclerView;
-    public static Map<String, MarkerClass> markerMap;
+
     public MarkerAdapter markerAdapter;
     private String storedAvatar;
 
@@ -169,7 +169,6 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(manager);
-        markerMap = new HashMap<>();
 
         userReportsRequest("");
 
@@ -220,8 +219,8 @@ public class ProfileActivity extends AppCompatActivity {
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, "", reportID);
 
-                if (!markerMap.containsKey(reportID)) {
-                    markerMap.put(reportID, report);
+                if (!MapActivity.userMarkerMap.containsKey(reportID)) {
+                    MapActivity.userMarkerMap.put(reportID, report);
                 }
             }
         } catch (JSONException e) {

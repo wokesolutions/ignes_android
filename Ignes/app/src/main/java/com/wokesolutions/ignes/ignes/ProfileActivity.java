@@ -82,8 +82,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.profile_avatar);
 
-        storedAvatar = sharedPref.getString("Avatar", "404");
-        if (!storedAvatar.equals("404")) {
+        storedAvatar = sharedPref.getString("Avatar", "");
+        if (!storedAvatar.equals("")) {
             byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
 
@@ -186,35 +186,35 @@ public class ProfileActivity extends AppCompatActivity {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String reportID = jsonobject.getString("Report");
+                String reportID = jsonobject.getString("report");
 
-                double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+                double latitude = Double.parseDouble(jsonobject.getString("lat"));
 
-                double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+                double longitude = Double.parseDouble(jsonobject.getString("lng"));
 
-                String likes = jsonobject.getString("reportvotes_up");
+                String likes = jsonobject.getString("ups");
 
-                String dislikes = jsonobject.getString("reportvotes_down");
+                String dislikes = jsonobject.getString("downs");
 
-                String status = jsonobject.getString("report_status");
+                String status = jsonobject.getString("status");
 
-                String address = jsonobject.getString("report_address");
+                String address = jsonobject.getString("address");
 
-                String date = jsonobject.getString("report_creationtimeformatted");
+                String date = jsonobject.getString("creationtime");
 
                 String name = mUsername;
 
                 String gravity = "0";
-                if (jsonobject.has("report_gravity"))
-                    gravity = jsonobject.getString("report_gravity");
+                if (jsonobject.has("gravity"))
+                    gravity = jsonobject.getString("gravity");
 
                 String description = "";
-                if (jsonobject.has("report_description"))
-                    description = jsonobject.getString("report_description");
+                if (jsonobject.has("description"))
+                    description = jsonobject.getString("description");
 
                 String title = "";
-                if (jsonobject.has("report_title"))
-                    title = jsonobject.getString("report_title");
+                if (jsonobject.has("title"))
+                    title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, "", reportID);
@@ -355,7 +355,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 mUsernameEditText.setText(mUsername);
 
-                if (!storedAvatar.equals("404")) {
+                if (!storedAvatar.equals("")) {
                     byte[] img = Base64.decode(storedAvatar, Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
 
@@ -490,11 +490,15 @@ public class ProfileActivity extends AppCompatActivity {
                             // form field with an error.
                             focusView.requestFocus();
                         } else {
-                            RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
+                            if (!storedAvatar.equals("")) {
+                                RequestsVolley.changeProfPicRequest(storedAvatar, mContext);
+                            }
+
+                            /*RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
                                     mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
                                     mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
                                     mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
-                                    ,mUsername, mContext, ProfileActivity.this );
+                                    ,mUsername, mContext, ProfileActivity.this );*/
 
                         }
                     }
@@ -592,11 +596,11 @@ public class ProfileActivity extends AppCompatActivity {
                     mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
                     byteArray = stream.toByteArray();
 
-                    String saveAvatarPicture = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                    storedAvatar = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
                     SharedPreferences.Editor editor = sharedPref.edit();
 
-                    editor.putString("Avatar", saveAvatarPicture);
+                    editor.putString("Avatar", storedAvatar);
 
                     editor.apply();
 

@@ -1,19 +1,25 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -68,6 +74,7 @@ public class RequestsVolley {
 
         url = "https://hardy-scarab-200218.appspot.com/api/report/comment/get/" + mReportId + "?cursor=" + mCursor;
 
+
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -97,11 +104,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
 
-                params.put("Authorization", mToken);
-
-                return params;
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -181,7 +185,7 @@ public class RequestsVolley {
                         System.out.println("OK: " + response);
                         try {
 
-                            String base64 = response.getString("report_thumbnail");
+                            String base64 = response.getString("thumbnail");
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
 
                             if (mMarker != null) {
@@ -210,6 +214,14 @@ public class RequestsVolley {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                //Map<String, String> params = new HashMap<String, String>();
+
+
+                return setHeaders("", mContext);
+            }
+
             @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
 
@@ -287,7 +299,8 @@ public class RequestsVolley {
 
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
-                            activity.votesRequest(activity.mUsername, "");
+                            if (activity.mRole.equals("USER"))
+                                activity.votesRequest(activity.mUsername, "");
                         } else {
                             System.out.println("Continuar a pedir...");
                             activity.mapRequest(mLat, mLng, mRadius, mToken, mIsFinish);
@@ -311,11 +324,11 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                if (activity.mRole.equals("WORKER"))
-                    params.put("Authorization", mToken);
 
-                return params;
+                if (activity.mRole.equals("WORKER"))
+                    return setHeaders(mToken, context);
+                else
+                    return setHeaders("", context);
             }
 
             @Override
@@ -414,11 +427,11 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                if (activity.mRole.equals("WORKER"))
-                    params.put("Authorization", mToken);
 
-                return params;
+                if (activity.mRole.equals("WORKER"))
+                    return setHeaders(mToken, context);
+                else
+                    return setHeaders("", context);
             }
 
             @Override
@@ -506,15 +519,17 @@ public class RequestsVolley {
 
                         System.out.println("ERRO DO USER REPORTS: " + error.toString());
 
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+                        if (error.toString().equals("com.android.volley.VolleyError: 204"))
+                            Toast.makeText(context, "This user has no reports!", Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
-                return params;
+
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -604,9 +619,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
-                return params;
+
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -686,9 +700,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
-                return params;
+
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -701,7 +714,7 @@ public class RequestsVolley {
 
                     System.out.println("RESPONSE HERE ->>> " + response);
 
-                    return Response.success("ola", HttpHeaderParser.parseCacheHeaders(response));
+                    return Response.success("Votes sent", HttpHeaderParser.parseCacheHeaders(response));
 
 
                 } else if (response.statusCode == 403) {
@@ -768,29 +781,29 @@ public class RequestsVolley {
             System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
             System.out.println("BYTEARRAY ENVIADO DA IMG: " + activity.imgByteArray.length);
 
-            report.put("report_lat", mLat);
-            report.put("report_lng", mLng);
-            report.put("report_img", base64Img);
+            report.put("lat", mLat);
+            report.put("lng", mLng);
+            report.put("img", base64Img);
             //report.put("report_thumbnail", base64Thumbnail);
-            report.put("report_imgheight", h);
-            report.put("report_imgwidth", w);
-            report.put("report_address", mAddress);
-            report.put("report_private", activity.mIsPrivate);
-            report.put("report_city", mDistrict);
-            report.put("report_locality", mLocality);
-            report.put("report_imgorientation", mOrientation);
+            report.put("imgheight", h);
+            report.put("imgwidth", w);
+            report.put("address", mAddress);
+            report.put("isprivate", activity.mIsPrivate);
+            report.put("city", mDistrict);
+            report.put("locality", mLocality);
+            report.put("imgorientation", mOrientation);
 
             if (activity.mReportType.equals("medium")) {
 
-                report.put("report_title", mTitle);
-                report.put("report_gravity", mGravity);
+                report.put("title", mTitle);
+                report.put("gravity", mGravity);
 
 
             } else if (activity.mReportType.equals("detailed")) {
 
-                report.put("report_title", mTitle);
-                report.put("report_gravity", mGravity);
-                report.put("report_description", mDescription);
+                report.put("title", mTitle);
+                report.put("gravity", mGravity);
+                report.put("description", mDescription);
 
             }
 
@@ -836,10 +849,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, context);
             }
 
             @Override
@@ -870,7 +881,7 @@ public class RequestsVolley {
         final JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("reportcomment_text", mComment);
+            jsonObject.put("text", mComment);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -887,6 +898,7 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK COMMENT");
                         Toast.makeText(context, "Comment added!", Toast.LENGTH_LONG).show();
+                        activity.arrayList.add(new CommentClass("", "", "", mComment));
                         activity.marker_comment.setText("");
                     }
                 },
@@ -902,19 +914,17 @@ public class RequestsVolley {
                         if (response.statusCode == 403) {
                             Toast.makeText(context, "No permission to comment!", Toast.LENGTH_LONG).show();
                             System.out.println("POST COMMENT volley -> User sem permissao para comentar " + response.statusCode);
-                        }
+                        } else
 
-                        Toast.makeText(context, "Ups, failed on comment report!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Ups, failed to comment report!", Toast.LENGTH_LONG).show();
 
                     }
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, context);
             }
 
             @Override
@@ -986,6 +996,12 @@ public class RequestsVolley {
                 }
         ) {
             @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders("", context);
+            }
+
+            @Override
             public byte[] getBody() {
                 return credentials.toString().getBytes();
             }
@@ -1054,10 +1070,8 @@ public class RequestsVolley {
 
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
 
-                return params;
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -1072,7 +1086,7 @@ public class RequestsVolley {
     }
 
     public static void userAvatarRequest(String username, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
-                                        TaskClass task, final TaskAdapter taskAdapter) {
+                                         TaskClass task, final TaskAdapter taskAdapter) {
 
         final String mUsername = username;
 
@@ -1131,6 +1145,12 @@ public class RequestsVolley {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders("", mContext);
+            }
+
             @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
 
@@ -1232,15 +1252,21 @@ public class RequestsVolley {
                             e.printStackTrace();
                         }
 
-                        activity.startActivity(new Intent(activity, MapActivity.class));
-                        activity.finish();
+                        String level = sharedPref.getString("userLevel", "");
+                        if (level.equals("USER"))
+                            profileRequest(sharedPref.getString("username", ""), context, activity);
+                        else {
+                            activity.startActivity(new Intent(activity, MapActivity.class));
+                            activity.finish();
+                        }
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("LOGIN volley -> ERRO " + response + " " + error);
+                        System.out.println("LOGIN volley -> ERRO " + response + " " + error.getMessage());
 
                         if (response.statusCode == 403) {
                             activity.mPasswordView.setError(context.getString(R.string.error_incorrect_password));
@@ -1252,6 +1278,12 @@ public class RequestsVolley {
                     }
                 }
         ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders("", context);
+            }
+
             @Override
             public byte[] getBody() {
                 return credentials.toString().getBytes();
@@ -1348,10 +1380,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
 
-                return params;
+                return setHeaders(mToken, context);
             }
 
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
@@ -1410,44 +1440,68 @@ public class RequestsVolley {
                         SharedPreferences.Editor editor = sharedPref.edit();
 
                         try {
-                            editor.putString("user_points", String.valueOf(response.getInt("userpoints_points")));
-                            editor.putString("user_reportNum", String.valueOf(response.getInt("user_reports")));
-                            editor.putString("user_email", response.getString("user_email"));
+                            editor.putString("user_points", String.valueOf(response.getInt("points")));
+                            editor.putString("user_reportNum", String.valueOf(response.getInt("reports")));
+                            editor.putString("user_email", response.getString("email"));
 
-                            if (response.has("useroptional_name"))
-                                editor.putString("user_name", response.getString("useroptional_name"));
+                            if (response.has("name"))
+                                editor.putString("user_name", response.getString("name"));
+                            else
+                                editor.putString("user_name", mUsername);
 
-                            if (response.has("useroptional_birth")) {
-                                String[] tokens = response.getString("useroptional_birth").split(" ");
+                            if (response.has("birth")) {
+                                String[] tokens = response.getString("birth").split(" ");
 
                                 editor.putString("user_day", tokens[0]);
                                 editor.putString("user_month", tokens[1]);
                                 editor.putString("user_year", tokens[2]);
+                            } else {
+                                editor.putString("user_day", "");
+                                editor.putString("user_month", "");
+                                editor.putString("user_year", "");
                             }
 
-                            if (response.has("useroptional_locality"))
-                                editor.putString("user_locality", response.getString("useroptional_locality"));
 
-                            if (response.has("useroptional_phone")) {
-                                editor.putString("user_phone", response.getString("useroptional_phone"));
-                            }
+                            if (response.has("locality"))
+                                editor.putString("user_locality", response.getString("locality"));
+                            else
+                                editor.putString("user_locality", "");
 
-                            if (response.has("useroptional_address")) {
-                                editor.putString("user_address", response.getString("useroptional_address"));
-                            }
 
-                            if (response.has("useroptional_gender")) {
-                                editor.putString("user_gender", response.getString("useroptional_gender"));
-                            }
+                            if (response.has("phone")) {
+                                editor.putString("user_phone", response.getString("phone"));
+                            } else
+                                editor.putString("user_phone", "");
 
-                            if (response.has("useroptional_job")) {
-                                editor.putString("user_job", response.getString("useroptional_job"));
-                            }
-                            if (response.has("useroptional_skills")) {
-                                editor.putString("user_skills", response.getString("useroptional_skills"));
-                            }
 
-                            editor.putString("askForProfile", "NO");
+                            if (response.has("address")) {
+                                editor.putString("user_address", response.getString("address"));
+                            } else
+                                editor.putString("user_address", "");
+
+
+                            if (response.has("gender")) {
+                                editor.putString("user_gender", response.getString("gender"));
+                            } else
+                                editor.putString("user_gender", "");
+
+                            if (response.has("job")) {
+                                editor.putString("user_job", response.getString("job"));
+                            } else
+                                editor.putString("user_job", "");
+
+                            if (response.has("skills")) {
+                                editor.putString("user_skills", response.getString("skills"));
+                            } else
+                                editor.putString("user_skills", "");
+
+                            if (response.has("profpic")) {
+                                editor.putString("Avatar", response.getString("profpic"));
+                            } else
+                                editor.putString("Avatar", "");
+
+
+                            editor.putString("askForProfile", "YES");
 
                             editor.apply();
 
@@ -1481,10 +1535,8 @@ public class RequestsVolley {
 
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, mContext);
             }
 
             @Override
@@ -1565,10 +1617,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, context);
             }
 
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
@@ -1663,10 +1713,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, context);
             }
 
             @Override
@@ -1740,10 +1788,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", token);
 
-                return params;
+                return setHeaders(token, context);
             }
 
             @Override
@@ -1782,7 +1828,8 @@ public class RequestsVolley {
                         // resp
                         SharedPreferences sharedPref = context.getSharedPreferences("Shared", MODE_PRIVATE);
                         sharedPref.edit().remove("token").commit();
-                        System.out.println("User Logged Out");
+
+                        Toast.makeText(context, "User Logged Out", Toast.LENGTH_LONG).show();
 
                         activity.startActivity(new Intent(activity, LoginActivity.class));
                         activity.finish();
@@ -1799,16 +1846,82 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
+                System.out.println("TOKEN NO LOGOUT: " + mToken);
 
-                return params;
+                return setHeaders(mToken, context);
             }
 
         };
         setRetry(stringRequest);
 
         queue.add(stringRequest);
+    }
+
+    public static void changeProfPicRequest(String avatar, final Context context) {
+
+        final String mAvatar = avatar;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
+
+        final JSONObject profilePic = new JSONObject();
+
+        try {
+            profilePic.put("pic", mAvatar);
+            profilePic.put("orientation", 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = "https://hardy-scarab-200218.appspot.com/api/profile/changeprofilepic";
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK Change profile: " + response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        System.out.println("CHANGE PROFILE PIC volley -> ERRO " + response.statusCode);
+
+                        if (response.statusCode == BAD_REQUEST_ERROR) {
+                        } else {
+                            Toast.makeText(context, "Ups, failed to change profile picture!", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(token, context);
+            }
+
+            @Override
+            public byte[] getBody() {
+                return profilePic.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
+        setRetry(stringRequest);
+        queue.add(stringRequest);
+
     }
 
     public static void editProfileRequest(String phone, String name, String gender, String address,
@@ -1836,15 +1949,15 @@ public class RequestsVolley {
 
         try {
 
-            json.put("useroptional_phone", mPhone);
-            json.put("useroptional_name", mName);
-            json.put("useroptional_gender", mGender);
-            json.put("useroptional_address", mAddress);
-            json.put("useroptional_locality", mLocality);
-            json.put("useroptional_zip", mZip);
-            json.put("useroptional_birth", mDay + " " + mMonth + " " + mYear);
-            json.put("useroptional_job", mJob);
-            json.put("useroptional_skills", mSkills);
+            json.put("phone", mPhone);
+            json.put("name", mName);
+            json.put("gender", mGender);
+            json.put("address", mAddress);
+            json.put("locality", mLocality);
+            json.put("zip", mZip);
+            json.put("birth", mDay + " " + mMonth + " " + mYear);
+            json.put("job", mJob);
+            json.put("skills", mSkills);
 
             System.out.println("JSON EDIT PROFILE ->  " + json);
         } catch (Exception e) {
@@ -1889,7 +2002,7 @@ public class RequestsVolley {
                         NetworkResponse response = error.networkResponse;
                         System.out.println("EDIT PROFILE volley -> ERRO " + response.statusCode + "  " + error);
 
-                        Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
+                        Log.e("Edit volley -> ERRO ", "" + response.statusCode);
 
                         Toast.makeText(context, "Ups, error editing profile!", Toast.LENGTH_LONG).show();
 
@@ -1898,10 +2011,8 @@ public class RequestsVolley {
         ) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", mToken);
 
-                return params;
+                return setHeaders(mToken, context);
             }
 
             @Override
@@ -1923,9 +2034,22 @@ public class RequestsVolley {
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 4,
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5,
                 -1,  // maxNumRetries = 0 means no retry
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    }
+
+    private static Map<String, String> setHeaders(String mToken, Context mContext) {
+        Map<String, String> params = new HashMap<String, String>();
+        if (!mToken.equals(""))
+            params.put("Authorization", mToken);
+
+        params.put("Device-ID", Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
+        System.out.println("DEVICE ID: " + Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
+        params.put("Device-App", "Android");
+        params.put("Device-Info", "Telemovel sexy");
+
+        return params;
     }
 
 }

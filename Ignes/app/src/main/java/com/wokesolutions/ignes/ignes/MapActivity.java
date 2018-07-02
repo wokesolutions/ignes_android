@@ -387,35 +387,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String reportID = jsonobject.getString("Report");
+                String reportID = jsonobject.getString("report");
 
-                double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+                double latitude = Double.parseDouble(jsonobject.getString("lat"));
 
-                double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+                double longitude = Double.parseDouble(jsonobject.getString("lng"));
 
-                String likes = jsonobject.getString("reportvotes_up");
+                String likes = jsonobject.getString("ups");
 
-                String dislikes = jsonobject.getString("reportvotes_down");
+                String dislikes = jsonobject.getString("downs");
 
-                String status = jsonobject.getString("report_status");
 
-                String address = jsonobject.getString("report_address");
+                String status = jsonobject.getString("status");
 
-                String date = jsonobject.getString("report_creationtimeformatted");
+                String address = jsonobject.getString("address");
 
-                String name = jsonobject.getString("report_username");
+                String date = jsonobject.getString("creationtime");
+
+                String name = jsonobject.getString("username");
 
                 String gravity = "0";
-                if (jsonobject.has("report_gravity"))
-                    gravity = jsonobject.getString("report_gravity");
+                if (jsonobject.has("gravity"))
+                    gravity = jsonobject.getString("gravity");
 
                 String description = "";
-                if (jsonobject.has("report_description"))
-                    description = jsonobject.getString("report_description");
+                if (jsonobject.has("description"))
+                    description = jsonobject.getString("description");
 
                 String title = "";
-                if (jsonobject.has("report_title"))
-                    title = jsonobject.getString("report_title");
+                if (jsonobject.has("title"))
+                    title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, reportID);
@@ -453,11 +454,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String reportID = jsonobject.getString("Report");
+                String reportID = jsonobject.getString("task");
 
-                double latitude = Double.parseDouble(jsonobject.getString("report_lat"));
+                double latitude = Double.parseDouble(jsonobject.getString("lat"));
 
-                double longitude = Double.parseDouble(jsonobject.getString("report_lng"));
+                double longitude = Double.parseDouble(jsonobject.getString("lng"));
 
                 String likes = "0";
                 if (jsonobject.has("reportvotes_up"))
@@ -467,34 +468,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("reportvotes_down"))
                     dislikes = jsonobject.getString("reportvotes_down");
 
-                String status = jsonobject.getString("report_status");
+                String status = jsonobject.getString("status");
 
-                String address = jsonobject.getString("report_address");
+                String address = jsonobject.getString("address");
 
-                String date = jsonobject.getString("report_creationtimeformatted");
+                String date = jsonobject.getString("creationtime");
 
-                String name = jsonobject.getString("report_username");
+                String name = jsonobject.getString("username");
 
                 String phonenumber = "";
 
-                if (jsonobject.has("useroptional_phone"))
-                    phonenumber = jsonobject.getString("useroptional_phone");
+                if (jsonobject.has("phone"))
+                    phonenumber = jsonobject.getString("phone");
 
                 String gravity = "0";
-                if (jsonobject.has("report_gravity"))
-                    gravity = jsonobject.getString("report_gravity");
+                if (jsonobject.has("gravity"))
+                    gravity = jsonobject.getString("gravity");
 
                 String description = "";
-                if (jsonobject.has("report_description"))
-                    description = jsonobject.getString("report_description");
+                if (jsonobject.has("description"))
+                    description = jsonobject.getString("description");
 
                 String title = "";
-                if (jsonobject.has("report_title"))
-                    title = jsonobject.getString("report_title");
+                if (jsonobject.has("title"))
+                    title = jsonobject.getString("title");
 
                 String indications = "";
-                if (jsonobject.has("report_indications"))
-                    title = jsonobject.getString("report_title");
+                if (jsonobject.has("indications"))
+                    title = jsonobject.getString("indications");
 
                 TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, reportID, indications, phonenumber);
@@ -503,12 +504,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mWorkerTaskMap.put(reportID, report);
                     orderedIds.add(reportID);
                 }
-
-                /*if(!mReportList.contains(report))
-                    mReportList.add(report);*/
             }
-
-            //  mReportMap = temp;
 
             setUpCluster(new LatLng(lat, lng));
 
@@ -942,10 +938,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                if (jsonobject.has("uservote_report")) {
+                if (jsonobject.has("report")) {
 
-                    String idReport = jsonobject.getString("uservote_report");
-                    String vote = jsonobject.getString("uservote_type");
+                    String idReport = jsonobject.getString("report");
+                    String vote = jsonobject.getString("vote");
 
                     if (mReportMap.containsKey(idReport)) {
                         MarkerClass markerClass = mReportMap.get(idReport);

@@ -151,11 +151,11 @@ public class NoteActivity extends AppCompatActivity {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String noteID = jsonobject.getString("Note");
+                String noteID = jsonobject.getString("note");
 
-                String textComment = jsonobject.getString("note_text");
-                String ownerComment = jsonobject.getString("note_worker");
-                String dateComment = jsonobject.getString("note_time");
+                String textComment = jsonobject.getString("text");
+                String ownerComment = jsonobject.getString("worker");
+                String dateComment = jsonobject.getString("creationtime");
 
                 noteClass = new NoteClass(ownerComment, textComment, dateComment);
 

@@ -46,7 +46,7 @@ public class MarkerActivity extends AppCompatActivity {
     private boolean mTouchLike, mTouchDislike;
     private LinearLayout mNumbCommentsLayout;
     private Context mContext;
-    private ArrayList<CommentClass> arrayList;
+    public ArrayList<CommentClass> arrayList;
     private ListView listview;
     private boolean isClicked;
 
@@ -300,7 +300,7 @@ public class MarkerActivity extends AppCompatActivity {
                 if (!text.equals("")) {
                     RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
                     //TODO meter esta parte do lado do volley para nao fazer sempre
-                    arrayList.add(new CommentClass("", "", "", text));
+                    //arrayList.add(new CommentClass("", "", "", text));
                     listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
                     setListViewHeightBasedOnChildren(listview);
                     new MarkerActivity.MyAdapter(mContext, arrayList).notifyDataSetChanged();
@@ -323,11 +323,11 @@ public class MarkerActivity extends AppCompatActivity {
 
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
-                String commentID = jsonobject.getString("ReportComment");
+                String commentID = jsonobject.getString("comment");
 
-                String textComment = jsonobject.getString("reportcomment_text");
-                String ownerComment = jsonobject.getString("reportcomment_user");
-                String dateComment = jsonobject.getString("reportcomment_time");
+                String textComment = jsonobject.getString("text");
+                String ownerComment = jsonobject.getString("username");
+                String dateComment = jsonobject.getString("creationtime");
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
 

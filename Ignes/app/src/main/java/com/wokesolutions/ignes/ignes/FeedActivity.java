@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class FeedActivity extends AppCompatActivity {
     private String mRole, mToken;
     private MarkerAdapter markerAdapter;
     private TaskAdapter taskAdapter;
+    private Spinner address_dropdown;
 
 
     @Override
@@ -108,6 +110,7 @@ public class FeedActivity extends AppCompatActivity {
             markerAdapter = new MarkerAdapter(this, markerMap, false);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
+
             user_menuButtons();
             mLocality = findViewById(R.id.feed_address);
 

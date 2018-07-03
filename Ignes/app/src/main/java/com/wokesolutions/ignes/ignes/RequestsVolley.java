@@ -1,25 +1,19 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -39,7 +33,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +45,7 @@ public class RequestsVolley {
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
+    private static final String URL = "https://mimetic-encoder-209111.appspot.com/api";
 
     private static final int L_EVERYWHERE = 1;
     private static final int L_ONCE = 0;
@@ -72,7 +66,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/get/" + mReportId + "?cursor=" + mCursor;
+        url = URL+"/report/comment/get/" + mReportId + "?cursor=" + mCursor;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -175,7 +169,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/thumbnail/" + report;
+        String url = URL+"/report/thumbnail/" + report;
 
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -275,11 +269,11 @@ public class RequestsVolley {
         String url = "";
 
         if (activity.mRole.equals("USER")) {
-            url = "https://hardy-scarab-200218.appspot.com/api/report/getwithinradius?"
+            url = URL+"/report/getwithinradius?"
                     + "lat=" + activity.mCurrentLocation.getLatitude() + "&lng=" + activity.mCurrentLocation.getLongitude()
                     + "&radius=" + mRadius + "&cursor=" + mCursor;
         } else if (activity.mRole.equals("WORKER")) {
-            url = "https://hardy-scarab-200218.appspot.com/api/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
+            url = URL+"/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
         }
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -387,7 +381,7 @@ public class RequestsVolley {
         System.out.println("PEDIR REPORTS DE --->>>" + mLocation);
 
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
+        String url = URL+"/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -486,7 +480,7 @@ public class RequestsVolley {
         final String mCursor = cursor;
 
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/profile/reports/" + mUsername + "?cursor=" + mCursor;
+        String url = URL+"/profile/reports/" + mUsername + "?cursor=" + mCursor;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -586,7 +580,7 @@ public class RequestsVolley {
         final String mCursor = cursor;
 
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/task/notes/" + mTask;
+        String url = URL+"/task/notes/" + mTask;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -676,7 +670,7 @@ public class RequestsVolley {
         final String mToken = token;
 
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/report/vote/multiple";
+        String url = URL+"/report/vote/multiple";
 
 
         stringRequest = new StringRequest(Request.Method.POST, url,
@@ -815,7 +809,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/create";
+        url = URL+"/report/create";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -889,7 +883,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/report/comment/post/" + mReport;
+        url = URL+"/report/comment/post/" + mReport;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -963,7 +957,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/register/user";
+        url = URL+"/register/user";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1032,7 +1026,7 @@ public class RequestsVolley {
             e.printStackTrace();
         }
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/activate/" + username;
+        url =URL+"/profile/activate/" + username;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1106,7 +1100,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = "https://hardy-scarab-200218.appspot.com/api/profile/getprofilepic/" + mUsername;
+        String url = URL+"/profile/getprofilepic/" + mUsername;
 
         jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1212,7 +1206,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/login";
+        url = URL+"/login";
 
         jsonRequest = new JsonObjectRequest(Request.Method.POST, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1341,7 +1335,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/verifytoken";
+        url = URL+"/verifytoken";
 
         stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -1427,7 +1421,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/view/" + mUsername;
+        url = URL+"/profile/view/" + mUsername;
 
         jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1582,7 +1576,7 @@ public class RequestsVolley {
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/votes/" + mUsername + "?cursor=" + mCursor;
+        url = URL+"/profile/votes/" + mUsername + "?cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -1684,7 +1678,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/task/addnote/" + mIdTask;
+        url =URL+"/task/addnote/" + mIdTask;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1757,7 +1751,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/changepassword";
+        url = URL+"/profile/changepassword";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1817,9 +1811,9 @@ public class RequestsVolley {
         String url = "";
 
         if (request == L_EVERYWHERE)
-            url = "https://hardy-scarab-200218.appspot.com/api/logout/everywhere";
+            url = URL+"/logout/everywhere";
         if (request == L_ONCE)
-            url = "https://hardy-scarab-200218.appspot.com/api/logout";
+            url = URL+"/logout";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1876,7 +1870,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/changeprofilepic";
+        url = URL+"/profile/changeprofilepic";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1966,7 +1960,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = "https://hardy-scarab-200218.appspot.com/api/profile/update/" + mUsername;
+        url = URL+"/profile/update/" + mUsername;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

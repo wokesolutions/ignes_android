@@ -275,7 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else if (mRole.equals("WORKER")) {
 
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
-            worker_menuButtons();
+
         }
 
         /*----- About Google Maps -----*/
@@ -289,7 +289,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        addresses = null;
+         addresses= null;
 
     }
 
@@ -729,12 +729,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
 
-    }
-
-    /*----- About Menu Bar -----*/
-    private void worker_menuButtons() {
-
-        System.out.println("SOU UM METODO INUTIL");
     }
 
     @Override

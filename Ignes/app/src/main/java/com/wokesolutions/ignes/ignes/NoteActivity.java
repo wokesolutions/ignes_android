@@ -94,7 +94,8 @@ public class NoteActivity extends AppCompatActivity {
                 worker_list_note_item, list);*/
        // listview.setAdapter(new MyAdapter(this, list));
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //TODO MUDAR ESTE ONCLICK DE FORMA A QUE LEIA BEM A NOTA
+       /* listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
@@ -113,7 +114,7 @@ public class NoteActivity extends AppCompatActivity {
                             }
                         });
             }
-        });
+        });*/
 
         mAddNote_button.setOnClickListener(new View.OnClickListener() {
             @Override

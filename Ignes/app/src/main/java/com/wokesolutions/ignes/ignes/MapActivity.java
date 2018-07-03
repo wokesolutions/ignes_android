@@ -289,7 +289,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-         addresses= null;
+        addresses = null;
 
     }
 
@@ -1088,7 +1088,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             System.out.println("COR AQUI! " + item.getmGravity());
 
-            markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+            //markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+            switch (item.getmGravity()) {
+                case "1":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    break;
+                case "2":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    break;
+                case "3":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    break;
+                case "4":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    break;
+                case "5":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+
+            }
         }
 
         @Override

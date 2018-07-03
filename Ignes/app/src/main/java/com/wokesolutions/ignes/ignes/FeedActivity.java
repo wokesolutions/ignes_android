@@ -151,6 +151,7 @@ public class FeedActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 startActivity(new Intent(FeedActivity.this, SettingsActivity.class));
+                finish();
             }
         });
     }
@@ -162,6 +163,7 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
+                finish();
             }
         });
     }

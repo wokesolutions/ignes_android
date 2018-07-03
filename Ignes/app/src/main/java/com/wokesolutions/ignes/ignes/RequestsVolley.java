@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -66,7 +67,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/report/comment/get/" + mReportId + "?cursor=" + mCursor;
+        url = URL + "/report/comment/get/" + mReportId + "?cursor=" + mCursor;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -169,7 +170,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = URL+"/report/thumbnail/" + report;
+        String url = URL + "/report/thumbnail/" + report;
 
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -269,11 +270,11 @@ public class RequestsVolley {
         String url = "";
 
         if (activity.mRole.equals("USER")) {
-            url = URL+"/report/getwithinradius?"
+            url = URL + "/report/getwithinradius?"
                     + "lat=" + activity.mCurrentLocation.getLatitude() + "&lng=" + activity.mCurrentLocation.getLongitude()
                     + "&radius=" + mRadius + "&cursor=" + mCursor;
         } else if (activity.mRole.equals("WORKER")) {
-            url = URL+"/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
+            url = URL + "/worker/tasks/" + activity.mUsername + "?cursor=" + mCursor;
         }
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -381,7 +382,7 @@ public class RequestsVolley {
         System.out.println("PEDIR REPORTS DE --->>>" + mLocation);
 
 
-        String url = URL+"/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
+        String url = URL + "/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -480,7 +481,7 @@ public class RequestsVolley {
         final String mCursor = cursor;
 
 
-        String url = URL+"/profile/reports/" + mUsername + "?cursor=" + mCursor;
+        String url = URL + "/profile/reports/" + mUsername + "?cursor=" + mCursor;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -580,7 +581,7 @@ public class RequestsVolley {
         final String mCursor = cursor;
 
 
-        String url = URL+"/task/notes/" + mTask;
+        String url = URL + "/task/notes/" + mTask;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -605,9 +606,12 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO USER REPORTS: " + error.toString());
+                        System.out.println("ERRO DO TASK NOTES: " + error.toString());
+                        if (error.toString().equals("204"))
+                            Toast.makeText(context, "No notes found for this task", Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
@@ -670,7 +674,7 @@ public class RequestsVolley {
         final String mToken = token;
 
 
-        String url = URL+"/report/vote/multiple";
+        String url = URL + "/report/vote/multiple";
 
 
         stringRequest = new StringRequest(Request.Method.POST, url,
@@ -809,7 +813,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/report/create";
+        url = URL + "/report/create";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -883,7 +887,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/report/comment/post/" + mReport;
+        url = URL + "/report/comment/post/" + mReport;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -957,7 +961,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/register/user";
+        url = URL + "/register/user";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1026,7 +1030,7 @@ public class RequestsVolley {
             e.printStackTrace();
         }
 
-        url =URL+"/profile/activate/" + username;
+        url = URL + "/profile/activate/" + username;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1100,7 +1104,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        String url = URL+"/profile/getprofilepic/" + mUsername;
+        String url = URL + "/profile/getprofilepic/" + mUsername;
 
         jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1206,7 +1210,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/login";
+        url = URL + "/login";
 
         jsonRequest = new JsonObjectRequest(Request.Method.POST, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1335,7 +1339,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/verifytoken";
+        url = URL + "/verifytoken";
 
         stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -1421,7 +1425,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/profile/view/" + mUsername;
+        url = URL + "/profile/view/" + mUsername;
 
         jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -1576,7 +1580,7 @@ public class RequestsVolley {
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
 
-        url = URL+"/profile/votes/" + mUsername + "?cursor=" + mCursor;
+        url = URL + "/profile/votes/" + mUsername + "?cursor=" + mCursor;
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -1678,7 +1682,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url =URL+"/task/addnote/" + mIdTask;
+        url = URL + "/task/addnote/" + mIdTask;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1751,7 +1755,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/profile/changepassword";
+        url = URL + "/profile/changepassword";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1811,9 +1815,9 @@ public class RequestsVolley {
         String url = "";
 
         if (request == L_EVERYWHERE)
-            url = URL+"/logout/everywhere";
+            url = URL + "/logout/everywhere";
         if (request == L_ONCE)
-            url = URL+"/logout";
+            url = URL + "/logout";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1870,7 +1874,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/profile/changeprofilepic";
+        url = URL + "/profile/changeprofilepic";
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -1960,7 +1964,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL+"/profile/update/" + mUsername;
+        url = URL + "/profile/update/" + mUsername;
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -2041,7 +2045,7 @@ public class RequestsVolley {
         params.put("Device-ID", Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         System.out.println("DEVICE ID: " + Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         params.put("Device-App", "Android");
-        params.put("Device-Info", "Telemovel sexy");
+        params.put("Device-Info", "Coisas do telemóvel");
 
         return params;
     }

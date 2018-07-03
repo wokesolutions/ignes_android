@@ -79,10 +79,12 @@ public class SettingsActivity extends AppCompatActivity {
         mAddLocalityButton = findViewById(R.id.add_localities_button);
 
         setChangePassword();
-        setAddLocality();
 
-        if (mRole.equals("USER"))
+
+        if (mRole.equals("USER")) {
+            setAddLocality();
             setChangeRadius();
+        }
 
         mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,8 +294,8 @@ public class SettingsActivity extends AppCompatActivity {
         mFeedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(SettingsActivity.this, FeedActivity.class));
+                finish();
             }
         });
 
@@ -301,8 +303,8 @@ public class SettingsActivity extends AppCompatActivity {
         mSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(SettingsActivity.this, SettingsActivity.class));
+                finish();
             }
         });
 
@@ -323,6 +325,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SettingsActivity.this, ProfileActivity.class));
+                finish();
             }
         });
     }

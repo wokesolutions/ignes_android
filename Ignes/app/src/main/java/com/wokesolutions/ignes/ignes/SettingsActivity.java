@@ -3,6 +3,8 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,17 +26,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int L_EVERYWHERE = 1;
 
-    private Button mChangePasswordButton, mLogoutAllButton, mChangeRadiusButton;
+    private Button mChangePasswordButton, mLogoutAllButton, mChangeRadiusButton, mAddLocalityButton;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private Context mContext;
     private String mRole, mToken;
     private SharedPreferences sharedPref;
     private LinearLayout mLoggoutButton, mFeedButton, mMapButton, mProfileButton, mSettingsButton;
+    private List<Address> mAddresses;
+    private Geocoder mGeocoder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,9 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         mContext = this;
+        mAddresses = null;
+        mGeocoder = new Geocoder(this, Locale.getDefault());
+
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_settings);
         setSupportActionBar(myToolbar);
@@ -64,8 +76,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         mChangePasswordButton = findViewById(R.id.changepassword_button);
         mLogoutAllButton = findViewById(R.id.logout_all_button);
+        mAddLocalityButton = findViewById(R.id.add_localities_button);
 
         setChangePassword();
+        setAddLocality();
 
         if (mRole.equals("USER"))
             setChangeRadius();
@@ -89,6 +103,76 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
         }
+    }
+
+    private void setAddLocality() {
+
+        mAddLocalityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+                mBuilder.setTitle("Adicionar localidade a seguir");
+                mBuilder.setIcon(R.drawable.addlocalityicon);
+
+                LayoutInflater inflater = SettingsActivity.this.getLayoutInflater();
+                final View mView = inflater.inflate(R.layout.add_localities, null);
+                mBuilder.setView(mView);
+                final AlertDialog alert = mBuilder.create();
+                alert.show();
+
+                final EditText new_address = mView.findViewById(R.id.new_address);
+                new_address.setError(null);
+                Button addLocButton = mView.findViewById(R.id.submit_new_address);
+
+                addLocButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        attemptNewAddress(new_address, alert);
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void attemptNewAddress(EditText new_address, AlertDialog alertDialog) {
+
+        View focusView = null;
+        boolean cancel = false;
+
+        String address = new_address.getText().toString();
+
+        if (!address.equals("")) {
+            try {
+                mAddresses = mGeocoder.getFromLocationName(address, 1);
+
+                if (mAddresses.size() > 0) {
+                    Toast.makeText(mContext, "Successfully added!", Toast.LENGTH_LONG).show();
+
+                } else {
+                    new_address.setError("Can't find location, please try a more detailed one");
+                    focusView = new_address;
+                    cancel = true;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            new_address.setError(getString(R.string.error_field_required));
+            focusView = new_address;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            focusView = new_address;
+            alertDialog.dismiss();
+            Toast.makeText(mContext, "Successfully added!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void setChangePassword() {

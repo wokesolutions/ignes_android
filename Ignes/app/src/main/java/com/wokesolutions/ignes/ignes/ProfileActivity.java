@@ -90,6 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
             RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
             roundedBitmap.setCircular(true);
             mImageView.setImageDrawable(roundedBitmap);
+
         }
 
         MapActivity.votesMap.clear();
@@ -362,6 +363,8 @@ public class ProfileActivity extends AppCompatActivity {
                     RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                     roundedBitmap.setCircular(true);
                     mImageView.setImageDrawable(roundedBitmap);
+
+                    storedAvatar = "";
                 }
 
 
@@ -494,11 +497,11 @@ public class ProfileActivity extends AppCompatActivity {
                                 RequestsVolley.changeProfPicRequest(storedAvatar, mContext);
                             }
 
-                            /*RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
+                            RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
                                     mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
                                     mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
                                     mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
-                                    ,mUsername, mContext, ProfileActivity.this );*/
+                                    ,mUsername, mContext, ProfileActivity.this );
 
                         }
                     }

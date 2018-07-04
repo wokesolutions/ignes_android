@@ -46,7 +46,7 @@ public class RequestsVolley {
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
-    private static final String URL = "https://mimetic-encoder-209111.appspot.com/api";
+    private static final String URL = "https://main-dot-mimetic-encoder-209111.appspot.com/api";
 
     private static final int L_EVERYWHERE = 1;
     private static final int L_ONCE = 0;
@@ -867,6 +867,74 @@ public class RequestsVolley {
 
     }
 
+    public static void changeRepStatusWIPRequest(String report, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        final String mReport = report;
+
+
+        String url = URL + "/worker/wipreport/" + mReport;
+
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+                        System.out.println("RESPONSE DATA: ->>> " + response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO REPORT CHANGE STATUS: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+
+                    System.out.println("RESPONSE HERE ->>> " + response);
+
+                    return Response.success("Report Status changed", HttpHeaderParser.parseCacheHeaders(response));
+
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
     public static void postCommentRequest(String report, String comment, final Context context,
                                           final MarkerActivity activity) {
 
@@ -1232,10 +1300,12 @@ public class RequestsVolley {
 
                             System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL") + " " + response.getString("level"));
 
-                            if ((response.getString("level")).contains("LEVEL"))
-                                editor.putString("userLevel", "USER");
-                            else {
+                            if ((response.getString("level")).contains("LEVEL")) {
                                 editor.putString("userLevel", response.getString("level"));
+                                editor.putString("userRole", "USER");
+                            }
+                            else {
+                                editor.putString("userRole", response.getString("level"));
 
                                 if (response.has("Org")) {
                                     editor.putString("org_name", response.getString("Org"));
@@ -1250,7 +1320,7 @@ public class RequestsVolley {
                             e.printStackTrace();
                         }
 
-                        String level = sharedPref.getString("userLevel", "");
+                        String level = sharedPref.getString("userRole", "");
                         if (level.equals("USER"))
                             profileRequest(sharedPref.getString("username", ""), context, activity);
                         else {
@@ -1351,14 +1421,17 @@ public class RequestsVolley {
                         SharedPreferences.Editor editor = sharedPref.edit();
                         System.out.println("LOGIIIN CENAS " + response.contains("LEVEL"));
 
-                        if (response.contains("LEVEL"))
-                            editor.putString("userLevel", "USER");
-                        else
+                        if (response.contains("LEVEL")) {
+                            editor.putString("userRole", "USER");
                             editor.putString("userLevel", response);
+                        }
+                        else
+                            editor.putString("userRole", response);
 
                         editor.apply();
 
-                        String level = sharedPref.getString("userLevel", "");
+                        String level = sharedPref.getString("userRole", "");
+                        System.out.println("VERIFY TOKEN LEVEL: " + level);
                         if (level.equals("USER"))
                             profileRequest(sharedPref.getString("username", ""), context, activity);
                         else {

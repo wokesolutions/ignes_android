@@ -50,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        mRole = sharedPref.getString("userLevel", "");
+        mRole = sharedPref.getString("userRole", "");
         mToken = sharedPref.getString("token", "");
 
         if (mRole.equals("USER"))

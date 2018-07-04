@@ -28,6 +28,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private Context mContext;
     private Map<String, TaskClass> mMap;
     private String newStatus;
+    private String mReportID;
     final String[] values = new String[]{"Aberto","Em progresso", "Fechado"};
 
     TaskAdapter(Context context, Map<String, TaskClass> map) {
@@ -58,8 +59,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         final TaskClass taskItem = mMap.get(keys[position]);
 
+        mReportID = (String) keys[position];
+
         if (taskItem.getmImg_bitmap() == null)
-            thumbnailRequest((String) keys[position], taskItem, position);
+            thumbnailRequest(mReportID, taskItem, position);
 
         ImageView image = holder.task_image;
         final TextView title = holder.task_title;
@@ -159,8 +162,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
                 mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if (newStatus.equals("Em progresso"))
+                        if (newStatus.equals("Em progresso")) {
+                            RequestsVolley.changeRepStatusWIPRequest(mReportID,mContext);
                             status_button.setText("Em progresso");
+                        }
                         else if(newStatus.equals("Fechado")) {
                             status_button.setText("Fechado");
                             img_status.setImageResource(R.drawable.lockclose);

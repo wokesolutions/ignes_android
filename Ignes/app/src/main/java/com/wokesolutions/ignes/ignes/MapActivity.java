@@ -208,7 +208,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mToken = sharedPref.getString("token", "");
         mUsername = sharedPref.getString("username", "ERROR");
-        mRole = sharedPref.getString("userLevel", "");
+        mRole = sharedPref.getString("userRole", "");
 
         if (!sharedPref.getString("userRadius", "").isEmpty())
             mUserRadius = sharedPref.getString("userRadius", "");

@@ -69,38 +69,58 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <TextView
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/backgroundColor" />
+
+                <LinearLayout
+                    android:id="@+id/address_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:text="Address"
-                    android:textColor="@color/colorIgnesPrimary"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/report_address_form"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/report_address"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/colorIgnesPrimary"
-                        android:fontFamily="@font/quicksand_light"
-                        android:inputType="textMultiLine"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:text="Address"
+                        android:textColor="@color/colorIgnesPrimary"
+                        android:textSize="20dp"
                         android:textStyle="bold" />
 
-                </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/report_address_form"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                <CheckBox
-                    android:id="@+id/report_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:text="Use my current location"
-                    android:visibility="visible" />
+                        <AutoCompleteTextView
+                            android:id="@+id/report_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/colorIgnesPrimary"
+                            android:fontFamily="@font/quicksand_light"
+                            android:inputType="textMultiLine"
+                            android:textStyle="bold" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <CheckBox
+                        android:id="@+id/report_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:text="Use my current location"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/backgroundColor" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -128,6 +148,12 @@
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="10dp"
+                android:background="@color/backgroundColor" />
 
             <TextView
                 android:layout_width="match_parent"

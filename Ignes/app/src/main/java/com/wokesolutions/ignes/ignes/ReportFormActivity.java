@@ -33,10 +33,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,9 +75,10 @@ public class ReportFormActivity extends AppCompatActivity {
     private CheckBox mCheckBox, mCheckBox_Private;
     private SeekBar mGravitySlider;
     private View mProgressView;
-    private LinearLayout mMediumForm, mSliderForm, mLongForm, mReportForm, mUploadPicture;
+    private LinearLayout mMediumForm, mSliderForm, mLongForm, mReportForm, mUploadPicture, mAddressLayout;
     private EditText mTitle, mMediumTitle, mAddress, mDescription;
     private ImageView mImageView;
+    private ArrayList<LatLng> mPoints;
 
     public static Bitmap getScaledBitmap(String path, int newSize) {
         File image = new File(path);
@@ -105,12 +115,14 @@ public class ReportFormActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mReportType = intent.getExtras().getString("TYPE");
         mCurrentLocation = (Location) intent.getExtras().get("LOCATION");
+        mPoints = (ArrayList<LatLng>) intent.getExtras().get("AREA");
         mCoder = new Geocoder(this);
 
         mReportForm = (LinearLayout) findViewById(R.id.report_form);
         mLongForm = (LinearLayout) findViewById(R.id.report_long_form);
         mMediumForm = (LinearLayout) findViewById(R.id.report_medium_form);
         mUploadPicture = (LinearLayout) findViewById(R.id.report_upload);
+        mAddressLayout = findViewById(R.id.address_layout);
 
         mCheckBox = (CheckBox) findViewById(R.id.report_checkbox);
         mCheckBox_Private = (CheckBox) findViewById(R.id.report_checkbox_private);
@@ -203,7 +215,8 @@ public class ReportFormActivity extends AppCompatActivity {
 
         if (mCurrentLocation != null) {
             try {
-                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                List<Address> addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(),
+                        mCurrentLocation.getLongitude(), 1);
                 address = addresses.get(0).getAddressLine(0);
                 district = addresses.get(0).getAdminArea();
                 locality = addresses.get(0).getLocality();
@@ -282,7 +295,8 @@ public class ReportFormActivity extends AppCompatActivity {
     }
 
     public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = getContentResolver().query(uri, null, null,
+                null, null);
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
@@ -339,7 +353,8 @@ public class ReportFormActivity extends AppCompatActivity {
                             orientation = 270;
                         } else
                             orientation = 0;
-                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(),
+                                mThumbnail.getHeight(), matrix, true);
 
                     } catch (Exception e) {
                         System.out.println("NO ORIENTATION FOUND");
@@ -386,10 +401,10 @@ public class ReportFormActivity extends AppCompatActivity {
                         } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                             matrix.postRotate(270);
                             orientation = 270;
-                        }
-                        else
+                        } else
                             orientation = 0;
-                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(),
+                                mThumbnail.getHeight(), matrix, true);
 
                         System.out.println("BYTE COUNT 2 THUMB: " + mThumbnail.getByteCount());
                     } catch (Exception e) {
@@ -426,7 +441,8 @@ public class ReportFormActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (pictureFile != null) {
-                Uri pictureURI = FileProvider.getUriForFile(context, "com.wokesolutions.ignes.ignes", pictureFile);
+                Uri pictureURI = FileProvider.getUriForFile(context, "com.wokesolutions.ignes.ignes",
+                        pictureFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureURI);
                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             }
@@ -449,11 +465,15 @@ public class ReportFormActivity extends AppCompatActivity {
                 mMediumForm.setVisibility(View.VISIBLE);
                 mLongForm.setVisibility(View.GONE);
                 mSliderForm.setVisibility(View.VISIBLE);
+                if (mPoints != null)
+                    mAddressLayout.setVisibility(View.GONE);
             }
             break;
 
             case "detailed": {
                 mSliderForm.setVisibility(View.VISIBLE);
+                if (mPoints != null)
+                    mAddressLayout.setVisibility(View.GONE);
             }
             break;
         }
@@ -503,19 +523,40 @@ public class ReportFormActivity extends AppCompatActivity {
         double lat = this.lat;
         double lng = this.lng;
         int gravity = mGravity + 1;
+        JSONArray jsonArray = new JSONArray();
+
+
+        if (mPoints != null) {
+            try {
+                for (LatLng latLng : mPoints) {
+
+                    JSONObject jsonObject = new JSONObject();
+
+                    jsonObject.put("lat", latLng.latitude);
+                    jsonObject.put("lng", latLng.longitude);
+
+                    jsonArray.put(jsonObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (mReportType.equals("detailed")) {
-            if (!mCheckBox.isChecked()) {
-                address = mAddress.getText().toString();
-                try {
-                    System.out.println("MORADA DENTRO DO LONG: " + address);
-                    List<Address> addresses = mCoder.getFromLocationName(address, 1);
-                    lat = addresses.get(0).getLatitude();
-                    lng = addresses.get(0).getLongitude();
-                    district = addresses.get(0).getAdminArea();
-                    locality = addresses.get(0).getLocality();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+            if (mCurrentLocation != null) {
+                if (!mCheckBox.isChecked()) {
+                    address = mAddress.getText().toString();
+                    try {
+                        System.out.println("MORADA DENTRO DO LONG: " + address);
+                        List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                        lat = addresses.get(0).getLatitude();
+                        lng = addresses.get(0).getLongitude();
+                        district = addresses.get(0).getAdminArea();
+                        locality = addresses.get(0).getLocality();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             title = mTitle.getText().toString();
@@ -525,18 +566,22 @@ public class ReportFormActivity extends AppCompatActivity {
 
             title = mMediumTitle.getText().toString();
 
-        } else if (mReportType.equals("fast")) {
-
         }
 
-        reportRequest(thumbnail, description, title, district, address, locality, gravity, lat, lng);
+        LatLng pointAddress = new LatLng(lat, lng);
+
+        System.out.println("ESTOU A ENVIAR PONTO: " + pointAddress + " " + mCurrentLocation);
+        System.out.println("ESTOU A ENVIAR PONTOSSSSSSS: " + jsonArray + "  " + mPoints);
+
+
+        reportRequest(description, title, district, address, locality, gravity, pointAddress, jsonArray);
     }
 
-    private void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
-                               String locality, int gravity, double lat, double lng) {
+    private void reportRequest(String description, String title, String district, String address,
+                               String locality, int gravity, LatLng pointAddress, JSONArray jsonArray) {
 
-        RequestsVolley.reportRequest(thumbnail, description, title, district, address,
-                locality, gravity, lat, lng, orientation, context, this);
+        RequestsVolley.reportRequest(description, title, district, address,
+                locality, gravity, pointAddress, jsonArray, orientation, context, this);
 
     }
 }

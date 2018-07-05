@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center_horizontal"
+        android:text="Reportar num ponto ou numa area?" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center">
+
+        <Button
+            android:id="@+id/report_address_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
+            android:inputType="textCapCharacters"
+            android:text="Address"
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/report_area_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/button"
+            android:fontFamily="@font/quicksand_bold"
+            android:inputType="textCapCharacters"
+            android:text="Area"
+            android:textColor="@color/backgroundColor"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

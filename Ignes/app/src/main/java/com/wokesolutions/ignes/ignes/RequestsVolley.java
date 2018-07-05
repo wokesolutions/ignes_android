@@ -1,6 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,8 +59,149 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
+    public static void userFollowLocalityRequest(String locality, String token, final Context context) {
 
-    public static void reportCommentsRequest(String reportId, String cursor, final Context context, final MarkerActivity activity) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final String mLocality = locality;
+        final String mToken = token;
+
+
+        String url = URL + "/profile/addfollow/" + mLocality;
+
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+                        System.out.println("RESPONSE DATA: ->>> " + response);
+
+                        Toast.makeText(context, "Locality added!", Toast.LENGTH_LONG).show();
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO USER REPORTS: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+
+                    System.out.println("RESPONSE HERE ->>> " + response);
+
+                    return Response.success("Votes sent", HttpHeaderParser.parseCacheHeaders(response));
+
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
+    public static void userLocalitiesRequest(final Context context, final FeedActivity activity) {
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = URL + "/profile/follows";
+
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK USER LOCALITIES : " + response);
+                        activity.setListComments(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO USER LOCALITIES: " + error.networkResponse.toString());
+
+                        Toast.makeText(context, "Something went wrong on getting your localities!", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(arrayRequest);
+
+        queue.add(arrayRequest);
+    }
+
+    public static void reportCommentsRequest(String reportId, String cursor, final Context context,
+                                             final MarkerActivity activity) {
 
         final String mReportId = reportId;
         final String mCursor = cursor;
@@ -148,8 +292,8 @@ public class RequestsVolley {
         queue.add(arrayRequest);
     }
 
-
-    public static void thumbnailRequest(String reportId, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
+    public static void thumbnailRequest(String reportId, MarkerClass marker, final int position,
+                                        final Context mContext, final MarkerAdapter markerAdapter,
                                         TaskClass task, final TaskAdapter taskAdapter) {
 
         final String report = reportId;
@@ -251,7 +395,8 @@ public class RequestsVolley {
 
     }
 
-    public static void mapRequest(double lat, double lng, double radius, String token, String cursor, final Context context, final MapActivity activity) {
+    public static void mapRequest(double lat, double lng, double radius, String token, String cursor,
+                                  final Context context, final MapActivity activity) {
 
         final double mLat = lat;
         final double mLng = lng;
@@ -323,7 +468,7 @@ public class RequestsVolley {
                 if (activity.mRole.equals("WORKER"))
                     return setHeaders(mToken, context);
                 else
-                    return setHeaders("", context);
+                    return setHeaders(mToken, context);
             }
 
             @Override
@@ -371,7 +516,8 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void locationReportsRequest(double lat, double lng, String location, String token, String cursor, final Context context, final MapActivity activity) {
+    public static void locationReportsRequest(double lat, double lng, String location, String token,
+                                              String cursor, final Context context, final MapActivity activity) {
 
         final double mLat = lat;
         final double mLng = lng;
@@ -398,7 +544,7 @@ public class RequestsVolley {
 
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
-                            activity.votesRequest(activity.mUsername, "");
+                            activity.votesRequest(MapActivity.mUsername, "");
                         } else {
                             System.out.println("Continuar a pedir...");
                             activity.locationReportsRequest(mLat, mLng, mLocation, mToken, mIsFinish);
@@ -423,7 +569,7 @@ public class RequestsVolley {
             @Override
             public Map<String, String> getHeaders() {
 
-                if (activity.mRole.equals("WORKER"))
+                if (MapActivity.mRole.equals("WORKER"))
                     return setHeaders(mToken, context);
                 else
                     return setHeaders("", context);
@@ -471,10 +617,11 @@ public class RequestsVolley {
         };
         setRetry(arrayRequest);
 
-        activity.queue.add(arrayRequest);
+        MapActivity.queue.add(arrayRequest);
     }
 
-    public static void userReportsRequest(String username, String token, String cursor, final Context context, final ProfileActivity activity) {
+    public static void userReportsRequest(String username, String token, String cursor,
+                                          final Context context, final ProfileActivity activity) {
 
         final String mUsername = username;
         final String mToken = token;
@@ -574,7 +721,8 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void taskNotesRequest(String taskID, String token, String cursor, final Context context, final NoteActivity activity) {
+    public static void taskNotesRequest(String taskID, String token, String cursor,
+                                        final Context context, final NoteActivity activity) {
 
         final String mTask = taskID;
         final String mToken = token;
@@ -743,13 +891,11 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportRequest(byte[] thumbnail, String description, String title, String district, String address,
-                                     String locality, int gravity, double lat, double lng, int orientation, final Context context,
+    public static void reportRequest(String description, String title, String district, String address,
+                                     String locality, int gravity, LatLng latLng,
+                                     JSONArray jsonArray, int orientation, final Context context,
                                      final ReportFormActivity activity) {
 
-        //final byte[] mThumbnail = thumbnail;
-        final double mLat = lat;
-        final double mLng = lng;
         final String base64Img;
         // final String base64Thumbnail = Base64.encodeToString(mThumbnail, Base64.DEFAULT);
         final String mDescription = description;
@@ -779,8 +925,14 @@ public class RequestsVolley {
             System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
             System.out.println("BYTEARRAY ENVIADO DA IMG: " + activity.imgByteArray.length);
 
-            report.put("lat", mLat);
-            report.put("lng", mLng);
+
+            if (jsonArray != null) {
+                report.put("points", jsonArray.toString());
+            } else {
+                report.put("lat", latLng.latitude);
+                report.put("lng", latLng.longitude);
+            }
+
             report.put("img", base64Img);
             //report.put("report_thumbnail", base64Thumbnail);
             report.put("imgheight", h);
@@ -790,6 +942,8 @@ public class RequestsVolley {
             report.put("city", mDistrict);
             report.put("locality", mLocality);
             report.put("imgorientation", mOrientation);
+            report.put("category", "MADEIRAS");
+
 
             if (activity.mReportType.equals("medium")) {
 
@@ -1009,7 +1163,6 @@ public class RequestsVolley {
 
     }
 
-
     public static void registerRequest(String username, String password, String email, final Context context,
                                        final RegisterActivity activity) {
 
@@ -1151,7 +1304,8 @@ public class RequestsVolley {
         activity.queue.add(stringRequest);
     }
 
-    public static void userAvatarRequest(String username, MarkerClass marker, final int position, final Context mContext, final MarkerAdapter markerAdapter,
+    public static void userAvatarRequest(String username, MarkerClass marker, final int position,
+                                         final Context mContext, final MarkerAdapter markerAdapter,
                                          TaskClass task, final TaskAdapter taskAdapter) {
 
         final String mUsername = username;
@@ -1251,7 +1405,8 @@ public class RequestsVolley {
 
     }
 
-    public static void loginRequest(String username, String password, final Context context, final LoginActivity activity) {
+    public static void loginRequest(String username, String password, final Context context,
+                                    final LoginActivity activity) {
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -1303,8 +1458,7 @@ public class RequestsVolley {
                             if ((response.getString("level")).contains("LEVEL")) {
                                 editor.putString("userLevel", response.getString("level"));
                                 editor.putString("userRole", "USER");
-                            }
-                            else {
+                            } else {
                                 editor.putString("userRole", response.getString("level"));
 
                                 if (response.has("Org")) {
@@ -1424,8 +1578,7 @@ public class RequestsVolley {
                         if (response.contains("LEVEL")) {
                             editor.putString("userRole", "USER");
                             editor.putString("userLevel", response);
-                        }
-                        else
+                        } else
                             editor.putString("userRole", response);
 
                         editor.apply();

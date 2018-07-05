@@ -35,25 +35,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
+                android:layout_margin="10dp"
                 android:background="@drawable/button_white"
-                android:padding="5dp"
-                android:layout_margin ="10dp">
+                android:padding="5dp">
 
                 <Button
+                    android:id="@+id/filter_button"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:background="@drawable/filter_icon" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15dp"
                     android:layout_gravity="center"
-                    android:textColor="#000000"
                     android:fontFamily="@font/quicksand_light"
-                    android:text="Filter Map"/>
+                    android:text="Filter Map"
+                    android:textColor="#000000"
+                    android:textSize="15dp" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/final_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:text="Finish"
+                android:textColor="#000000"
+                android:visibility="gone"/>
+
 
         </fragment>
 

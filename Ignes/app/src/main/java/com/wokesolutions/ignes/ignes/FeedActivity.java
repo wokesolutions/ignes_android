@@ -3,6 +3,8 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -28,11 +32,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
-public class FeedActivity extends AppCompatActivity {
+public class FeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public static final int REPORT_ACTIVITY = 1;
 
@@ -44,7 +52,7 @@ public class FeedActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mMenu;
 
     private LinearLayout mLoggoutButton, mMapButton;
-    private TextView mLocality, mOrganization, mUsername;
+    private TextView mAlertMessage, mOrganization, mUsername;
     private LinearLayout mProfileButton, mSettingsButton;
     private Context mContext;
     private Location mCurrentLocation;
@@ -52,16 +60,22 @@ public class FeedActivity extends AppCompatActivity {
     private String mRole, mToken;
     private MarkerAdapter markerAdapter;
     private TaskAdapter taskAdapter;
-    private Spinner address_dropdown;
+    private Spinner address_spinner;
+    private ArrayList<String> localities_array;
+    private  Geocoder mGeocoder;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+
+    {
         super.onCreate(savedInstanceState);
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userRole", "");
         mToken = sharedPref.getString("token", "");
+        mContext = this;
+        mGeocoder = new Geocoder(this, Locale.getDefault());
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_feed);
@@ -107,25 +121,24 @@ public class FeedActivity extends AppCompatActivity {
 
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
+            address_spinner = findViewById(R.id.feed_address_spinner);
+            localities_array = new ArrayList<>();
             markerAdapter = new MarkerAdapter(this, markerMap, false);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
 
             user_menuButtons();
-            mLocality = findViewById(R.id.feed_address);
+            mAlertMessage = findViewById(R.id.alert);
 
             if (markerMap.isEmpty())
-                mLocality.setText("There are no reports to list in this area...");
-
+                mAlertMessage.setText("There are no reports to list in this area...");
             else {
                 String firstKey = (String) markerMap.keySet().iterator().next();
-                mLocality.setText(markerMap.get(firstKey).getmLocality());
                 mCurrentLocation = MapActivity.mCurrentLocation;
+                localities_array.add(markerMap.get(firstKey).getmLocality());
             }
+            RequestsVolley.userLocalitiesRequest(mContext, this);
         }
-        mContext = this;
-
-
     }
 
     private void general_menuButtons() {
@@ -229,6 +242,20 @@ public class FeedActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    public void setListComments(JSONArray comments) {
+        try {
+            JSONArray jsonarray = comments;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+                localities_array.add(jsonarray.getString(i));
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, localities_array);
+            address_spinner.setAdapter(adapter);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void onReport() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
@@ -287,4 +314,24 @@ public class FeedActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        if(position!=0){
+            try {
+                List<Address> addresses = mGeocoder.getFromLocationName(localities_array.get(position), 1);
+                double lat = addresses.get(0).getLatitude();
+                double lng = addresses.get(0).getLongitude();
+//                MapActivity.locationReportsRequest(lat, lng, localities_array.get(position), mToken, "");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -45,11 +46,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CustomCap;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -70,6 +80,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -85,6 +96,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
 
+    private static final int COLOR_BLACK_ARGB = 0xff000000;
+    private static final int COLOR_WHITE_ARGB = 0xffffffff;
+    private static final int COLOR_GREEN_ARGB = 0xff388E3C;
+    private static final int COLOR_PURPLE_ARGB = 0xff81C784;
+    private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
+    private static final int COLOR_BLUE_ARGB = 0xffF9A825;
+
+    private static final int POLYGON_STROKE_WIDTH_PX = 8;
+    private static final int PATTERN_DASH_LENGTH_PX = 20;
+    private static final int PATTERN_GAP_LENGTH_PX = 20;
+    private static final PatternItem DOT = new Dot();
+    private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
+    private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
+
+    // Create a stroke pattern of a gap followed by a dash.
+    private static final List<PatternItem> PATTERN_POLYGON_ALPHA = Arrays.asList(GAP, DASH);
+
+    // Create a stroke pattern of a dot followed by a gap, a dash, and another gap.
+    private static final List<PatternItem> PATTERN_POLYGON_BETA =
+            Arrays.asList(DOT, GAP, DASH, GAP);
+
     public static Map<String, MarkerClass> mReportMap;
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
@@ -94,16 +126,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static LatLng mLatLng;
     public static String mUsername;
     public static LinearLayout mGoogleMapsButtonLayout;
-    private static GoogleMap mMap;
+    public static GoogleMap mMap;
     private static Context mContext;
     private static Button mGoogleMapsButton;
-    private Button mFinishTaskPathButton;
     private static Polyline mMapPollyLine;
+    private static ArrayList<LatLng> vector;
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
-    public RequestQueue queue;
-    public String mRole, mUserRadius;
+    public static RequestQueue queue;
+    public static String mRole;
+    public String mUserRadius;
+    private Button mFinishTaskPathButton;
+    private Button mFilterButton, mFinishDrawAddress;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
     private ClusterManager<TaskClass> mWorkerClusterManager;
@@ -114,7 +149,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
-    private List<String> orderedIds;
+    private static List<String> orderedIds;
+    private int counter;
 
     private static String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -217,17 +253,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         System.out.println("MROOOOOLE-> " + mRole);
 
-        if (mRole.equals("USER"))
+        if (mRole.equals("USER")) {
             setContentView(R.layout.activity_map);
-
-        else if (mRole.equals("WORKER")) {
+            mFinishDrawAddress = findViewById(R.id.final_button);
+        } else if (mRole.equals("WORKER")) {
             setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_map);
 
             mGoogleMapsButtonLayout = findViewById(R.id.googlemapsbutton_layout);
             mGoogleMapsButton = findViewById(R.id.googlemaps_button);
             mFinishTaskPathButton = findViewById(R.id.finish_task_path);
-
             mFinishTaskPathButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -243,6 +278,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         queue = Volley.newRequestQueue(this);
         isReady = false;
         orderedIds = new LinkedList<>();
+        mFilterButton = findViewById(R.id.filter_button);
 
         String languageToLoad = "pt_PT";
         Locale locale = new Locale(languageToLoad);
@@ -291,6 +327,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         addresses = null;
 
+        vector = new ArrayList<>();
+        counter = 0;
+
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPolygon(vector);
+            }
+        });
     }
 
     private void setUpCluster(LatLng latLng) {
@@ -651,6 +696,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         try {
                             addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
                             mCurrentLocality = addresses.get(0).getLocality();
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -757,7 +803,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (mRole.equals("USER")) {
 
                 if (item.getItemId() == R.id.reporticon) {
-                    onReport();
+                    onReportStart();
                     return true;
                 }
 
@@ -773,7 +819,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return super.onOptionsItemSelected(item);
     }
 
-    public void onReport() {
+    public void onReportStart() {
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Report Address");
+        mBuilder.setIcon(R.drawable.ocorrenciared);
+
+        LayoutInflater inflater = MapActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.report_address_choices, null);
+        mBuilder.setView(mView);
+        final AlertDialog alert = mBuilder.create();
+
+        alert.show();
+
+        Button mAddressButton = mView.findViewById(R.id.report_address_button);
+        Button mAreaButton = mView.findViewById(R.id.report_area_button);
+
+        mAddressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+                onReport(false);
+
+            }
+        });
+
+        mAreaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+                mFinishDrawAddress.setVisibility(View.VISIBLE);
+                onSelectArea();
+            }
+        });
+    }
+
+    public void onReport(final boolean isArea) {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Report");
         mBuilder.setIcon(R.drawable.ocorrenciared);
@@ -792,7 +872,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 public void onClick(View v) {
                     Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                     i.putExtra("TYPE", "fast");
-                    i.putExtra("LOCATION", mCurrentLocation);
+
+                    if (isArea)
+                        i.putExtra("AREA", vector);
+                    else
+                        i.putExtra("LOCATION", mCurrentLocation);
+
                     alert.dismiss();
                     startActivity(i);
 
@@ -805,7 +890,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 public void onClick(View v) {
                     Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                     i.putExtra("TYPE", "medium");
-                    i.putExtra("LOCATION", mCurrentLocation);
+
+                    if (isArea)
+                        i.putExtra("AREA", vector);
+                    else
+                        i.putExtra("LOCATION", mCurrentLocation);
                     alert.dismiss();
                     startActivityForResult(i, REPORT_ACTIVITY);
                 }
@@ -821,8 +910,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Intent i = new Intent(MapActivity.this, ReportFormActivity.class);
                 i.putExtra("TYPE", "detailed");
 
-                if (mCurrentLocation != null)
-                    i.putExtra("LOCATION", mCurrentLocation);
+                if (isArea)
+                    i.putExtra("AREA", vector);
+                else {
+                    if (mCurrentLocation != null)
+                        i.putExtra("LOCATION", mCurrentLocation);
+
+                }
 
                 alert.dismiss();
                 startActivity(i);
@@ -914,13 +1008,90 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
     }
 
+    /*public void mapClickPoints() {
+        System.out.println("CLICASTE NO MAPA");
+        mMap.setOnMapClickListener();
+    }*/
+
+    public void createPolygon(ArrayList<LatLng> points) {
+
+        if (!points.isEmpty()) {
+            System.out.println("DENTRO DO CREATE POLYGON");
+            // Add polygons to indicate areas on the map.
+            Polygon polygon = mMap.addPolygon(new PolygonOptions()
+                    .clickable(false)
+                    .addAll(points));
+
+            // Store a data object with the polygon, used here to indicate an arbitrary type.
+            polygon.setTag("alpha");
+            // Style the polygon.
+            stylePolygon(polygon);
+            mFinishDrawAddress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onReport(true);
+                    mFinishDrawAddress.setVisibility(View.GONE);
+                }
+            });
+
+
+        }
+    }
+
+   /* public void createPolyline (LatLng c1, LatLng c2) {
+        PolylineOptions rectOptions = new PolylineOptions()
+                .add(c1,c2)
+                .width(5)
+                .color(Color.RED);
+
+       mMap.addPolyline(rectOptions);
+    }*/
+
+    /**
+     * Styles the polygon, based on type.
+     *
+     * @param polygon The polygon object that needs styling.
+     */
+    private void stylePolygon(Polygon polygon) {
+        String type = "";
+        // Get the data object stored with the polygon.
+        if (polygon.getTag() != null) {
+            type = polygon.getTag().toString();
+        }
+
+        List<PatternItem> pattern = null;
+        int strokeColor = COLOR_BLACK_ARGB;
+        int fillColor = COLOR_WHITE_ARGB;
+
+        switch (type) {
+            // If no type is given, allow the API to use the default.
+            case "alpha":
+                // Apply a stroke pattern to render a dashed line, and define colors.
+                pattern = PATTERN_POLYGON_ALPHA;
+                strokeColor = COLOR_GREEN_ARGB;
+                fillColor = COLOR_PURPLE_ARGB;
+                break;
+            case "beta":
+                // Apply a stroke pattern to render a line of dots and dashes, and define colors.
+                pattern = PATTERN_POLYGON_BETA;
+                strokeColor = COLOR_ORANGE_ARGB;
+                fillColor = COLOR_BLUE_ARGB;
+                break;
+        }
+
+        polygon.setStrokePattern(pattern);
+        polygon.setStrokeWidth(POLYGON_STROKE_WIDTH_PX);
+        polygon.setStrokeColor(strokeColor);
+        polygon.setFillColor(fillColor);
+    }
+
     public void locationReportsRequest(double lat, double lng, String location, String token, String cursor) {
 
-        RequestsVolley.locationReportsRequest(lat, lng, location, token, cursor, mContext, this);
+        RequestsVolley.locationReportsRequest(lat, lng, location, token, cursor, mContext, MapActivity.this);
     }
 
     public void votesRequest(String username, String cursor) {
-        RequestsVolley.votesRequest(username, cursor, mContext, this);
+        RequestsVolley.votesRequest(username, cursor, mContext, MapActivity.this);
     }
 
     public void setUserVotes(JSONArray jsonArray) {
@@ -966,6 +1137,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             markerDescriptor = BitmapDescriptorFactory.defaultMarker(3.0f);
 
         return markerDescriptor;
+    }
+
+    public void onSelectArea() {
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                System.out.println("CLICASTE NO MAPA " + vector.size());
+                vector.add(latLng);
+            }
+        });
+
+       /* if(counter>=1) {
+            createPolyline(vector.get(counter), latLng);
+        }
+        counter++;*/
     }
 
     // Fetches data from url passed

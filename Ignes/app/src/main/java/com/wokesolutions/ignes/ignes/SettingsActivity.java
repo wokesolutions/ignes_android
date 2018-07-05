@@ -93,7 +93,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-
         // logoutRequest(token, mContext, LogoutActivity.this,null, L_ONCE);
 
         general_menuButtons();
@@ -171,8 +170,8 @@ public class SettingsActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             focusView = new_address;
+            RequestsVolley.userFollowLocalityRequest(address, mToken, mContext);
             alertDialog.dismiss();
-            Toast.makeText(mContext, "Successfully added!", Toast.LENGTH_LONG).show();
         }
 
     }

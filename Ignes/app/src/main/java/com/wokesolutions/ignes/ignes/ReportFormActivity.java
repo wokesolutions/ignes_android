@@ -537,7 +537,13 @@ public class ReportFormActivity extends AppCompatActivity {
 
                     jsonArray.put(jsonObject);
                 }
+
+                List<Address> addresses = mCoder.getFromLocation(mPoints.get(0).latitude, mPoints.get(0).longitude, 1);
+                district = addresses.get(0).getAdminArea();
+                locality = addresses.get(0).getLocality();
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

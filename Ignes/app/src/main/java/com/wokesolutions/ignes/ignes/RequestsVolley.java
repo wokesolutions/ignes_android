@@ -942,7 +942,7 @@ public class RequestsVolley {
             report.put("city", mDistrict);
             report.put("locality", mLocality);
             report.put("imgorientation", mOrientation);
-            report.put("category", "MADEIRAS");
+            report.put("category", "Madeiras");
 
 
             if (activity.mReportType.equals("medium")) {

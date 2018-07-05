@@ -1317,7 +1317,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
 
-            markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+            switch (item.getmGravity()) {
+                case "1":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    break;
+                case "2":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    break;
+                case "3":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    break;
+                case "4":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    break;
+                case "5":
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+
+            }
         }
 
         @Override

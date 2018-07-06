@@ -13,7 +13,7 @@ public class TaskClass extends MarkerClass {
                      String date, String username, String description, String gravity,
                      String title, String likes, String dislikes, String locality,
                      String marker_id, String indications, String phoneNumber) {
-        super(lat, lng, status, address, date, username, description, gravity, title, likes, dislikes, locality, marker_id);
+        super(lat, lng, status, address, date, username, description, gravity, title, likes, dislikes, locality, false,false,"", marker_id);
 
         notes = new LinkedList<>();
         this.indications = indications;

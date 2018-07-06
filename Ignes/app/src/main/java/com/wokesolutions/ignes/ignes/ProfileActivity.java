@@ -205,6 +205,15 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String name = mUsername;
 
+                boolean isArea = false;
+                boolean isClicked = false;
+
+                String points = null;
+                if (jsonobject.has("points")) {
+                    isArea = true;
+                    points = jsonobject.getString("points");
+                }
+
                 String gravity = "0";
                 if (jsonobject.has("gravity"))
                     gravity = jsonobject.getString("gravity");
@@ -218,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
                     title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, "", reportID);
+                        description, gravity, title, likes, dislikes, "", isArea, isClicked, points,  reportID);
 
                 if (!MapActivity.userMarkerMap.containsKey(reportID)) {
                     MapActivity.userMarkerMap.put(reportID, report);

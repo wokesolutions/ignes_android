@@ -7,17 +7,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.icu.text.SymbolTable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -46,23 +43,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
@@ -121,21 +112,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
+    private Map<String, Polygon> mapPolygons;
 
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
     public static LinearLayout mGoogleMapsButtonLayout;
     public static GoogleMap mMap;
+    public static RequestQueue queue;
+    public static String mRole;
     private static Context mContext;
     private static Button mGoogleMapsButton;
     private static Polyline mMapPollyLine;
     private static ArrayList<LatLng> vector;
+    private static List<String> orderedIds;
     public Geocoder mCoder;
     public boolean isReady;
     public List<Address> addresses;
-    public static RequestQueue queue;
-    public static String mRole;
     public String mUserRadius;
     private Button mFinishTaskPathButton;
     private Button mFilterButton, mFinishDrawAddress;
@@ -149,7 +142,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
-    private static List<String> orderedIds;
     private int counter;
 
     private static String getDirectionsUrl(LatLng origin, LatLng dest) {
@@ -291,6 +283,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mWorkerTaskMap = new HashMap<>();
         votesMap = new HashMap<>();
         userMarkerMap = new HashMap<>();
+        mapPolygons = new HashMap<>();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -370,10 +363,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MarkerClass>() {
                     @Override
                     public void onClusterItemInfoWindowClick(MarkerClass markerClass) {
-                        System.out.println("ESTOU DENTRO DO MARKEEERR HELLLOOO");
-                        Intent i = new Intent(MapActivity.this, MarkerActivity.class);
-                        i.putExtra("MarkerClass", markerClass.getmId());
-                        startActivity(i);
+
+                        if (markerClass.mIsArea()) {
+
+                            try {
+                                if (!markerClass.mIsClicked()) {
+                                    markerClass.setmIsClicked(true);
+                                   Polygon polygon= setAreaReport(new JSONArray(markerClass.getmPoints()));
+                                   mapPolygons.put(markerClass.getmId(), polygon);
+                                } else {
+                                    markerClass.setmIsClicked(false);
+                                    Polygon polygon = mapPolygons.get(markerClass.getmId());
+                                    polygon.remove();
+                                }
+
+                            } catch (JSONException e) {
+
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            System.out.println("ESTOU DENTRO DO MARKEEERR HELLLOOO");
+                            Intent i = new Intent(MapActivity.this, MarkerActivity.class);
+                            i.putExtra("MarkerClass", markerClass.getmId());
+                            startActivity(i);
+                        }
                     }
                 });
 
@@ -434,14 +448,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String reportID = jsonobject.getString("report");
 
-                double latitude = Double.parseDouble(jsonobject.getString("lat"));
-
-                double longitude = Double.parseDouble(jsonobject.getString("lng"));
-
                 String likes = jsonobject.getString("ups");
 
                 String dislikes = jsonobject.getString("downs");
-
 
                 String status = jsonobject.getString("status");
 
@@ -450,6 +459,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String date = jsonobject.getString("creationtime");
 
                 String name = jsonobject.getString("username");
+
+                double latitude = Double.parseDouble(jsonobject.getString("lat"));
+
+                double longitude = Double.parseDouble(jsonobject.getString("lng"));
+
+                boolean isArea = false;
+                boolean isClicked = false;
+
+                String points = null;
+                if (jsonobject.has("points")) {
+                    isArea = true;
+                    points = jsonobject.getString("points");
+                }
 
                 String gravity = "0";
                 if (jsonobject.has("gravity"))
@@ -464,7 +486,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, locality, reportID);
+                        description, gravity, title, likes, dislikes, locality, isArea, isClicked, points, reportID);
 
                 if (!mReportMap.containsKey(reportID)) {
                     mReportMap.put(reportID, report);
@@ -475,7 +497,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         userMarkerMap.put(reportID, report);
                     }
                 }
-
             }
 
             setUpCluster(new LatLng(lat, lng));
@@ -557,6 +578,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private Polygon setAreaReport(JSONArray points) {
+        ArrayList<LatLng> pointsArray = new ArrayList<>();
+
+        for (int i = 0; i < points.length(); i++) {
+
+            try {
+
+                JSONObject jsonobject = points.getJSONObject(i);
+
+                double latitude = Double.parseDouble(jsonobject.getString("lat"));
+
+                double longitude = Double.parseDouble(jsonobject.getString("lng"));
+
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                pointsArray.add(latLng);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return createPolygon(pointsArray);
     }
 
     private void buildAlertMessageNoGps() {
@@ -1013,7 +1059,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener();
     }*/
 
-    public void createPolygon(ArrayList<LatLng> points) {
+    public Polygon createPolygon(ArrayList<LatLng> points) {
 
         if (!points.isEmpty()) {
             System.out.println("DENTRO DO CREATE POLYGON");
@@ -1026,6 +1072,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polygon.setTag("alpha");
             // Style the polygon.
             stylePolygon(polygon);
+
+
             mFinishDrawAddress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1033,9 +1081,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mFinishDrawAddress.setVisibility(View.GONE);
                 }
             });
-
-
+            return polygon;
         }
+        return null;
     }
 
    /* public void createPolyline (LatLng c1, LatLng c2) {

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polygon;
 import com.google.maps.android.clustering.ClusterItem;
 
 public class MarkerClass implements ClusterItem {
@@ -15,11 +16,15 @@ public class MarkerClass implements ClusterItem {
     private byte[] mAvatarbyte;
     private Bitmap mImage_bitmap;
     private Bitmap mAvatar_bitmap;
-    private String mId, mVote;
+    private String mId, mVote, mPoints;
+    private boolean mIsArea;
+    private boolean mIsClicked;
+
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
-                       String title, String likes, String dislikes, String locality, String marker_id) {
+                       String title, String likes, String dislikes, String locality, boolean isArea,
+                       boolean isClicked, String points, String marker_id) {
 
         mPosition = new LatLng(lat, lng);
         mStatus = status;
@@ -36,7 +41,26 @@ public class MarkerClass implements ClusterItem {
         mImgbyte = null;
         mAvatarbyte = null;
         mId = marker_id;
+        mIsArea = isArea;
+        mIsClicked = isClicked;
+        mPoints = points;
         mVote = "";
+    }
+
+    public String getmPoints() {
+        return mPoints;
+    }
+
+    public boolean mIsArea() {
+        return mIsArea;
+    }
+
+    public boolean mIsClicked() {
+        return mIsClicked;
+    }
+
+    public void setmIsClicked(boolean click) {
+        mIsClicked = click;
     }
 
     @Override

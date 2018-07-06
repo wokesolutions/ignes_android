@@ -26,6 +26,8 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -33,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
@@ -52,16 +55,27 @@ import java.util.List;
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
-public class ReportFormActivity extends AppCompatActivity {
+public class ReportFormActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public static final int MY_PERMISSIONS_REQUEST_STORAGE = 77;
+
+    public static final String LIXO = "Limpeza de lixo geral";
+    public static final String PESADOS = "Transportes pesados";
+    public static final String PERIGOSOS = "Transportes perigosos";
+    public static final String PESSOAS = "Transporte de pessoas";
+    public static final String TRANSPORTE = "Transportes gerais";
+    public static final String MADEIRAS = "Madeiras";
+    public static final String CARCACAS = "Carcaças";
+    public static final String BIOLOGICO = "Outros resíduos biológicos";
+    public static final String JARDINAGEM = "Jardinagem";
+    public static final String MATAS = "Limpeza de matas/florestas";
 
     private final int REQUEST_IMAGE_CAPTURE = 0;
     public byte[] imgByteArray;
     public Uri mImageURI;
     public String mReportType;
     public boolean mIsPrivate;
-    String address, district, locality;
+    String address, district, locality, category;
     double lat, lng;
     private Context context;
     private int mRequestCode, mGravity, orientation;
@@ -79,6 +93,7 @@ public class ReportFormActivity extends AppCompatActivity {
     private EditText mTitle, mMediumTitle, mAddress, mDescription;
     private ImageView mImageView;
     private ArrayList<LatLng> mPoints;
+    private Spinner mReportTypeSpinner;
 
     public static Bitmap getScaledBitmap(String path, int newSize) {
         File image = new File(path);
@@ -126,6 +141,14 @@ public class ReportFormActivity extends AppCompatActivity {
 
         mCheckBox = (CheckBox) findViewById(R.id.report_checkbox);
         mCheckBox_Private = (CheckBox) findViewById(R.id.report_checkbox_private);
+
+        mReportTypeSpinner = findViewById(R.id.report_category_spinner);
+        mReportTypeSpinner.setOnItemSelectedListener(this);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.report_category, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mReportTypeSpinner.setAdapter(adapter);
 
         mCheckBox.setOnClickListener(new OnClickListener() {
             @Override
@@ -512,21 +535,33 @@ public class ReportFormActivity extends AppCompatActivity {
         }
     }
 
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        category = (String) parent.getItemAtPosition(pos);
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
+
     private void attemptReport() {
 
         byte[] thumbnail = byteArray;
         String description = "";
         String title = "";
         String locality = this.locality;
+        String category = this.category;
         String district = this.district;
         String address = this.address;
         double lat = this.lat;
         double lng = this.lng;
         int gravity = mGravity + 1;
-        JSONArray jsonArray = new JSONArray();
+        JSONArray jsonArray = null;
 
 
         if (mPoints != null) {
+            jsonArray = new JSONArray();
             try {
                 for (LatLng latLng : mPoints) {
 
@@ -542,7 +577,7 @@ public class ReportFormActivity extends AppCompatActivity {
                 address = addresses.get(0).getAddressLine(0);
                 district = addresses.get(0).getAdminArea();
                 locality = addresses.get(0).getLocality();
-                
+
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -579,17 +614,50 @@ public class ReportFormActivity extends AppCompatActivity {
         LatLng pointAddress = new LatLng(lat, lng);
 
         System.out.println("ESTOU A ENVIAR PONTO: " + pointAddress + " " + mCurrentLocation);
-        System.out.println("ESTOU A ENVIAR PONTOSSSSSSS: " + jsonArray + "  " + mPoints);
+        if (jsonArray != null)
+            System.out.println("ESTOU A ENVIAR PONTOSSSSSSS: " + jsonArray + "  " + mPoints);
+
+        switch (category) {
+            case LIXO:
+                category = "LIXO";
+                break;
+            case PESADOS:
+                category = "PESADOS";
+                break;
+            case PERIGOSOS:
+                category = "PERIGOSOS";
+                break;
+            case PESSOAS:
+                category = "PESSOAS";
+                break;
+            case TRANSPORTE:
+                category = "TRANSPORTE";
+                break;
+            case MADEIRAS:
+                category = "MADEIRAS";
+                break;
+            case CARCACAS:
+                category = "CARCACAS";
+                break;
+            case BIOLOGICO:
+                category = "BIOLOGICO";
+                break;
+            case JARDINAGEM:
+                category = "JARDINAGEM";
+                break;
+            case MATAS:
+                category = "MATAS";
+        }
 
 
-        reportRequest(description, title, district, address, locality, gravity, pointAddress, jsonArray);
+        reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
     }
 
     private void reportRequest(String description, String title, String district, String address,
-                               String locality, int gravity, LatLng pointAddress, JSONArray jsonArray) {
+                               String locality, String category, int gravity, LatLng pointAddress, JSONArray jsonArray) {
 
         RequestsVolley.reportRequest(description, title, district, address,
-                locality, gravity, pointAddress, jsonArray, orientation, context, this);
+                locality, category, gravity, pointAddress, jsonArray, orientation, context, this);
 
     }
 }

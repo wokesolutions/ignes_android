@@ -892,7 +892,7 @@ public class RequestsVolley {
     }
 
     public static void reportRequest(String description, String title, String district, String address,
-                                     String locality, int gravity, LatLng latLng,
+                                     String locality, String category, int gravity, LatLng latLng,
                                      JSONArray jsonArray, int orientation, final Context context,
                                      final ReportFormActivity activity) {
 
@@ -904,6 +904,7 @@ public class RequestsVolley {
         final String mDistrict = district;
         final String mAddress = address;
         final String mLocality = locality;
+        final String mCategory = category;
         final int mOrientation = orientation;
 
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
@@ -942,7 +943,8 @@ public class RequestsVolley {
             report.put("city", mDistrict);
             report.put("locality", mLocality);
             report.put("imgorientation", mOrientation);
-            report.put("category", "Madeiras");
+            System.out.println("PRINT DA CATEGORY NO REPORT:" + category);
+            report.put("category", mCategory);
 
 
             if (activity.mReportType.equals("medium")) {

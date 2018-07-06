@@ -65,9 +65,21 @@
         <item>October</item>
         <item>November</item>
         <item>December</item>
-
-
     </string-array>
+
+
+    <string-array name="report_category">
+        <item>Limpeza de lixo geral</item>
+        <item>Transportes pesados</item>
+        <item>Transportes perigosos</item>
+        <item>Transporte de pessoas</item>
+        <item>Transportes gerais</item>
+        <item>Carcaças</item>
+        <item>Outros resíduos biológicos</item>
+        <item>Jardinagem</item>
+        <item>Limpeza de matas/florestas</item>
+    </string-array>
+
 
 
 </resources>

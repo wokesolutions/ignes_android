@@ -50,6 +50,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="log_out">Logout</string>
     <string name="profile_navi">Profile</string>
+    <string name="default_notification_channel_id">blablablaignes</string>
 
 
     <string-array name="month_array">

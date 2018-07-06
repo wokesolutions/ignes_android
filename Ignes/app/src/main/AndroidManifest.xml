@@ -25,6 +25,21 @@
         android:roundIcon="@mipmap/icon_app_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service
+            android:exported="false"
+            android:name=".MyJobService">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.wokesolutions.ignes.ignes"

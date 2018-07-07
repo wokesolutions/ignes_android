@@ -173,7 +173,10 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO REPORT APPLICATIONS ORGS : " + error.networkResponse.toString());
+                        if (error.networkResponse != null)
+                            System.out.println("ERRO DO REPORT APPLICATIONS ORGS : " + error.networkResponse.toString());
+                        else
+                            System.out.println("REPORT APPLICATIONS ORGS volley -> ERRO Response veio null ");
 
                         Toast.makeText(context, "Something went wrong on loading applications!", Toast.LENGTH_LONG).show();
                     }
@@ -314,7 +317,10 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO USER LOCALITIES: " + error.networkResponse.toString());
+                        if (error.networkResponse != null)
+                            System.out.println("ERRO DO USER LOCALITIES: " + error.networkResponse.toString());
+                        else
+                            System.out.println("USER LOCALITIES volley -> ERRO Response veio null ");
 
                         Toast.makeText(context, "Something went wrong on getting your localities!", Toast.LENGTH_LONG).show();
                     }
@@ -401,7 +407,10 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO REPORT COMMENTS: " + error.networkResponse.toString());
+                        if (error.networkResponse != null) {
+                            System.out.println("ERRO DO REPORT COMMENTS: " + error.networkResponse.toString());
+                        } else
+                            System.out.println("REPORT COMMENTS volley -> ERRO Response veio null ");
 
                         Toast.makeText(context, "Something went wrong on loading comments!", Toast.LENGTH_LONG).show();
                     }
@@ -514,8 +523,13 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("THUMBNAIL volley -> ERRO " + response);
+                        if (response != null) {
+
+                            System.out.println("THUMBNAIL volley -> ERRO " + response);
+                        } else
+                            System.out.println("THUMBNAIL volley -> ERRO Response veio null ");
 
 
                     }
@@ -1155,14 +1169,21 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("REPORT volley -> ERRO " + response.statusCode);
 
-                        Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
+                        if (response != null) {
 
-                        if (response.statusCode == BAD_REQUEST_ERROR)
+                            System.out.println("REPORT volley -> ERRO " + response.statusCode);
+
+                            Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
+
+                            if (response.statusCode == BAD_REQUEST_ERROR)
+                                activity.showProgress(false);
+                            else
+                                activity.showProgress(false);
+                        } else {
+                            System.out.println("REPORT volley -> ERRO Response veio null ");
                             activity.showProgress(false);
-                        else
-                            activity.showProgress(false);
+                        }
 
                         Toast.makeText(context, "Ups, failed to send report!", Toast.LENGTH_LONG).show();
 
@@ -1259,7 +1280,7 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void postCommentRequest(String report, String comment, final Context context,
+    public static void postCommentRequest(final String report, String comment, final Context context,
                                           final MarkerActivity activity) {
 
         final String mComment = comment;
@@ -1297,16 +1318,23 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("POST COMMENT volley -> ERRO " + response.statusCode);
+                        if (response != null) {
 
-                        Log.e("COMMENT volley -> ERRO ", "" + response.statusCode);
+                            System.out.println("POST COMMENT volley -> ERRO " + response.statusCode);
 
-                        if (response.statusCode == 403) {
-                            Toast.makeText(context, "No permission to comment!", Toast.LENGTH_LONG).show();
-                            System.out.println("POST COMMENT volley -> User sem permissao para comentar " + response.statusCode);
-                        } else
+                            Log.e("COMMENT volley -> ERRO ", "" + response.statusCode);
 
-                            Toast.makeText(context, "Ups, failed to comment report!", Toast.LENGTH_LONG).show();
+                            if (response.statusCode == 403) {
+                                Toast.makeText(context, "No permission to comment!", Toast.LENGTH_LONG).show();
+                                System.out.println("POST COMMENT volley -> User sem permissao para comentar " + response.statusCode);
+                            } else
+
+                                Toast.makeText(context, "Ups, failed to comment report!", Toast.LENGTH_LONG).show();
+                        } else {
+                            System.out.println("ADD NOTE volley -> ERRO Response veio null ");
+                            Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
+                        }
+
 
                     }
                 }
@@ -1367,20 +1395,25 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         NetworkResponse response = error.networkResponse;
+                        if (response != null) {
 
-                        System.out.println("REGISTER volley -> ERRO " + response.statusCode);
+                            System.out.println("REGISTER volley -> ERRO " + response.statusCode);
 
-                        if (response.statusCode == activity.CONFLICT_ERROR) {
+                            if (response.statusCode == activity.CONFLICT_ERROR) {
 
-                            Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
-                            activity.changeVisibility("Username");
-                            activity.mUsername.setError("Choose a different username");
-                            activity.mUsername.requestFocus();
+                                Toast.makeText(context, "Username already exists", Toast.LENGTH_LONG).show();
+                                activity.changeVisibility("Username");
+                                activity.mUsername.setError("Choose a different username");
+                                activity.mUsername.requestFocus();
 
-                        } else {
-                            Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
-                        }
+                            } else {
+                                Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
+                            }
+                        } else
+                            System.out.println("REGISTER volley -> ERRO Response veio a null");
+
                     }
                 }
         ) {
@@ -1444,8 +1477,11 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
+                        if (response != null) {
+                            System.out.println("CONFIRM ACCOUNT volley -> ERRO " + response);
+                        } else
+                            System.out.println("CONFIRM ACCOUNT volley -> ERRO Response veio a null");
 
-                        System.out.println("CONFIRM ACCOUNT volley -> ERRO " + response);
 
                         Toast.makeText(context, "Error confirming your account!", Toast.LENGTH_LONG).show();
 
@@ -1528,9 +1564,12 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("THUMBNAIL volley -> ERRO " + response);
 
+                        NetworkResponse response = error.networkResponse;
+                        if (response != null) {
+                            System.out.println("THUMBNAIL volley -> ERRO " + response);
+                        } else
+                            System.out.println("THUMBNAIL volley -> ERRO Response veio a null");
 
                     }
                 }
@@ -1658,14 +1697,19 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        NetworkResponse response = error.networkResponse;
-                        System.out.println("LOGIN volley -> ERRO " + response + " " + error.getMessage());
 
-                        if (response.statusCode == 403) {
-                            activity.mPasswordView.setError(context.getString(R.string.error_incorrect_password));
-                            activity.mPasswordView.requestFocus();
-                        } else
-                            Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+                        NetworkResponse response = error.networkResponse;
+                        if (response != null) {
+                            System.out.println("LOGIN volley -> ERRO " + response + " " + error.getMessage());
+
+                            if (response.statusCode == 403) {
+                                activity.mPasswordView.setError(context.getString(R.string.error_incorrect_password));
+                                activity.mPasswordView.requestFocus();
+                            }
+                        }
+                        Toast.makeText(context, "Ups something went wrong!", Toast.LENGTH_LONG).show();
+
+                        System.out.println("REGISTER volley -> ERRO Response veio a null");
 
                         activity.showProgress(false);
                     }
@@ -1911,8 +1955,13 @@ public class RequestsVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("PROFILE volley -> ERRO " + response + " " + response.statusCode);
+                        if (response != null) {
+
+                            System.out.println("PROFILE volley -> ERRO " + response + " " + response.statusCode);
+                        } else
+                            System.out.println("PROFILE volley -> ERRO Response veio null ");
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -2096,13 +2145,17 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("ADD NOTE volley -> ERRO " + response.statusCode);
+                        if (response != null) {
 
-                        if (response.statusCode == BAD_REQUEST_ERROR) {
-                        } else {
-                            Toast.makeText(context, "Ups, failed to send note!", Toast.LENGTH_LONG).show();
+                            System.out.println("ADD NOTE volley -> ERRO " + response.statusCode);
 
-                        }
+                            if (response.statusCode == BAD_REQUEST_ERROR) {
+                            } else {
+                                Toast.makeText(context, "Ups, failed to send note!", Toast.LENGTH_LONG).show();
+
+                            }
+                        } else
+                            System.out.println("ADD NOTE volley -> ERRO Response veio null ");
                     }
                 }
         ) {
@@ -2169,15 +2222,20 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("CHANGE PASSWORD volley -> ERRO " + response.statusCode);
+                        if (response != null) {
 
-                        if (response.statusCode == BAD_REQUEST_ERROR) {
-                        } else {
-                            Toast.makeText(context, "Ups, could not change the password!", Toast.LENGTH_LONG).show();
+                            System.out.println("CHANGE PASSWORD volley -> ERRO " + response.statusCode);
 
-                        }
-                        mOldPassEditText.setError("Invalid password");
-                        mView.requestFocus();
+                            if (response.statusCode == BAD_REQUEST_ERROR) {
+                            } else {
+                                Toast.makeText(context, "Ups, could not change the password!", Toast.LENGTH_LONG).show();
+
+                            }
+                            mOldPassEditText.setError("Invalid password");
+                            mView.requestFocus();
+                        } else
+                            System.out.println("CHANGE PASSWORD volley -> ERRO Response veio a null");
+
                     }
                 }
         ) {
@@ -2287,13 +2345,17 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("CHANGE PROFILE PIC volley -> ERRO " + response.statusCode);
+                        if (response != null) {
 
-                        if (response.statusCode == BAD_REQUEST_ERROR) {
-                        } else {
-                            Toast.makeText(context, "Ups, failed to change profile picture!", Toast.LENGTH_LONG).show();
+                            System.out.println("CHANGE PROFILE PIC volley -> ERRO " + response.statusCode);
 
-                        }
+                            if (response.statusCode == BAD_REQUEST_ERROR) {
+                            } else {
+                                Toast.makeText(context, "Ups, failed to change profile picture!", Toast.LENGTH_LONG).show();
+
+                            }
+                        } else
+                            System.out.println("CHANGE PROFILE PIC volley -> ERRO Response veio a null");
                     }
                 }
         ) {
@@ -2395,12 +2457,16 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         NetworkResponse response = error.networkResponse;
-                        System.out.println("EDIT PROFILE volley -> ERRO " + response.statusCode + "  " + error);
+                        if (response != null) {
 
-                        Log.e("Edit volley -> ERRO ", "" + response.statusCode);
+                            System.out.println("EDIT PROFILE volley -> ERRO " + response.statusCode + "  " + error);
 
-                        Toast.makeText(context, "Ups, error editing profile!", Toast.LENGTH_LONG).show();
+                            Log.e("Edit volley -> ERRO ", "" + response.statusCode);
 
+                            Toast.makeText(context, "Ups, error editing profile!", Toast.LENGTH_LONG).show();
+
+                        } else
+                            System.out.println("EDIT PROFILE volley -> ERRO Response veio a null");
                     }
                 }
         ) {

@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Note by "
+            android:text="@string/note_by"
             android:textAllCaps="true"
             android:textColor="@color/backgroundColor"
             android:textSize="20dp" />

@@ -27,7 +27,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginVertical="15dp"
             android:fontFamily="@font/quicksand_light"
-            android:text="Tasks"
+            android:text="@string/tasks"
             android:textColor="@color/backgroundColor"
             android:textSize="17dp"
             android:textStyle="bold" />
@@ -57,7 +57,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginVertical="15dp"
             android:fontFamily="@font/quicksand_light"
-            android:text="Map"
+            android:text="@string/map"
             android:textColor="@color/backgroundColor"
             android:textSize="17dp"
             android:textStyle="bold" />
@@ -87,7 +87,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginVertical="15dp"
             android:fontFamily="@font/quicksand_light"
-            android:text="Contacts"
+            android:text="@string/contacts"
             android:textColor="@color/backgroundColor"
             android:textSize="17dp"
             android:textStyle="bold" />

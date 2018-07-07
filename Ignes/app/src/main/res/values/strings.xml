@@ -24,6 +24,10 @@
     <string name="quick">Quick</string>
     <string name="simple">Simple</string>
     <string name="detailed">Detailed</string>
+    <string name="map">Map</string>
+    <string name="neighbour_tips">Neighbour tips</string>
+    <string name="contacts">Contacts</string>
+    <string name="tasks">Tasks</string>
 
     <!-- Launch Page Strings -->
     <string name="turning_red_into_green" translatable="false">Turning RED into GREEN</string>
@@ -85,12 +89,25 @@
     <string name="comments">comments</string>
     <string name="comment">&#160;Comment...</string>
     <string name="post">post</string>
+    <string name="zero_tasks_atributted">Zero tasks atributted</string>
+    <string name="no_reports_to_list_area">There are no reports to list in this area...</string>
+    <string name="description">Description</string>
+    <string name="created_on">Created on</string>
+    <string name="work_start">Work start</string>
+    <string name="get_directions">Get Directions</string>
+    <string name="indications">Indications:</string>
+    <string name="read_task_notes">Read Task Notes</string>
+    <string name="write_your_note_here">Write your note here...</string>
+    <string name="note_by">Note by&#160;</string>
+    <string name="task_s_notes">Task\'s Notes</string>
+    <string name="new_note">New note</string>
 
     <!-- SettingsActivity String -->
     <string name="change_password">Change password</string>
     <string name="logout_everywhere_logged_in">Logout everywhere logged in</string>
     <string name="change_map_area_radius">Change map area radius</string>
     <string name="add_localities">Add localities</string>
+
 
 
     <string-array name="month_array">

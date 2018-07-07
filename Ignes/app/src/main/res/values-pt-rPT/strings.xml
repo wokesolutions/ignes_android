@@ -59,4 +59,20 @@
     <string name="quick">Rápido</string>
     <string name="simple">Simples</string>
     <string name="detailed">Detalhado</string>
+    <string name="map">Mapa</string>
+    <string name="neighbour_tips">Cantinho do Vizinho</string>
+    <string name="contacts">Contactos</string>
+    <string name="tasks">Tarefas</string>
+    <string name="zero_tasks_atributted">Sem tarefas atribuídas</string>
+    <string name="no_reports_to_list_area">Não há reportes a listar nesta zona</string>
+    <string name="description">Descrição</string>
+    <string name="created_on">Criado a</string>
+    <string name="work_start">Início trabalhos</string>
+    <string name="get_directions">Direções</string>
+    <string name="indications">Indicações</string>
+    <string name="read_task_notes">Ler Notas da Tarefa</string>
+    <string name="write_your_note_here">Escreva sua nota aqui...</string>
+    <string name="note_by">Nota por&#160;</string>
+    <string name="task_s_notes">Notas da Tarefa</string>
+    <string name="new_note">Nova nota</string>
 </resources>

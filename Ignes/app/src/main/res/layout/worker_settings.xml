@@ -54,7 +54,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Change Password" />
+                    android:text="@string/change_password" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,7 +78,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Logout Everywhere Logged In" />
+                    android:text="@string/logout_everywhere_logged_in" />
             </LinearLayout>
         </LinearLayout>
 

@@ -131,7 +131,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             mAlertMessage = findViewById(R.id.alert);
 
             if (markerMap.isEmpty())
-                mAlertMessage.setText("There are no reports to list in this area...");
+                mAlertMessage.setText(R.string.no_reports_to_list_area);
             else {
                 String firstKey = (String) markerMap.keySet().iterator().next();
                 mCurrentLocation = MapActivity.mCurrentLocation;
@@ -296,7 +296,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             });
         } else {
-            Toast.makeText(mContext, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "You should enable your gps to report something", Toast.LENGTH_LONG).show();
         }
         //----LONG-----
         Button mLong = (Button) mView.findViewById(R.id.report_long_button);

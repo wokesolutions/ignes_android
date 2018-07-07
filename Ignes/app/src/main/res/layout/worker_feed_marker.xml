@@ -155,7 +155,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/quicksand_light"
-                            android:text="Gravity: "
+                            android:text="@string/gravity"
                             android:textColor="@color/colorIgnesPrimary"
                             android:textSize="15dp"
                             android:textStyle="bold" />
@@ -185,7 +185,7 @@
                 android:fontFamily="@font/quicksand_light"
                 android:gravity="center"
                 android:inputType="textMultiLine"
-                android:text="Description"
+                android:text="@string/description"
                 android:textColor="#000000"
                 android:textSize="17dp"
                 android:textStyle="bold" />
@@ -205,7 +205,7 @@
                     android:layout_weight=".25"
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="right"
-                    android:text="Created on"
+                    android:text="@string/created_on"
                     android:textColor="#000000"
                     android:textSize="10dp"
                     android:textStyle="bold" />
@@ -245,7 +245,7 @@
                     android:layout_weight=".25"
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left"
-                    android:text="Work start"
+                    android:text="@string/work_start"
                     android:textColor="#000000"
                     android:textSize="10dp"
                     android:textStyle="bold" />
@@ -296,7 +296,7 @@
                     android:fontFamily="@font/quicksand_light"
                     style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:inputType="text"
-                    android:text="Get Directions"
+                    android:text="@string/get_directions"
                     android:textColor="#ffffff"
                     android:textSize="17dp"
                     android:textStyle="bold" />
@@ -330,7 +330,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="center"
-                    android:text="Indications:"
+                    android:text="@string/indications"
                     android:textColor="@color/colorIgnesWorker"
                     android:textSize="17dp"
                     android:textStyle="bold" />
@@ -361,7 +361,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
                 android:fontFamily="@font/quicksand_bold"
-                android:text="Read Task Notes"
+                android:text="@string/read_task_notes"
                 android:textColor="@color/colorIgnesWorker"
                 android:textSize="17dp"
                 android:textStyle="bold" />

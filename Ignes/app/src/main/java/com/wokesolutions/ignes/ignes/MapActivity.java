@@ -1375,22 +1375,37 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             System.out.println("COR AQUI! " + item.getmGravity());
 
-            //markerOptions.icon(setMarkersColor(markerDescriptor, item.getmGravity()));
+
             switch (item.getmGravity()) {
                 case "1":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    if (item.getmCreator_username().equals(mUsername))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wipmine));
+                    else
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
                     break;
                 case "2":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    if (item.getmCreator_username().equals(mUsername))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wipmine));
+                    else
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
                     break;
                 case "3":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    if (item.getmCreator_username().equals(mUsername))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wipmine));
+                    else
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
                     break;
                 case "4":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    if (item.getmCreator_username().equals(mUsername))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wipmine));
+                    else
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
                     break;
                 case "5":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+                    if (item.getmCreator_username().equals(mUsername))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wipmine));
+                    else
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
             }
         }
 

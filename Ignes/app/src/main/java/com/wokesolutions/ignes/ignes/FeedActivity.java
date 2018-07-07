@@ -50,7 +50,6 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-
     private LinearLayout mLoggoutButton, mMapButton;
     private TextView mAlertMessage, mOrganization, mUsername;
     private LinearLayout mProfileButton, mSettingsButton;
@@ -242,7 +241,8 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
 
         return super.onOptionsItemSelected(item);
     }
-    public void setListComments(JSONArray comments) {
+
+    public void setListLocalities(JSONArray comments) {
         try {
             JSONArray jsonarray = comments;
 

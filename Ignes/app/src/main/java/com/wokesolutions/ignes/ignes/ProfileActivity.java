@@ -34,8 +34,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +51,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     public Uri mImageURI;
     public RequestQueue queue;
+    public RecyclerView recyclerView;
+    public MarkerAdapter markerAdapter;
     private Context mContext;
     private Bitmap mThumbnail;
     private ImageView mImageView;
@@ -61,15 +65,12 @@ public class ProfileActivity extends AppCompatActivity {
     private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
     private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton, mSaveButton;
-    private LinearLayout mAboutLayout,  mEditAboutLayout;
+    private LinearLayout mAboutLayout, mEditAboutLayout;
     private TextView mDay, mMonth, mYear;
     private TextView mPoints, mReportNum, mGender, mAddress, mName, mJob, mPhonenumber, mSkills,
             mLocality, mProfileName, mProfileLevel, mUsernameEditText;
     private boolean backBool;
     private String isConfirmed;
-    public RecyclerView recyclerView;
-
-    public MarkerAdapter markerAdapter;
     private String storedAvatar;
 
 
@@ -166,7 +167,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         checkIfAccountConfirmed();
 
-
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerview);
         LinearLayoutManager manager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(manager);
@@ -203,6 +203,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String date = jsonobject.getString("creationtime");
 
+                String category = "";
+                if (jsonobject.has("category"))
+                    category = jsonobject.getString("category");
+
                 String name = mUsername;
 
                 boolean isArea = false;
@@ -227,7 +231,7 @@ public class ProfileActivity extends AppCompatActivity {
                     title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, "", isArea, isClicked, points,  reportID);
+                        description, gravity, title, likes, dislikes, "", isArea, isClicked, points, category, reportID);
 
                 if (!MapActivity.userMarkerMap.containsKey(reportID)) {
                     MapActivity.userMarkerMap.put(reportID, report);
@@ -244,7 +248,7 @@ public class ProfileActivity extends AppCompatActivity {
         mLoggoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestsVolley.logoutRequest(mToken, mContext, ProfileActivity.this,0);
+                RequestsVolley.logoutRequest(mToken, mContext, ProfileActivity.this, 0);
             }
         });
         mMapButton = (LinearLayout) findViewById(R.id.menu_button_map);
@@ -378,8 +382,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
 
-
-
                 final LinearLayout edit_avatar = findViewById(R.id.edit_avatar);
                 edit_avatar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -511,7 +513,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
                                     mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
                                     mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
-                                    ,mUsername, mContext, ProfileActivity.this );
+                                    , mUsername, mContext, ProfileActivity.this);
 
                         }
                     }

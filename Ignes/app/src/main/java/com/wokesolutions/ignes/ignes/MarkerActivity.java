@@ -37,7 +37,8 @@ public class MarkerActivity extends AppCompatActivity {
     private static String markerID;
     private ImageView marker_image, marker_status_image;
     private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
-            marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number, marker_gravity_title;
+            marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number,
+            marker_gravity_title, marker_category;
     private TextView comment_owner, comment_date, comment_text;
     private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
     private ProgressBar mProgressBar;
@@ -106,6 +107,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_comment = findViewById(R.id.marker_comment);
         marker_comment.setFocusable(false);
         marker_comment.setFocusableInTouchMode(true);
+        marker_category = findViewById(R.id.marker_category);
 
         arrayList = new ArrayList<>();
         listview = (ListView) findViewById(R.id.listview_comments);
@@ -133,6 +135,9 @@ public class MarkerActivity extends AppCompatActivity {
             marker_title.setText(title);
         else
             marker_title.setVisibility(View.GONE);
+
+        String category = mMarker.getmCategory();
+        marker_category.setText(category);
 
         String description = mMarker.getmDescription();
         if (!description.equals(""))

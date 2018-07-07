@@ -3,19 +3,25 @@ package com.wokesolutions.ignes.ignes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
@@ -24,12 +30,14 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     private Context mContext;
     private Map<String, MarkerClass> mMap;
     private boolean mIsProfile;
+    private ArrayList<ApplicationClass> mArrayList;
 
     MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile) {
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
         mIsProfile = isProfile;
+        mArrayList = new ArrayList<>();
 
     }
 
@@ -66,6 +74,17 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
         ImageView img_status = holder.marker_status_image;
+        ListView listOrgs = holder.marker_listview;
+
+
+        if(mIsProfile){
+            RequestsVolley.reportApplicationsRequest(markerItem.getmId(), mContext, MarkerAdapter.this);
+
+            if(!mArrayList.isEmpty()){
+                listOrgs.setAdapter(new MyAdapter(mContext, mArrayList, markerItem.getmId()));
+            }
+        }
+
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -135,6 +154,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 marker_gravity, marker_gravity_title;
         Button button_more;
         Context itemViewContext;
+        ListView marker_listview;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -149,6 +169,90 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_status_image = itemView.findViewById(R.id.feed_lock_img);
+            marker_listview = itemView.findViewById(R.id.list_orgs);
+        }
+    }
+
+    public void setListApplications(JSONArray applications) {
+
+        ApplicationClass applicationClass;
+        mArrayList.clear();
+
+        try {
+
+            JSONArray jsonarray = applications;
+
+            for (int i = 0; i < jsonarray.length(); i++) {
+
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                String name = jsonobject.getString("name");
+
+                String nif = jsonobject.getString("nif");
+                String phone = jsonobject.getString("phone");
+                String budget = jsonobject.getString("budget");
+                String info = jsonobject.getString("info");
+                String email = jsonobject.getString("email");
+
+                applicationClass = new ApplicationClass(name, budget, info, email, nif, phone);
+
+                mArrayList.add(applicationClass);
+            }
+           // setListViewHeightBasedOnChildren(listview);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class MyAdapter extends BaseAdapter {
+
+        private Context context;
+        private ArrayList<ApplicationClass> applications;
+        private String reportId;
+
+        public MyAdapter(Context context, ArrayList<ApplicationClass> applications, String reportId) {
+            this.context = context;
+            this.applications = applications;
+            this.reportId = reportId;
+        }
+
+        @Override
+        public int getCount() {
+            return applications.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return applications.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = (View) inflater.inflate(
+                        R.layout.activity_feed_orgs_listitem, null);
+            }
+
+            TextView orgname = convertView.findViewById(R.id.org_name);
+            orgname.setText(applications.get(position).getmNameOrg());
+            Button accept = convertView.findViewById(R.id.org_accept);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RequestsVolley.reportAcceptApplicationRequest(applications.get(position).getmNIFOrg(), reportId, mContext);
+                }
+            });
+
+            return convertView;
         }
     }
 

@@ -16,7 +16,7 @@ public class MarkerClass implements ClusterItem {
     private byte[] mAvatarbyte;
     private Bitmap mImage_bitmap;
     private Bitmap mAvatar_bitmap;
-    private String mId, mVote, mPoints;
+    private String mId, mVote, mPoints, mCategory;
     private boolean mIsArea;
     private boolean mIsClicked;
 
@@ -24,7 +24,7 @@ public class MarkerClass implements ClusterItem {
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
                        String title, String likes, String dislikes, String locality, boolean isArea,
-                       boolean isClicked, String points, String marker_id) {
+                       boolean isClicked, String points, String category, String marker_id) {
 
         mPosition = new LatLng(lat, lng);
         mStatus = status;
@@ -44,7 +44,12 @@ public class MarkerClass implements ClusterItem {
         mIsArea = isArea;
         mIsClicked = isClicked;
         mPoints = points;
+        mCategory = category;
         mVote = "";
+    }
+
+    public String getmCategory() {
+        return mCategory;
     }
 
     public String getmPoints() {

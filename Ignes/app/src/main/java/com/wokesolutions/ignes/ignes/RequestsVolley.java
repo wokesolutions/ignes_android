@@ -1,7 +1,6 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +27,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +56,172 @@ public class RequestsVolley {
     private static JsonObjectRequest jsonRequest;
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
+
+    public static void reportAcceptApplicationRequest(String report, String nif, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final String mNif = nif;
+        final String mReport = report;
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("report", mReport);
+            jsonObject.put("nif", mNif);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String url = URL + "/report/acceptapplication";
+
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK: " + response);
+
+                        System.out.println("RESPONSE DATA: ->>> " + response);
+
+                        Toast.makeText(context, "Application Accepted!", Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO ACEITAR APPLICATION: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            public byte[] getBody() {
+                return jsonObject.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+
+                    System.out.println("RESPONSE HERE ->>> " + response);
+
+                    return Response.success("Application Accepted", HttpHeaderParser.parseCacheHeaders(response));
+
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
+
+    public static void reportApplicationsRequest(String reportId, final Context context,
+                                                 final MarkerAdapter activity) {
+
+        final String mReportId = reportId;
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = URL + "/profile/getapplications/" + mReportId;
+
+
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK REPORT APPLICATIONS ORGS : " + response);
+
+                        activity.setListApplications(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO REPORT APPLICATIONS ORGS : " + error.networkResponse.toString());
+
+                        Toast.makeText(context, "Something went wrong on loading applications!", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+
+                    try {
+
+                        String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                        JSONArray jsonArray = new JSONArray(json);
+
+                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
+
+                        return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        return Response.error(new VolleyError(String.valueOf(response.statusCode)));
+                    }
+
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(arrayRequest);
+
+        queue.add(arrayRequest);
+    }
 
     public static void userFollowLocalityRequest(String locality, String token, final Context context) {
 
@@ -141,7 +305,7 @@ public class RequestsVolley {
                     public void onResponse(JSONArray response) {
                         // response
                         System.out.println("OK USER LOCALITIES : " + response);
-                        activity.setListComments(response);
+                        activity.setListLocalities(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -1429,6 +1593,7 @@ public class RequestsVolley {
         try {
             credentials.put("username", mUsernameRequest);
             credentials.put("password", mPasswordRequest);
+            credentials.put("firebasetoken", "abc");
         } catch (Exception e) {
             e.printStackTrace();
         }

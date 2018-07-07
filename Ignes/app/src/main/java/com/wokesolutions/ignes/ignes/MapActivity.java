@@ -94,6 +94,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
     private static final int COLOR_BLUE_ARGB = 0xffF9A825;
 
+    public static final String LIXO = "Limpeza de lixo geral";
+    public static final String PESADOS = "Transportes pesados";
+    public static final String PERIGOSOS = "Transportes perigosos";
+    public static final String PESSOAS = "Transporte de pessoas";
+    public static final String TRANSPORTE = "Transportes gerais";
+    public static final String MADEIRAS = "Madeiras";
+    public static final String CARCACAS = "Carcaças";
+    public static final String BIOLOGICO = "Outros resíduos biológicos";
+    public static final String JARDINAGEM = "Jardinagem";
+    public static final String MATAS = "Limpeza de matas/florestas";
+
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
@@ -112,8 +123,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
-    private Map<String, Polygon> mapPolygons;
-
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
@@ -130,6 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean isReady;
     public List<Address> addresses;
     public String mUserRadius;
+    private Map<String, Polygon> mapPolygons;
     private Button mFinishTaskPathButton;
     private Button mFilterButton, mFinishDrawAddress;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -219,8 +229,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mGoogleMapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" + MapActivity.mCurrentLocation.getLatitude()
-                        + "," + MapActivity.mCurrentLocation.getLongitude() + "&daddr=" + task.getPosition().latitude +
+                String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" +
+                        MapActivity.mCurrentLocation.getLatitude()
+                        + "," + MapActivity.mCurrentLocation.getLongitude() + "&daddr=" +
+                        task.getPosition().latitude +
                         "," + task.getPosition().longitude;
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
 
@@ -369,8 +381,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             try {
                                 if (!markerClass.mIsClicked()) {
                                     markerClass.setmIsClicked(true);
-                                   Polygon polygon= setAreaReport(new JSONArray(markerClass.getmPoints()));
-                                   mapPolygons.put(markerClass.getmId(), polygon);
+                                    Polygon polygon = setAreaReport(new JSONArray(markerClass.getmPoints()));
+                                    mapPolygons.put(markerClass.getmId(), polygon);
                                 } else {
                                     markerClass.setmIsClicked(false);
                                     Polygon polygon = mapPolygons.get(markerClass.getmId());
@@ -412,7 +424,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 final TaskClass item = mWorkerTaskMap.get(key);
                 mWorkerClusterManager.cluster();
                 mWorkerClusterManager.addItem(item);
-                mWorkerClusterManager.setRenderer(new OwnIconRenderedWorker(mContext, mMap, mWorkerClusterManager));
+                mWorkerClusterManager.setRenderer(new OwnIconRenderedWorker(mContext, mMap,
+                        mWorkerClusterManager));
             }
         }
     }
@@ -435,6 +448,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
+
         try {
 
             System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
@@ -459,6 +473,40 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String date = jsonobject.getString("creationtime");
 
                 String name = jsonobject.getString("username");
+
+                String category = jsonobject.getString("category");
+
+                switch (category) {
+                    case "LIXO":
+                        category = LIXO;
+                        break;
+                    case "PESADOS":
+                        category = PESADOS;
+                        break;
+                    case "PERIGOSOS":
+                        category = PERIGOSOS;
+                        break;
+                    case "PESSOAS":
+                        category = PESSOAS;
+                        break;
+                    case "TRANSPORTE":
+                        category = TRANSPORTE;
+                        break;
+                    case "MADEIRAS":
+                        category = MADEIRAS;
+                        break;
+                    case "CARCACAS":
+                        category = CARCACAS;
+                        break;
+                    case "BIOLOGICO":
+                        category = BIOLOGICO;
+                        break;
+                    case "JARDINAGEM":
+                        category = JARDINAGEM;
+                        break;
+                    case "MATAS":
+                        category = MATAS;
+                }
 
                 double latitude = Double.parseDouble(jsonobject.getString("lat"));
 
@@ -486,7 +534,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("title");
 
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, locality, isArea, isClicked, points, reportID);
+                        description, gravity, title, likes, dislikes, locality, isArea, isClicked,
+                        points, category, reportID);
 
                 if (!mReportMap.containsKey(reportID)) {
                     mReportMap.put(reportID, report);
@@ -542,6 +591,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String name = jsonobject.getString("username");
 
+                String category = jsonobject.getString("category");
+
                 String phonenumber = "";
 
                 if (jsonobject.has("phone"))
@@ -564,7 +615,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     title = jsonobject.getString("indications");
 
                 TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, locality, reportID, indications, phonenumber);
+                        description, gravity, title, likes, dislikes, locality, reportID, indications, category, phonenumber);
 
                 if (!mWorkerTaskMap.containsKey(reportID)) {
                     mWorkerTaskMap.put(reportID, report);
@@ -946,7 +997,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
         } else {
-            Toast.makeText(mContext, "You should enable your gps to do report something", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "You should enable your gps to do report something",
+                    Toast.LENGTH_LONG).show();
         }
         //----LONG-----
         Button mLong = (Button) mView.findViewById(R.id.report_long_button);
@@ -1339,7 +1391,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     break;
                 case "5":
                     markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
-
             }
         }
 

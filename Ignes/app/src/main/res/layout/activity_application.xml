@@ -1,0 +1,150 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_note"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ActionBar"
+        app:contentInsetEnd="60dp"
+        app:contentInsetRight="60dp">
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/note_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorIgnesPrimary"
+        android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="Organization Name"
+        android:textColor="@color/backgroundColor"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="@color/backgroundColor" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="NIF : "
+        android:textColor="@color/colorIgnesPrimary"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/org_nif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="NIF..."
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="Email : "
+        android:textColor="@color/colorIgnesPrimary"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/org_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="Email..."
+        android:textColor="#000000" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="@color/backgroundColor" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="Information : "
+        android:textColor="@color/colorIgnesPrimary"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/org_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:inputType="textAutoCorrect"
+        android:text="Information..."
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"
+        android:inputType="textAutoCorrect"
+        android:text="Budget : "
+        android:textColor="@color/colorIgnesPrimary"
+        android:textSize="17dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/org_budget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"
+        android:inputType="textAutoCorrect"
+        android:text="10000$"
+        android:textColor="#000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aceitar" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recusar" />
+    </LinearLayout>
+
+
+</LinearLayout>

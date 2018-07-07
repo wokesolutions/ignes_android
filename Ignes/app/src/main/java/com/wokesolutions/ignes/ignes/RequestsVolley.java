@@ -738,7 +738,7 @@ public class RequestsVolley {
                 if (MapActivity.mRole.equals("WORKER"))
                     return setHeaders(mToken, context);
                 else
-                    return setHeaders("", context);
+                    return setHeaders(mToken, context);
             }
 
             @Override

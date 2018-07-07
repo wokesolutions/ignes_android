@@ -31,6 +31,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     private Map<String, MarkerClass> mMap;
     private boolean mIsProfile;
     private ArrayList<ApplicationClass> mArrayList;
+    private int isReady;
 
     MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile) {
         mContext = context;
@@ -38,6 +39,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         queue = Volley.newRequestQueue(mContext);
         mIsProfile = isProfile;
         mArrayList = new ArrayList<>();
+        isReady = 0;
 
     }
 
@@ -76,8 +78,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         ImageView img_status = holder.marker_status_image;
         ListView listOrgs = holder.marker_listview;
 
+        if(mIsProfile && !markerItem.getmApplicationRequested()){
+            markerItem.setmApplicationRequested(true);
 
-        if(mIsProfile){
             RequestsVolley.reportApplicationsRequest(markerItem.getmId(), mContext, MarkerAdapter.this);
 
             if(!mArrayList.isEmpty()){
@@ -174,10 +177,8 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     }
 
     public void setListApplications(JSONArray applications) {
-
         ApplicationClass applicationClass;
         mArrayList.clear();
-
         try {
 
             JSONArray jsonarray = applications;
@@ -245,9 +246,11 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             TextView orgname = convertView.findViewById(R.id.org_name);
             orgname.setText(applications.get(position).getmNameOrg());
             Button accept = convertView.findViewById(R.id.org_accept);
+
             accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     RequestsVolley.reportAcceptApplicationRequest(applications.get(position).getmNIFOrg(), reportId, mContext);
                 }
             });

@@ -8,8 +8,10 @@ public class ApplicationClass {
     private String mEmailOrg;
     private String mNIFOrg;
     private String mPhone;
+    private boolean mRequested;
 
-    public ApplicationClass (String nameOrg, String budget, String info, String emailOrg, String nifOrg, String phoneOrg){
+    public ApplicationClass (String nameOrg, String budget, String info, String emailOrg,
+                             String nifOrg, String phoneOrg){
 
         mNameOrg = nameOrg;
         mBudget = budget;
@@ -17,6 +19,14 @@ public class ApplicationClass {
         mEmailOrg =emailOrg;
         mNIFOrg = nifOrg;
         mPhone = phoneOrg;
+        mRequested = false;
+    }
+
+    public void setmRequested(boolean mRequested) {
+        this.mRequested = mRequested;
+    }
+    public boolean getmRequested(){
+        return mRequested;
     }
 
     public String getmPhone() {

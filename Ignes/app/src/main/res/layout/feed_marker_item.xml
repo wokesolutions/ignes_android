@@ -227,22 +227,21 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:id="@+id/list_orgs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ListView
-            android:id="@+id/list_orgs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp" />
 
     </LinearLayout>
-
-
 </LinearLayout>
 
 

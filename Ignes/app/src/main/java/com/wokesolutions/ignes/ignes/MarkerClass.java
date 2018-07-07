@@ -19,6 +19,7 @@ public class MarkerClass implements ClusterItem {
     private String mId, mVote, mPoints, mCategory;
     private boolean mIsArea;
     private boolean mIsClicked;
+    private boolean mApplicationRequested;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
@@ -46,6 +47,15 @@ public class MarkerClass implements ClusterItem {
         mPoints = points;
         mCategory = category;
         mVote = "";
+        mApplicationRequested = false;
+    }
+
+    public void setmApplicationRequested(boolean mApplicationRequested) {
+        this.mApplicationRequested = mApplicationRequested;
+    }
+
+    public boolean getmApplicationRequested(){
+        return mApplicationRequested;
     }
 
     public String getmCategory() {

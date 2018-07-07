@@ -66,6 +66,8 @@ public class RequestsVolley {
         final String mToken = sharedPref.getString("token", null);
         final JSONObject jsonObject = new JSONObject();
 
+        Log.e("CENAAAS FRANNN ", "nif: "+mNif +" report:" +mReport+" token:"+mToken);
+
         try {
             jsonObject.put("report", mReport);
             jsonObject.put("nif", mNif);

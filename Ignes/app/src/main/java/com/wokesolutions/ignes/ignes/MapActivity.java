@@ -316,6 +316,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
 
+            addresses = null;
+
+            vector = new ArrayList<>();
+            counter = 0;
+
+            mFinishDrawButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createPolygon(vector);
+                    mNextButton.setVisibility(View.VISIBLE);
+                }
+            });
+
         } else if (mRole.equals("WORKER")) {
 
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
@@ -333,18 +346,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        addresses = null;
 
-        vector = new ArrayList<>();
-        counter = 0;
-
-        mFinishDrawButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createPolygon(vector);
-                mNextButton.setVisibility(View.VISIBLE);
-            }
-        });
     }
 
     private void setUpCluster(LatLng latLng) {

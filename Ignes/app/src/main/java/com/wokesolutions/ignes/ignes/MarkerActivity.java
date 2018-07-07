@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -128,6 +129,10 @@ public class MarkerActivity extends AppCompatActivity {
 
         Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
 
+        //TODO
+        Bitmap bitmap = mMarker.getmImg_bitmap();
+        if(bitmap==null)
+            RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext, null, null, null);
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
         String title = mMarker.getmTitle();

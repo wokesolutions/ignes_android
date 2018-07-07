@@ -66,7 +66,7 @@ public class RequestsVolley {
         final String mToken = sharedPref.getString("token", null);
         final JSONObject jsonObject = new JSONObject();
 
-        Log.e("CENAAAS FRANNN ", "nif: "+mNif +" report:" +mReport+" token:"+mToken);
+        Log.e("CENAAAS FRANNN ", "nif: " + mNif + " report:" + mReport + " token:" + mToken);
 
         try {
             jsonObject.put("report", mReport);
@@ -495,11 +495,13 @@ public class RequestsVolley {
 
                             if (mMarker != null) {
                                 mMarker.makeImg(data);
-                                markerAdapter.notifyItemChanged(position);
+                                if (position != -1)
+                                    markerAdapter.notifyItemChanged(position);
 
                             } else if (mTask != null) {
                                 mTask.makeImg(data);
-                                taskAdapter.notifyItemChanged(position);
+                                if (position != -1)
+                                    taskAdapter.notifyItemChanged(position);
                             }
 
 

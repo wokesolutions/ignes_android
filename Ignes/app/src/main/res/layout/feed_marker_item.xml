@@ -50,6 +50,11 @@
                     android:layout_marginRight="5dp"
                     android:src="@drawable/lockopen" />
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/backgroundColor" />
+
                 <Button
                     android:id="@+id/button_more"
                     style="@style/Widget.AppCompat.Button.Borderless"

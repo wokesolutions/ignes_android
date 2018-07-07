@@ -31,40 +31,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|bottom"
-                android:layout_margin="10dp"
-                android:background="@drawable/button_white"
-                android:padding="5dp">
-
-                <Button
-                    android:id="@+id/filter_button"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/filter_icon" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/quicksand_light"
-                    android:text="Filter Map"
-                    android:textColor="#000000"
-                    android:textSize="15dp" />
-
-            </LinearLayout>
-
             <Button
-                android:id="@+id/final_button"
+                android:id="@+id/next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|top"
-                android:text="Finish"
-                android:textColor="#000000"
+                android:text="Next"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:inputType="textCapCharacters"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:background="@drawable/shadow"
+                android:textColor="@color/colorIgnesPrimary"
                 android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/done_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:text="Finish draw"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:inputType="textCapCharacters"
+                style="@style/Base.Widget.AppCompat.Button.Borderless"
+                android:background="@drawable/shadow"
+                android:textColor="@color/colorIgnesPrimary"
+                android:visibility="gone" />
 
 
         </fragment>

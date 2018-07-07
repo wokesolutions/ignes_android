@@ -123,6 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
+    private ArrayList<Polygon> currentPolygonsArray;
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
@@ -141,7 +142,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public String mUserRadius;
     private Map<String, Polygon> mapPolygons;
     private Button mFinishTaskPathButton;
-    private Button mFilterButton, mFinishDrawAddress;
+    private Button mFinishDrawButton, mFinishDrawAddress, mNextButton;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
     private ClusterManager<TaskClass> mWorkerClusterManager;
@@ -259,7 +260,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (mRole.equals("USER")) {
             setContentView(R.layout.activity_map);
-            mFinishDrawAddress = findViewById(R.id.final_button);
+            mFinishDrawAddress = findViewById(R.id.done_button);
         } else if (mRole.equals("WORKER")) {
             setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_map);
@@ -282,7 +283,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         queue = Volley.newRequestQueue(this);
         isReady = false;
         orderedIds = new LinkedList<>();
-        mFilterButton = findViewById(R.id.filter_button);
+        mFinishDrawButton = findViewById(R.id.done_button);
+        mNextButton = findViewById(R.id.next_button);
+        currentPolygonsArray = new ArrayList<>();
 
         String languageToLoad = "pt_PT";
         Locale locale = new Locale(languageToLoad);
@@ -335,10 +338,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         vector = new ArrayList<>();
         counter = 0;
 
-        mFilterButton.setOnClickListener(new View.OnClickListener() {
+        mFinishDrawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createPolygon(vector);
+                mNextButton.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -916,6 +920,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return super.onOptionsItemSelected(item);
     }
 
+    private void cleanMapPolygons(){
+
+        for(Polygon polygon : currentPolygonsArray)
+            polygon.remove();
+    }
+
     public void onReportStart() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Report Address");
@@ -1018,6 +1028,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 alert.dismiss();
                 startActivity(i);
+            }
+        });
+
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                cleanMapPolygons();
             }
         });
     }
@@ -1125,12 +1142,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Style the polygon.
             stylePolygon(polygon);
 
+            currentPolygonsArray.add(polygon);
 
-            mFinishDrawAddress.setOnClickListener(new View.OnClickListener() {
+            mFinishDrawAddress.setVisibility(View.GONE);
+
+            mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReport(true);
-                    mFinishDrawAddress.setVisibility(View.GONE);
+                    mNextButton.setVisibility(View.GONE);
+
                 }
             });
             return polygon;

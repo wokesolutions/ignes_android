@@ -85,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_light"
-                    android:text="Category: "
+                    android:text="@string/category"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="15dp"
                     android:textStyle="bold" />
@@ -117,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_light"
-                    android:text="Gravity: "
+                    android:text="@string/gravity"
                     android:textColor="@color/colorIgnesPrimary"
                     android:textSize="15dp"
                     android:textStyle="bold" />
@@ -292,7 +292,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="10dp"
                             android:fontFamily="@font/quicksand_light"
-                            android:text="comments"
+                            android:text="@string/comments"
                             android:textColor="#000000"
                             android:textSize="15dp"
                             android:textStyle="bold" />
@@ -385,7 +385,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:fontFamily="@font/quicksand_light"
-                        android:hint=" Comment..."
+                        android:hint="@string/comment"
                         android:inputType="textMultiLine"
                         android:singleLine="true"
                         android:textSize="15dp"
@@ -398,7 +398,7 @@
                         android:layout_height="60dp"
                         android:layout_gravity="bottom"
                         android:layout_weight=".5"
-                        android:text="post"
+                        android:text="@string/post"
                         android:textColor="@color/colorIgnesPrimary"
                         android:textSize="10dp" />
 

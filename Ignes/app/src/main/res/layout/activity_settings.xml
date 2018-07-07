@@ -54,7 +54,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Change password" />
+                    android:text="@string/change_password" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,7 +78,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Logout everywhere logged in" />
+                    android:text="@string/logout_everywhere_logged_in" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,7 +102,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Change map area radius" />
+                    android:text="@string/change_map_area_radius" />
             </LinearLayout>
 
             <LinearLayout
@@ -126,7 +126,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:gravity="left|center"
                     android:inputType="textCapSentences"
-                    android:text="Add localities" />
+                    android:text="@string/add_localities" />
             </LinearLayout>
         </LinearLayout>
 

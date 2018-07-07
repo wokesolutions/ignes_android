@@ -45,4 +45,18 @@
     <string name="save">Guardar</string>
     <string name="locality">Localidade&#160;</string>
     <string name="more_about">Mais SOBRE&#160;</string>
+    <string name="people_interacted_with_this_report">&#160;pessoas interagiram com este reporte</string>
+    <string name="gravity">Gravidade:&#160;</string>
+    <string name="category">Categoria:&#160;</string>
+    <string name="comments">comentários</string>
+    <string name="comment">&#160;Comentar...</string>
+    <string name="post">postar</string>
+    <string name="person_interacted_with_report">&#160;pessoa interagiu com este reporte</string>
+    <string name="change_password">Mudar password</string>
+    <string name="logout_everywhere_logged_in">Sair em todos os dispositivos</string>
+    <string name="change_map_area_radius">Mudar raio no mapa</string>
+    <string name="add_localities">Adicionar localidades</string>
+    <string name="quick">Rápido</string>
+    <string name="simple">Simples</string>
+    <string name="detailed">Detalhado</string>
 </resources>

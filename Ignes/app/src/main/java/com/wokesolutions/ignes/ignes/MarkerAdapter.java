@@ -75,6 +75,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         Button more_button = holder.button_more;
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
+        TextView interacts_text = holder.marker_interactions_text;
         ImageView img_status = holder.marker_status_image;
         ListView listOrgs = holder.marker_listview;
 
@@ -125,6 +126,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         int total = Integer.parseInt(markerItem.getmLikes()) + Integer.parseInt(markerItem.getmDislikes());
         interacts.setText("" + total);
 
+        if (total == 1)
+            interacts_text.setText(R.string.person_interacted_with_report);
+
         image.setImageBitmap(markerItem.getmImg_bitmap());
 
         more_button.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +158,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         ImageView marker_status_image, marker_image;
         TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
-                marker_gravity, marker_gravity_title;
+                marker_gravity, marker_gravity_title, marker_interactions_text;
         Button button_more;
         Context itemViewContext;
         ListView marker_listview;
@@ -171,6 +175,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             button_more = itemView.findViewById(R.id.button_more);
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
+            marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
             marker_status_image = itemView.findViewById(R.id.feed_lock_img);
             marker_listview = itemView.findViewById(R.id.list_orgs);
         }

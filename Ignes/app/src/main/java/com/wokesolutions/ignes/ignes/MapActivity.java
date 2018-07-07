@@ -964,7 +964,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void onReport(final boolean isArea) {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Report");
+        mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
 
         LayoutInflater inflater = MapActivity.this.getLayoutInflater();

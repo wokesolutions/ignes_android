@@ -155,7 +155,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/quicksand_light"
-                            android:text="Gravity: "
+                            android:text="@string/gravity"
                             android:textColor="@color/colorIgnesPrimary"
                             android:textSize="15dp"
                             android:textStyle="bold" />
@@ -216,11 +216,12 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/feed_report_interactions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_light"
                         android:inputType="textMultiLine"
-                        android:text=" people interacted to this report"
+                        android:text="@string/people_interacted_with_this_report"
                         android:textColor="#000000"
                         android:textSize="10dp"
                         android:textStyle="bold" />

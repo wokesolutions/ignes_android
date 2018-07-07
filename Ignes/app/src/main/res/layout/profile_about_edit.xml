@@ -26,7 +26,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit your Profile "
+                    android:text="@string/edit_your_profile"
                     android:textAllCaps="true"
                     android:textColor="#000000"
                     android:textSize="20dp" />
@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Tap to Change Photo" />
+                    android:text="@string/tap_to_change_photo" />
 
             </LinearLayout>
 
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Name"
+                android:text="@string/name"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Gender"
+                android:text="@string/gender"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -117,21 +117,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/colorIgnesPrimary"
-                    android:text="Female" />
+                    android:text="@string/female" />
 
                 <RadioButton
                     android:id="@+id/checkbox_male"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/colorIgnesPrimary"
-                    android:text="Male" />
+                    android:text="@string/male" />
 
                 <RadioButton
                     android:id="@+id/checkbox_other"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/colorIgnesPrimary"
-                    android:text="Prefer to self describe" />
+                    android:text="@string/prefer_to_self_describe" />
 
                 <EditText
                     android:id="@+id/edit_gender_self"
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Birth Date "
+                android:text="@string/birth_date"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -211,7 +211,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@android:color/transparent"
                     android:fontFamily="@font/quicksand_light"
-                    android:hint="yyyy"
+                    android:hint="@string/birthdate_year_hint"
                     android:inputType="date"
                     android:textColor="#000000"
                     android:textStyle="bold" />
@@ -232,7 +232,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Address"
+                android:text="@string/address"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -257,7 +257,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Phone Number"
+                android:text="@string/phone_number"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -281,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Job"
+                android:text="@string/job"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -304,7 +304,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Locality"
+                android:text="@string/locality"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -327,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Skills"
+                android:text="@string/skills"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
@@ -349,7 +349,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button"
                 android:fontFamily="@font/quicksand_bold"
-                android:text="Save"
+                android:text="@string/save"
                 android:textColor="@color/backgroundColor"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -5,17 +5,22 @@
     <string name="action_sign_in" translatable="false">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email" translatable="false">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_password">This password is too short</string>
     <string name="error_field_required" translatable="false">This field is required</string>
     <string name="permission_rationale" translatable="false">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="default_notification_channel_id" translatable="false">blablablaignes</string>
 
     <!-- Multiple Page Strings -->
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="report_alert">Report</string>
+    <string name="report_by_an_address_or_in_an_area">Report by an address or in an area?</string>
+    <string name="address">Address</string>
+    <string name="area">Area</string>
 
     <!-- Launch Page Strings -->
     <string name="turning_red_into_green" translatable="false">Turning RED into GREEN</string>
@@ -27,6 +32,7 @@
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_a_new_one">Create a new one</string>
     <string name="enter_without_an_account">Continue without an account</string>
+    <string name="forgot_my_password">Forgot my password</string>
 
     <string name="title_activity_nav_bar" translatable="false">NavBarActivity</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
@@ -39,18 +45,35 @@
     <string name="close">Close</string>
 
     <!-- ProfileActivity String -->
-    <string name="welcome">Welcome,</string>
-    <string name="points">Points:</string>
-    <string name="insert_company_code">Insert company code</string>
-    <string name="code">Code</string>
-    <string name="next">Next</string>
+    <string name="points">Points</string>
+    <string name="reports">Reports</string>
+    <string name="click_to_confirm_account">CLICK HERE TO CONFIRM YOUR ACCOUNT</string>
+    <string name="locality">Locality&#160;</string>
+    <string name="more_about">More ABOUT&#160;</string>
+    <string name="name">Name</string>
+    <string name="gender">Gender</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="job">Job</string>
+    <string name="skills">Skills</string>
+    <string name="edit_your_profile">Edit your Profile</string>
+    <string name="tap_to_change_photo">Tap to Change Photo</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="prefer_to_self_describe">Prefer to self describe</string>
+    <string name="birthdate_year_hint">yyyy</string>
+    <string name="save">Save</string>
 
     <!-- Register form String -->
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="log_out">Logout</string>
     <string name="profile_navi">Profile</string>
-    <string name="default_notification_channel_id">blablablaignes</string>
+
+    <!-- Search Alert String -->
+    <string name="search_alert">Search Locality</string>
+    <string name="search">Search</string>
+
 
 
     <string-array name="month_array">

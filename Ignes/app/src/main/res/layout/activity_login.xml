@@ -79,7 +79,7 @@
                     android:fontFamily="@font/quicksand_light"
                     android:textColor="@color/colorIgnesPrimary"
                     android:layout_gravity="right"
-                    android:text="Forgot my password"
+                    android:text="@string/forgot_my_password"
                     android:textSize="12dp"/>
 
                 <Button

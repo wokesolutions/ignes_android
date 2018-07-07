@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_light"
         android:gravity="center_horizontal"
-        android:text="Reportar num ponto ou numa area?" />
+        android:text="@string/report_by_an_address_or_in_an_area" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:background="@drawable/button"
             android:fontFamily="@font/quicksand_bold"
             android:inputType="textCapCharacters"
-            android:text="Address"
+            android:text="@string/address"
             android:textColor="@color/backgroundColor"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:background="@drawable/button"
             android:fontFamily="@font/quicksand_bold"
             android:inputType="textCapCharacters"
-            android:text="Area"
+            android:text="@string/area"
             android:textColor="@color/backgroundColor"
             android:textStyle="bold" />
     </LinearLayout>

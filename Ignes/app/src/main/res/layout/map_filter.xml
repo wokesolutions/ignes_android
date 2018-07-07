@@ -18,7 +18,7 @@
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:background="@drawable/button"
         android:fontFamily="@font/quicksand_bold"
-        android:text="Search"
+        android:text="@string/search"
         android:textColor="@color/backgroundColor"
         android:textStyle="bold" />
 

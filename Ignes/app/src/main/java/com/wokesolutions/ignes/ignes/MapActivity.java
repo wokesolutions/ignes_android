@@ -930,7 +930,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void onReportStart() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Report Address");
+        mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
 
         LayoutInflater inflater = MapActivity.this.getLayoutInflater();
@@ -1084,7 +1084,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void filterTask() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Search");
+        mBuilder.setTitle(R.string.search_alert);
         mBuilder.setIcon(R.drawable.lupared);
 
         LayoutInflater inflater = MapActivity.this.getLayoutInflater();

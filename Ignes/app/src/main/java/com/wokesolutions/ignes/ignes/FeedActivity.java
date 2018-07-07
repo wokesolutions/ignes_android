@@ -121,6 +121,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
         } else if (mRole.equals("USER")) {
             markerMap = MapActivity.mReportMap;
             address_spinner = findViewById(R.id.feed_address_spinner);
+            address_spinner.setOnItemSelectedListener(this);
             localities_array = new ArrayList<>();
             markerAdapter = new MarkerAdapter(this, markerMap, false);
             recyclerView.setAdapter(markerAdapter);
@@ -322,7 +323,9 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
                 List<Address> addresses = mGeocoder.getFromLocationName(localities_array.get(position), 1);
                 double lat = addresses.get(0).getLatitude();
                 double lng = addresses.get(0).getLongitude();
-//                MapActivity.locationReportsRequest(lat, lng, localities_array.get(position), mToken, "");
+                System.out.println("ON ITEM SELECTED: " + addresses.get(0));
+
+                //MapActivity.locationReportsRequest(lat, lng, localities_array.get(position), mToken, "");
 
             } catch (IOException e) {
                 e.printStackTrace();

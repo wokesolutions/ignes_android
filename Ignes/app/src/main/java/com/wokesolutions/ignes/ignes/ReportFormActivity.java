@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,6 +54,7 @@ import java.util.Date;
 import java.util.List;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
+import static android.os.Environment.getExternalStorageDirectory;
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class ReportFormActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -258,7 +260,11 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         //Unique filename to prevent name collision
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imgFileName = "IGNES_" + timeStamp + "_";
-        File storageDir = getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
+        //File storageDir = getExternalStoragePublicDirectory();
+        File storageDir = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES) + File.separator + "/Ignes/");
+        storageDir.mkdir();
+
+
         File image = File.createTempFile(imgFileName, ".jpg", storageDir);
 
         mCurrentPhotoPath = image.getAbsolutePath();

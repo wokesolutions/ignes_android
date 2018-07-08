@@ -7,6 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.maps.android.clustering.ClusterItem;
 
+import java.util.ArrayList;
+
 public class MarkerClass implements ClusterItem {
 
     public String mDMY;
@@ -22,6 +24,7 @@ public class MarkerClass implements ClusterItem {
     private boolean mIsArea;
     private boolean mIsClicked;
     private boolean mApplicationRequested;
+    private ArrayList<ApplicationClass> mArrayApplications;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
@@ -53,6 +56,7 @@ public class MarkerClass implements ClusterItem {
         String[] tokens = mDate.split(" ");
         mDMY = tokens[0];
         mHours = tokens[1];
+        mArrayApplications = new ArrayList<>();
     }
 
     public String getmDMY() {
@@ -177,6 +181,14 @@ public class MarkerClass implements ClusterItem {
         mAvatar_bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length, options);
 
         return mAvatar_bitmap;
+    }
+
+    public void addArrayApplication(ApplicationClass applicationClass){
+        mArrayApplications.add(applicationClass);
+    }
+
+    public ArrayList<ApplicationClass> getmArrayApplications() {
+        return mArrayApplications;
     }
 
     public byte[] getmImgbyte() {

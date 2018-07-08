@@ -75,6 +75,9 @@
             android:name=".RandomActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
+            android:name=".ApplicationActivity"
+            android:theme="@style/WelcomeTheme" />
+        <activity
             android:name=".RegisterActivity"
             android:theme="@style/WelcomeTheme" />
         <activity

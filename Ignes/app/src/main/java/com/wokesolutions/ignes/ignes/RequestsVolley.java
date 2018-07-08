@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -135,7 +136,7 @@ public class RequestsVolley {
     }
 
 
-    public static void reportApplicationsRequest(String reportId, final Context context,
+    public static void reportApplicationsRequest(String reportId, final Context context, final Button button,
                                                  final MarkerAdapter activity) {
 
         final String mReportId = reportId;
@@ -155,7 +156,8 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK REPORT APPLICATIONS ORGS : " + response);
 
-                        activity.setListApplications(response);
+                        activity.setListApplications(response, mReportId);
+                        button.setVisibility(View.VISIBLE);
 
                     }
                 },

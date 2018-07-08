@@ -42,8 +42,6 @@ import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    public static final int REPORT_ACTIVITY = 1;
-
     Map<String, MarkerClass> markerMap;
     Map<String, TaskClass> taskMap;
 
@@ -234,12 +232,6 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
         if (item.getItemId() == R.id.refreshicon) {
             recreate();
         }
-
-        if (item.getItemId() == R.id.reporticon) {
-            onReport();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -258,62 +250,6 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public void onReport() {
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-        mBuilder.setTitle("Report");
-        mBuilder.setIcon(R.drawable.ocorrenciared);
-
-        LayoutInflater inflater = FeedActivity.this.getLayoutInflater();
-        final View mView = inflater.inflate(R.layout.report_choice, null);
-        mBuilder.setView(mView);
-        final AlertDialog alert = mBuilder.create();
-
-        alert.show();
-
-        if (mCurrentLocation != null) {
-            Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
-            mFast.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
-                    i.putExtra("TYPE", "fast");
-                    i.putExtra("LOCATION", mCurrentLocation);
-                    alert.dismiss();
-                    startActivity(i);
-
-                }
-            });
-
-            Button mMedium = (Button) mView.findViewById(R.id.report_medium_button);
-            mMedium.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
-                    i.putExtra("TYPE", "medium");
-                    i.putExtra("LOCATION", mCurrentLocation);
-                    alert.dismiss();
-                    startActivityForResult(i, REPORT_ACTIVITY);
-                }
-            });
-        } else {
-            Toast.makeText(mContext, "You should enable your gps to report something", Toast.LENGTH_LONG).show();
-        }
-        //----LONG-----
-        Button mLong = (Button) mView.findViewById(R.id.report_long_button);
-        mLong.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(FeedActivity.this, ReportFormActivity.class);
-                i.putExtra("TYPE", "detailed");
-
-                if (mCurrentLocation != null)
-                    i.putExtra("LOCATION", mCurrentLocation);
-
-                alert.dismiss();
-                startActivity(i);
-            }
-        });
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

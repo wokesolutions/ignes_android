@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".NoteActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar_applications"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ActionBar"
+        app:contentInsetEnd="60dp"
+        app:contentInsetRight="60dp">
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorIgnesPrimary"
+        android:gravity="center_horizontal|center"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:gravity="center"
+            android:text="Candidaturas"
+            android:textColor="@color/backgroundColor"
+            android:textSize="20dp" />
+
+
+        <TextView
+            android:id="@+id/report_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_light"
+            android:text=""
+            android:textColor="@color/backgroundColor"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lista de candidaturas de Organizações para resolução da sua ocorrência.
+         Leia com atenção as propostas recebidas."
+        android:textSize="12dp"
+        android:textColor="#000000"
+        android:inputType="textMultiLine"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"/>
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+    </ListView>
+
+
+</LinearLayout>

@@ -25,7 +25,7 @@ public class ApplicationClass {
     public void setmRequested(boolean mRequested) {
         this.mRequested = mRequested;
     }
-    
+
     public boolean getmRequested(){
         return mRequested;
     }

@@ -61,14 +61,14 @@ public class CommentClass extends AppCompatActivity {
         options.inMutable = true;
         mAvatar_bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length, options);
 
-        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mAvatar_bitmap);
-        roundedBitmap.setCircular(true);
-        mAvatar_rounded = roundedBitmap;
-
         return mAvatar_bitmap;
     }
     public Bitmap getmAvatar_bitmap() {
         return mAvatar_bitmap;
+    }
+
+    public void setAvatar(RoundedBitmapDrawable avatar) {
+        mAvatar_rounded = avatar;
     }
 
     public RoundedBitmapDrawable getmAvatar_rounded() {

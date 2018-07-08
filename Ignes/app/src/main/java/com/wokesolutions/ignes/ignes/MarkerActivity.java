@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -352,7 +355,14 @@ public class MarkerActivity extends AppCompatActivity {
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
                 byte [] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
-                commentClass.makeAvatar(bytes);
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                roundedBitmap.setCircular(true);
+
+                commentClass.setAvatar(roundedBitmap);
+                //commentClass.makeAvatar(bytes);
                 arrayList.add(commentClass);
             }
             listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));

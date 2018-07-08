@@ -45,7 +45,7 @@ public class MarkerActivity extends AppCompatActivity {
 
     public static EditText marker_comment;
     private static String markerID;
-    private ImageView marker_image, marker_status_image;
+    public ImageView marker_image, marker_status_image;
     private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
             marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number,
             marker_gravity_title, marker_category;
@@ -144,7 +144,7 @@ public class MarkerActivity extends AppCompatActivity {
         Bitmap bitmap = mMarker.getmImg_bitmap();
         if(bitmap==null)
             RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext,
-                    null, null, null);
+                    null, null, null, MarkerActivity.this);
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
         String title = mMarker.getmTitle();

@@ -431,7 +431,7 @@ public class RequestsVolley {
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position,
                                         final Context mContext, final MarkerAdapter markerAdapter,
-                                        TaskClass task, final TaskAdapter taskAdapter) {
+                                        TaskClass task, final TaskAdapter taskAdapter, final  MarkerActivity activity) {
 
         final String report = reportId;
 
@@ -474,6 +474,8 @@ public class RequestsVolley {
                                 if (position != -1)
                                     taskAdapter.notifyItemChanged(position);
                             }
+                            if (activity != null)
+                                activity.marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
 
                         } catch (JSONException e) {

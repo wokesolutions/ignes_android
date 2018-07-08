@@ -201,7 +201,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private void thumbnailRequest(String reportId, TaskClass task, final int position) {
 
-        RequestsVolley.thumbnailRequest(reportId, null, position, mContext, null, task, this);
+        RequestsVolley.thumbnailRequest(reportId, null, position, mContext, null, task, this, null);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

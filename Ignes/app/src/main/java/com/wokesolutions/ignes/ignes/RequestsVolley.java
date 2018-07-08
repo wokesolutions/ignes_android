@@ -1430,6 +1430,9 @@ public class RequestsVolley {
 
         final TaskClass mTask = task;
 
+        final SharedPreferences sharedPref = mContext.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String token = sharedPref.getString("token", null);
+
         ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected() ||
@@ -1487,7 +1490,7 @@ public class RequestsVolley {
             @Override
             public Map<String, String> getHeaders() {
 
-                return setHeaders("", mContext);
+                return setHeaders(token, mContext);
             }
 
             @Override

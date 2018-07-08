@@ -427,7 +427,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                             orientation = 0;
                         mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(),
                                 mThumbnail.getHeight(), matrix, true);
-                        } catch (Exception e) {
+                    } catch (Exception e) {
                         System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();
                     }
@@ -606,38 +606,37 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
 
         LatLng pointAddress = new LatLng(lat, lng);
 
-        if (jsonArray != null)
-            switch (category) {
-                case LIXO:
-                    category = "LIXO";
-                    break;
-                case PESADOS:
-                    category = "PESADOS";
-                    break;
-                case PERIGOSOS:
-                    category = "PERIGOSOS";
-                    break;
-                case PESSOAS:
-                    category = "PESSOAS";
-                    break;
-                case TRANSPORTE:
-                    category = "TRANSPORTE";
-                    break;
-                case MADEIRAS:
-                    category = "MADEIRAS";
-                    break;
-                case CARCACAS:
-                    category = "CARCACAS";
-                    break;
-                case BIOLOGICO:
-                    category = "BIOLOGICO";
-                    break;
-                case JARDINAGEM:
-                    category = "JARDINAGEM";
-                    break;
-                case MATAS:
-                    category = "MATAS";
-            }
+        switch (category) {
+            case LIXO:
+                category = "LIXO";
+                break;
+            case PESADOS:
+                category = "PESADOS";
+                break;
+            case PERIGOSOS:
+                category = "PERIGOSOS";
+                break;
+            case PESSOAS:
+                category = "PESSOAS";
+                break;
+            case TRANSPORTE:
+                category = "TRANSPORTE";
+                break;
+            case MADEIRAS:
+                category = "MADEIRAS";
+                break;
+            case CARCACAS:
+                category = "CARCACAS";
+                break;
+            case BIOLOGICO:
+                category = "BIOLOGICO";
+                break;
+            case JARDINAGEM:
+                category = "JARDINAGEM";
+                break;
+            case MATAS:
+                category = "MATAS";
+        }
 
         reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
     }

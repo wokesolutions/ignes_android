@@ -1031,6 +1031,8 @@ public class RequestsVolley {
             activity.imgByteArray = imgStream.toByteArray();
             base64Img = Base64.encodeToString(activity.imgByteArray, Base64.DEFAULT);
 
+            System.out.println("JSONARRAY DO REPORT ----> "+ jsonArray);
+
             if (jsonArray != null) {
                 report.put("points", jsonArray.toString());
             } else {
@@ -1079,6 +1081,8 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK REPORTAR: " + response);
                         activity.setResult(Activity.RESULT_OK, new Intent());
+                        int reportNum = Integer.parseInt(sharedPref.getString("user_reportNum", "0"));
+                        sharedPref.edit().putString("user_reportNum", ""+(reportNum+1)).apply();
                         Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
                         activity.finish();
                     }

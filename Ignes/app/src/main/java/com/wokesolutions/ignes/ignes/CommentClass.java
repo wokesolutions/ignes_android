@@ -2,8 +2,11 @@ package com.wokesolutions.ignes.ignes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AppCompatActivity;
 
-public class CommentClass {
+public class CommentClass extends AppCompatActivity {
 
     public String mId;
     public String mDate;
@@ -13,6 +16,7 @@ public class CommentClass {
     public String mHours;
     private byte[] mAvatarbyte;
     private Bitmap mAvatar_bitmap;
+    private RoundedBitmapDrawable mAvatar_rounded;
 
 
     public CommentClass(String id, String date, String owner, String text){
@@ -57,9 +61,17 @@ public class CommentClass {
         options.inMutable = true;
         mAvatar_bitmap = BitmapFactory.decodeByteArray(avatar, 0, avatar.length, options);
 
+        RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), mAvatar_bitmap);
+        roundedBitmap.setCircular(true);
+        mAvatar_rounded = roundedBitmap;
+
         return mAvatar_bitmap;
     }
     public Bitmap getmAvatar_bitmap() {
         return mAvatar_bitmap;
+    }
+
+    public RoundedBitmapDrawable getmAvatar_rounded() {
+        return mAvatar_rounded;
     }
 }

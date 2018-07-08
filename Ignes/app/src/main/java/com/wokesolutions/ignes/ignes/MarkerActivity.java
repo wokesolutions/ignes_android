@@ -415,7 +415,8 @@ public class MarkerActivity extends AppCompatActivity {
             comment_text.setText(comments.get(position).mText);
             comment_date.setText(comments.get(position).mDMY);
             comment_owner.setText(comments.get(position).mOwner);
-            comment_ownerpic.setImageBitmap(comments.get(position).getmAvatar_bitmap());
+            //comment_ownerpic.setImageBitmap(comments.get(position).getmAvatar_bitmap());
+            comment_ownerpic.setImageDrawable(comments.get(position).getmAvatar_rounded());
 
             return convertView;
         }

@@ -59,13 +59,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
+                        android:padding="5dp"
+                        android:background="@color/colorIgnesPrimary"
                         android:gravity="center">
-
-                        <View
-                            android:layout_width="10dp"
-                            android:layout_height="2dp"
-                            android:layout_gravity="center"
-                            android:background="@color/colorIgnesPrimary" />
 
                         <Spinner
                             android:id="@+id/feed_address_spinner"
@@ -74,14 +70,9 @@
                             android:layout_gravity="center"
                             android:layout_marginHorizontal="10dp"
                             android:fontFamily="@font/quicksand_light"
-                            android:textColor="#000000"
+                            android:textColor="@color/backgroundColor"
                             android:textSize="15dp" />
 
-                        <View
-                            android:layout_width="10dp"
-                            android:layout_height="2dp"
-                            android:layout_gravity="center"
-                            android:background="@color/colorIgnesPrimary" />
                     </LinearLayout>
 
                     <TextView

@@ -173,13 +173,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         userReportsRequest("");
 
+        Button random = findViewById(R.id.random_button);
+        random.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, RandomActivity.class));
+            }
+        });
+
+
     }
 
     public void setUserMap(JSONArray markers) {
         try {
-
-            System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
-            //Map<String, MarkerClass> temp = new HashMap<>();
 
             JSONArray jsonarray = markers;
 
@@ -541,7 +547,6 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String insertedCode = mSearchText.getText().toString();
-                System.out.println("INSERTED CODE: " + insertedCode);
                 confirmRequest(insertedCode);
                 alert.dismiss();
             }
@@ -579,12 +584,9 @@ public class ProfileActivity extends AppCompatActivity {
                             THUMBSIZE,
                             THUMBSIZE);
 
-                    System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());
-
                     try {
                         ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
                         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                        System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                             matrix.postRotate(90);
@@ -594,8 +596,6 @@ public class ProfileActivity extends AppCompatActivity {
                             matrix.postRotate(270);
                         }
                         mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
-
-                        System.out.println("BYTE COUNT 2 THUMB: " + mThumbnail.getByteCount());
                     } catch (Exception e) {
                         System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();

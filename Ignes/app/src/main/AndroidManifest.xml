@@ -72,6 +72,9 @@
             android:name=".LoginActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
+            android:name=".RandomActivity"
+            android:theme="@style/WelcomeTheme" />
+        <activity
             android:name=".RegisterActivity"
             android:theme="@style/WelcomeTheme" />
         <activity

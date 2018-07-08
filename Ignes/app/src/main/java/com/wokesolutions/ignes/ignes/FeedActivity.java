@@ -250,7 +250,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             for (int i = 0; i < jsonarray.length(); i++) {
                 localities_array.add(jsonarray.getString(i));
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, localities_array);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, localities_array);
             address_spinner.setAdapter(adapter);
 
         } catch (JSONException e) {

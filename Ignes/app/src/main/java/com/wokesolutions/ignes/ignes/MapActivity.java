@@ -217,29 +217,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public static void getDirections(LatLng dest, TaskClass taskClass) {
-        setGoogleMapsApp(taskClass);
         String url = getDirectionsUrl(mLatLng, dest);
         DownloadTask downloadTask = new DownloadTask();
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
 
-    }
-
-    public static void setGoogleMapsApp(final TaskClass task) {
-
-        mGoogleMapsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" +
-                        MapActivity.mCurrentLocation.getLatitude()
-                        + "," + MapActivity.mCurrentLocation.getLongitude() + "&daddr=" +
-                        task.getPosition().latitude +
-                        "," + task.getPosition().longitude;
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-
-                mContext.startActivity(Intent.createChooser(intent, "Select an application"));
-            }
-        });
     }
 
     @Override
@@ -264,7 +246,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             setContentView(R.layout.worker_map);
 
             mGoogleMapsButtonLayout = findViewById(R.id.googlemapsbutton_layout);
-            mGoogleMapsButton = findViewById(R.id.googlemaps_button);
             mFinishTaskPathButton = findViewById(R.id.finish_task_path);
             mFinishTaskPathButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -597,7 +578,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 String indications = "";
                 if (jsonobject.has("indications"))
-                    title = jsonobject.getString("indications");
+                    indications = jsonobject.getString("indications");
+
 
                 TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, reportID, indications, category, phonenumber);

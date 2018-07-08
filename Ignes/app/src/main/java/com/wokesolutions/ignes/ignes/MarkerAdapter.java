@@ -100,7 +100,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             title.setVisibility(View.GONE);
 
         username.setText(markerItem.getmCreator_username());
-        date.setText(markerItem.getmDate());
+        date.setText(markerItem.getmDMY());
         address.setText(markerItem.getmAddress());
 
         if (!markerItem.getmGravity().equals("0"))

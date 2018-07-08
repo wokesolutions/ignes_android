@@ -31,23 +31,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <LinearLayout
                 android:id="@+id/googlemapsbutton_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|start"
                 android:layout_margin="10dp"
-                android:background="#30000000"
-                android:padding="5dp"
                 android:visibility="gone">
-
-                <Button
-                    android:id="@+id/googlemaps_button"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/googlemapsicon" />
 
                 <Button
                     android:id="@+id/finish_task_path"
@@ -57,12 +47,10 @@
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/worker_shadow_about"
                     android:fontFamily="@font/quicksand_light"
-                    android:padding="5dp"
                     android:text="Finish Path View"
                     android:textColor="@color/colorIgnesWorker"
                     android:textSize="10dp"
                     android:textStyle="bold" />
-
             </LinearLayout>
 
         </fragment>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -350,7 +351,8 @@ public class MarkerActivity extends AppCompatActivity {
                 String dateComment = jsonobject.getString("creationtime");
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
-                commentClass.makeAvatar(jsonobject.getString("profpic").getBytes());
+                byte [] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
+                commentClass.makeAvatar(bytes);
                 arrayList.add(commentClass);
             }
             listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));

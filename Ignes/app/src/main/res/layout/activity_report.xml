@@ -32,6 +32,14 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <CheckBox
+                android:id="@+id/report_checkbox_private"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/quicksand_light"
+                android:text="Private location"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/report_long_form"
@@ -47,8 +55,7 @@
                     android:fontFamily="@font/quicksand_bold"
                     android:text="Title"
                     android:textColor="@color/colorIgnesPrimary"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textSize="20dp" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/report_title_form"
@@ -63,17 +70,10 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorIgnesPrimary"
                         android:fontFamily="@font/quicksand_light"
-                        android:singleLine="true"
-                        android:textStyle="bold" />
+                        android:singleLine="true" />
 
 
                 </android.support.design.widget.TextInputLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginVertical="10dp"
-                    android:background="@color/backgroundColor" />
 
                 <LinearLayout
                     android:id="@+id/address_layout"
@@ -88,8 +88,7 @@
                         android:fontFamily="@font/quicksand_bold"
                         android:text="Address"
                         android:textColor="@color/colorIgnesPrimary"
-                        android:textSize="20dp"
-                        android:textStyle="bold" />
+                        android:textSize="20dp" />
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/report_address_form"
@@ -102,8 +101,7 @@
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/colorIgnesPrimary"
                             android:fontFamily="@font/quicksand_light"
-                            android:inputType="textMultiLine"
-                            android:textStyle="bold" />
+                            android:inputType="textMultiLine" />
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -111,16 +109,10 @@
                         android:id="@+id/report_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_bold"
+                        android:fontFamily="@font/quicksand_light"
                         android:text="Use my current location"
                         android:visibility="visible" />
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginVertical="10dp"
-                    android:background="@color/backgroundColor" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -128,8 +120,7 @@
                     android:fontFamily="@font/quicksand_bold"
                     android:text="Description"
                     android:textColor="@color/colorIgnesPrimary"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textSize="20dp" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/report_description_form"
@@ -142,18 +133,36 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorIgnesPrimary"
                         android:fontFamily="@font/quicksand_light"
-                        android:inputType="textMultiLine"
-                        android:textStyle="bold" />
+                        android:inputType="textMultiLine" />
 
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
-            <View
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="10dp"
-                android:background="@color/backgroundColor" />
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/quicksand_bold"
+                    android:text="Category:"
+                    android:textColor="@color/colorIgnesPrimary"
+                    android:textSize="20dp" />
+
+                <Spinner
+                    android:id="@+id/report_category_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:fontFamily="@font/quicksand_light"
+                    android:textColor="#000000"
+                    android:textSize="15dp" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -162,8 +171,7 @@
                 android:gravity="center"
                 android:text="Image"
                 android:textColor="@color/colorIgnesPrimary"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textSize="20dp" />
 
             <LinearLayout
                 android:id="@+id/report_long_image_form"
@@ -189,6 +197,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_bold"
+                        android:inputType="textCapCharacters"
                         android:text="Camera"
                         android:textColor="#000000" />
                 </LinearLayout>
@@ -205,6 +214,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_bold"
+                        android:inputType="textCapCharacters"
                         android:text="Upload"
                         android:textColor="#000000" />
 
@@ -216,17 +226,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/report_checkbox_private"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:fontFamily="@font/quicksand_bold"
-                android:text="Private location"
-                android:visibility="visible" />
-
-
 
             <LinearLayout
                 android:id="@+id/report_medium_form"
@@ -265,30 +264,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/quicksand_light"
-                    android:textColor="@color/colorIgnesPrimary"
-                    android:text="Category:"/>
-
-                <Spinner
-                    android:id="@+id/report_category_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:gravity="center"
-                    android:fontFamily="@font/quicksand_light"
-                    android:textColor="#000000"
-                    android:textSize="15dp" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/report_slider_form"
@@ -307,8 +282,7 @@
                     android:gravity="center"
                     android:text="Rank report gravity"
                     android:textColor="@color/colorIgnesPrimary"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textSize="20dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -319,8 +293,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/quicksand_bold"
                         android:text="1"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="17dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -329,8 +302,7 @@
                         android:fontFamily="@font/quicksand_bold"
                         android:gravity="right"
                         android:text="3"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="17dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -339,8 +311,7 @@
                         android:fontFamily="@font/quicksand_bold"
                         android:gravity="right"
                         android:text="5"
-                        android:textSize="17dp"
-                        android:textStyle="bold" />
+                        android:textSize="17dp" />
                 </RelativeLayout>
 
                 <SeekBar
@@ -362,6 +333,7 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:background="@drawable/button"
                 android:fontFamily="@font/quicksand_bold"
+                android:inputType="textCapCharacters"
                 android:text="Submit"
                 android:textColor="@color/backgroundColor"
                 android:textStyle="bold" />

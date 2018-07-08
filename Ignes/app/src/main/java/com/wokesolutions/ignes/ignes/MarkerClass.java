@@ -9,6 +9,8 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class MarkerClass implements ClusterItem {
 
+    public String mDMY;
+    public String mHours;
     private LatLng mPosition;
     private String mStatus, mAddress, mDate, mCreator_username,
             mDescription, mGravity, mTitle, mLikes, mDislikes, mLocality;
@@ -48,14 +50,25 @@ public class MarkerClass implements ClusterItem {
         mCategory = category;
         mVote = "";
         mApplicationRequested = false;
+        String[] tokens = mDate.split(" ");
+        mDMY = tokens[0];
+        mHours = tokens[1];
+    }
+
+    public String getmDMY() {
+        return mDMY;
+    }
+
+    public String getmHours() {
+        return mHours;
+    }
+
+    public boolean getmApplicationRequested() {
+        return mApplicationRequested;
     }
 
     public void setmApplicationRequested(boolean mApplicationRequested) {
         this.mApplicationRequested = mApplicationRequested;
-    }
-
-    public boolean getmApplicationRequested(){
-        return mApplicationRequested;
     }
 
     public String getmCategory() {
@@ -172,6 +185,10 @@ public class MarkerClass implements ClusterItem {
 
     public Bitmap getmImg_bitmap() {
         return mImage_bitmap;
+    }
+
+    public Bitmap getmAvatar_bitmap() {
+        return mAvatar_bitmap;
     }
 
     public String getmVote() {

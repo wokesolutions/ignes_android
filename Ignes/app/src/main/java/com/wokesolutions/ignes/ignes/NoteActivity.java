@@ -133,8 +133,6 @@ public class NoteActivity extends AppCompatActivity {
 
                         final EditText newNoteBox = findViewById(R.id.note_new_text);
                         final String newNote = newNoteBox.getText().toString();
-
-                        System.out.println("NOTA ENVIADA: " + newNote);
                         RequestsVolley.addNoteRequest(newNote, mTask.getmId(), mContext, NoteActivity.this);
                     }
                 });
@@ -162,15 +160,11 @@ public class NoteActivity extends AppCompatActivity {
 
                 arrayList.add(noteClass);
 
-                System.out.println("OLÁ DENTRO DO SET NOTES LIST");
-
                 listview.setAdapter(new NoteActivity.MyAdapter(mContext, arrayList));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println("OLÁ DENTRO DO SET NOTES LIST");
-
     }
 
     public void setToolbar(Toolbar toolbar) {

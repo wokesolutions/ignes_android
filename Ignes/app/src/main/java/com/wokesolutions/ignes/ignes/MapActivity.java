@@ -256,8 +256,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         else
             mUserRadius = "5";
 
-        System.out.println("MROOOOOLE-> " + mRole);
-
         if (mRole.equals("USER")) {
             setContentView(R.layout.activity_map);
             mFinishDrawAddress = findViewById(R.id.done_button);
@@ -357,7 +355,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // (Activity extends context, so we can pass 'this' in the constructor.)
         if (mRole.equals("USER")) {
             // Add cluster items (markers) to the cluster manager.
-            System.out.println("TAMANHO DA LISTA " + mReportMap.size());
 
             mClusterManager = new ClusterManager<MarkerClass>(mContext, mMap);
 
@@ -371,7 +368,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             while (it.hasNext()) {
                 String key = (String) it.next();
-                System.out.println("ITEM " + key);
                 final MarkerClass item = mReportMap.get(key);
                 mClusterManager.cluster();
                 mClusterManager.addItem(item);
@@ -401,7 +397,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             }
 
                         } else {
-                            System.out.println("ESTOU DENTRO DO MARKEEERR HELLLOOO");
                             Intent i = new Intent(MapActivity.this, MarkerActivity.class);
                             i.putExtra("MarkerClass", markerClass.getmId());
                             startActivity(i);
@@ -412,8 +407,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         } else if (mRole.equals("WORKER")) {
             // Add cluster items (markers) to the cluster manager.
-            System.out.println("TAMANHO DA LISTA " + mWorkerTaskMap.size());
-
             mWorkerClusterManager = new ClusterManager<TaskClass>(mContext, mMap);
 
             // Point the map's listeners at the listeners implemented by the cluster
@@ -426,7 +419,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             while (it.hasNext()) {
                 String key = (String) it.next();
-                System.out.println("ITEM " + key);
                 final TaskClass item = mWorkerTaskMap.get(key);
                 mWorkerClusterManager.cluster();
                 mWorkerClusterManager.addItem(item);
@@ -439,11 +431,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("ON RESUMEE");
-
-        /*if (mCurrentLocation != null) {
-            setMarkers(readFromFile(mContext), mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-        }*/
     }
 
     @Override
@@ -456,10 +443,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
 
         try {
-
-            System.out.println("ENTREI DENTRO DO SETMARKERS!!!    " + markers);
-            //Map<String, MarkerClass> temp = new HashMap<>();
-
             JSONArray jsonarray = markers;
 
             for (int i = 0; i < jsonarray.length(); i++) {
@@ -564,10 +547,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void setWorkerMarkers(JSONArray markers, double lat, double lng, String locality) {
         try {
-
-
-            System.out.println("ENTREI DENTRO DO SETWORKERMARKERS!!!    " + markers);
-            //Map<String, MarkerClass> temp = new HashMap<>();
 
             JSONArray jsonarray = markers;
 
@@ -1101,7 +1080,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 String address = mSearchText.getText().toString();
-                System.out.println(address);
                 alert.dismiss();
 
                 try {
@@ -1125,15 +1103,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
     }
 
-    /*public void mapClickPoints() {
-        System.out.println("CLICASTE NO MAPA");
-        mMap.setOnMapClickListener();
-    }*/
-
     public Polygon createPolygon(ArrayList<LatLng> points) {
 
         if (!points.isEmpty()) {
-            System.out.println("DENTRO DO CREATE POLYGON");
             // Add polygons to indicate areas on the map.
             Polygon polygon = mMap.addPolygon(new PolygonOptions()
                     .clickable(false)
@@ -1267,15 +1239,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                System.out.println("CLICASTE NO MAPA " + vector.size());
                 vector.add(latLng);
             }
         });
-
-       /* if(counter>=1) {
-            createPolyline(vector.get(counter), latLng);
-        }
-        counter++;*/
     }
 
     // Fetches data from url passed
@@ -1395,9 +1361,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             //  markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
-
-            System.out.println("COR AQUI! " + item.getmGravity());
-
 
             switch (item.getmGravity()) {
                 case "1":

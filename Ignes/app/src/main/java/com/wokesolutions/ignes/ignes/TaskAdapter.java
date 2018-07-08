@@ -226,7 +226,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             button_notes = itemView.findViewById(R.id.button_notes);
             button_status = itemView.findViewById(R.id.button_status);
             task_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
-            task_status_image = itemView.findViewById(R.id.feed_lock_img);
+        //    task_status_image = itemView.findViewById(R.id.feed_lock_img);
             task_indications = itemView.findViewById(R.id.feed_info_marker);
             task_contact = itemView.findViewById(R.id.feed_contact);
             task_directions_button = itemView.findViewById(R.id.gps_directions);

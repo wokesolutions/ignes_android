@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +31,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
 public class MarkerActivity extends AppCompatActivity {
 
@@ -41,12 +46,13 @@ public class MarkerActivity extends AppCompatActivity {
             marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number,
             marker_gravity_title, marker_category;
     private TextView comment_owner, comment_date, comment_text;
+    private ImageView comment_ownerpic;
     private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
     private ProgressBar mProgressBar;
     private MarkerClass mMarker, mSecondMarker;
     private int mLikes, mDislikes;
     private boolean mTouchLike, mTouchDislike;
-    private LinearLayout mNumbCommentsLayout;
+    private LinearLayout mNumbCommentsLayout, mCommentPostLayout;
     private Context mContext;
     public ArrayList<CommentClass> arrayList;
     private ListView listview;
@@ -88,11 +94,12 @@ public class MarkerActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.marker_progress_likes);
         // mListCommentsLayout = findViewById(R.id.list_comments_layout);
         mNumbCommentsLayout = findViewById(R.id.comments_layout);
+        mCommentPostLayout = findViewById(R.id.comment_post_layout);
 
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
         marker_button_post_comment = findViewById(R.id.marker_comment_post_button);
-        marker_status_image = findViewById(R.id.marker_lock_img);
+      //  marker_status_image = findViewById(R.id.marker_lock_img);
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
         marker_description = findViewById(R.id.marker_description);
@@ -132,7 +139,8 @@ public class MarkerActivity extends AppCompatActivity {
         //TODO
         Bitmap bitmap = mMarker.getmImg_bitmap();
         if(bitmap==null)
-            RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext, null, null, null);
+            RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext,
+                    null, null, null);
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
 
         String title = mMarker.getmTitle();
@@ -151,7 +159,7 @@ public class MarkerActivity extends AppCompatActivity {
             marker_description.setVisibility(View.GONE);
 
         marker_address.setText(mMarker.getmAddress());
-        marker_date.setText(mMarker.getmDate());
+        marker_date.setText(mMarker.getmDMY());
         marker_username.setText(mMarker.getmCreator_username());
 
         String gravity = mMarker.getmGravity();
@@ -210,9 +218,9 @@ public class MarkerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isClicked)
-                    listview.setVisibility(View.GONE);
+                    mCommentPostLayout.setVisibility(View.GONE);
                 else
-                    listview.setVisibility(View.VISIBLE);
+                    mCommentPostLayout.setVisibility(View.VISIBLE);
 
                 isClicked = !isClicked;
             }
@@ -304,16 +312,22 @@ public class MarkerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                System.out.println("COMMMMENNNNTTT" + marker_comment.getText().toString());
                 String text = marker_comment.getText().toString();
 
                 if (!text.equals("")) {
+
                     RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
-                    //TODO meter esta parte do lado do volley para nao fazer sempre
-                    //arrayList.add(new CommentClass("", "", "", text));
-                    listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
+
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String strDate = sdf.format(c.getTime());
+
+                    arrayList.add(new CommentClass(mMarker.getmId(), strDate, mMarker.getmCreator_username(), text));
+
+                    MyAdapter myAdapter = new MarkerActivity.MyAdapter(mContext, arrayList);
+                    listview.setAdapter(myAdapter);
                     setListViewHeightBasedOnChildren(listview);
-                    new MarkerActivity.MyAdapter(mContext, arrayList).notifyDataSetChanged();
+                    myAdapter.notifyDataSetChanged();
 
                 } else
                     Toast.makeText(mContext, "Empty comment", Toast.LENGTH_LONG).show();
@@ -323,27 +337,22 @@ public class MarkerActivity extends AppCompatActivity {
 
     public void setListComments(JSONArray comments) {
         CommentClass commentClass;
-        arrayList.clear();
 
         try {
-
             JSONArray jsonarray = comments;
 
             for (int i = 0; i < jsonarray.length(); i++) {
-
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
 
                 String commentID = jsonobject.getString("comment");
-
                 String textComment = jsonobject.getString("text");
                 String ownerComment = jsonobject.getString("username");
                 String dateComment = jsonobject.getString("creationtime");
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
-
+                commentClass.makeAvatar(jsonobject.getString("profpic").getBytes());
                 arrayList.add(commentClass);
             }
-
             listview.setAdapter(new MarkerActivity.MyAdapter(mContext, arrayList));
             setListViewHeightBasedOnChildren(listview);
 
@@ -399,10 +408,12 @@ public class MarkerActivity extends AppCompatActivity {
             comment_owner = convertView.findViewById(R.id.comment_ownername);
             comment_date = convertView.findViewById(R.id.comment_date);
             comment_text = convertView.findViewById(R.id.comment_text);
+            comment_ownerpic = convertView.findViewById(R.id.comment_ownerpic);
 
             comment_text.setText(comments.get(position).mText);
-            comment_date.setText(comments.get(position).mDate);
+            comment_date.setText(comments.get(position).mDMY);
             comment_owner.setText(comments.get(position).mOwner);
+            comment_ownerpic.setImageBitmap(comments.get(position).getmAvatar_bitmap());
 
             return convertView;
         }

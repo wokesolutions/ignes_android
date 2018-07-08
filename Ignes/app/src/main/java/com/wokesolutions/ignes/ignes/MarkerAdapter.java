@@ -66,6 +66,11 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         if (markerItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], markerItem, position);
 
+        //TODO - esta a dar 403
+        /*if (markerItem.getmAvatar_bitmap() == null)
+            avatarRequest(markerItem.getmCreator_username(), markerItem, position);*/
+
+        ImageView avatar = holder.user_avatar;
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
         TextView username = holder.marker_username;
@@ -79,16 +84,15 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         ImageView img_status = holder.marker_status_image;
         ListView listOrgs = holder.marker_listview;
 
-        if(mIsProfile && !markerItem.getmApplicationRequested()){
+        if (mIsProfile && !markerItem.getmApplicationRequested()) {
             markerItem.setmApplicationRequested(true);
 
             RequestsVolley.reportApplicationsRequest(markerItem.getmId(), mContext, MarkerAdapter.this);
 
-            if(!mArrayList.isEmpty()){
+            if (!mArrayList.isEmpty()) {
                 listOrgs.setAdapter(new MyAdapter(mContext, mArrayList, markerItem.getmId()));
             }
         }
-
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -130,6 +134,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             interacts_text.setText(R.string.person_interacted_with_report);
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
+        //avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
 
         more_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,31 +159,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null, null);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private void avatarRequest(String username, MarkerClass marker, final int position) {
 
-        ImageView marker_status_image, marker_image;
-        TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
-                marker_gravity, marker_gravity_title, marker_interactions_text;
-        Button button_more;
-        Context itemViewContext;
-        ListView marker_listview;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            itemViewContext = itemView.getContext();
-            marker_image = itemView.findViewById(R.id.feed_image_marker);
-            marker_title = itemView.findViewById(R.id.feed_title_marker);
-            marker_address = itemView.findViewById(R.id.feed_address_marker);
-            marker_date = itemView.findViewById(R.id.feed_date_marker);
-            marker_username = itemView.findViewById(R.id.feed_username_marker);
-            marker_gravity = itemView.findViewById(R.id.feed_gravity_marker);
-            button_more = itemView.findViewById(R.id.button_more);
-            marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
-            marker_interacts = itemView.findViewById(R.id.feed_total_number);
-            marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
-            marker_status_image = itemView.findViewById(R.id.feed_lock_img);
-            marker_listview = itemView.findViewById(R.id.list_orgs);
-        }
+        RequestsVolley.userAvatarRequest(username, marker, position, mContext, this, null, null);
     }
 
     public void setListApplications(JSONArray applications) {
@@ -204,10 +187,38 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
                 mArrayList.add(applicationClass);
             }
-           // setListViewHeightBasedOnChildren(listview);
+            // setListViewHeightBasedOnChildren(listview);
 
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView marker_status_image, marker_image, user_avatar;
+        TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
+                marker_gravity, marker_gravity_title, marker_interactions_text;
+        Button button_more;
+        Context itemViewContext;
+        ListView marker_listview;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            itemViewContext = itemView.getContext();
+            marker_image = itemView.findViewById(R.id.feed_image_marker);
+            marker_title = itemView.findViewById(R.id.feed_title_marker);
+            marker_address = itemView.findViewById(R.id.feed_address_marker);
+            marker_date = itemView.findViewById(R.id.feed_date_marker);
+            marker_username = itemView.findViewById(R.id.feed_username_marker);
+            marker_gravity = itemView.findViewById(R.id.feed_gravity_marker);
+            button_more = itemView.findViewById(R.id.button_more);
+            marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
+            marker_interacts = itemView.findViewById(R.id.feed_total_number);
+            marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
+          //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
+            marker_listview = itemView.findViewById(R.id.list_orgs);
+            user_avatar = itemView.findViewById(R.id.avatar_icon_marker);
         }
     }
 

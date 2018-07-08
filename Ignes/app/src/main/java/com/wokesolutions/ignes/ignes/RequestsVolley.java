@@ -66,8 +66,6 @@ public class RequestsVolley {
         final String mToken = sharedPref.getString("token", null);
         final JSONObject jsonObject = new JSONObject();
 
-        Log.e("CENAAAS FRANNN ", "nif: " + mNif + " report:" + mReport + " token:" + mToken);
-
         try {
             jsonObject.put("report", mReport);
             jsonObject.put("nif", mNif);
@@ -83,9 +81,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
+                        System.out.println("OK ACEITAR APPLICATION: " + response);
 
                         Toast.makeText(context, "Application Accepted!", Toast.LENGTH_LONG).show();
                     }
@@ -117,16 +113,10 @@ public class RequestsVolley {
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
 
-                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
 
                 if (response.statusCode == 200) {
-
-
-                    System.out.println("RESPONSE HERE ->>> " + response);
-
                     return Response.success("Application Accepted", HttpHeaderParser.parseCacheHeaders(response));
-
-
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
@@ -194,23 +184,16 @@ public class RequestsVolley {
                 System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
 
                 if (response.statusCode == 200) {
-
                     try {
-
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
                         JSONArray jsonArray = new JSONArray(json);
 
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
-
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
-
                     } catch (Exception e) {
                         e.printStackTrace();
 
                         return Response.error(new VolleyError(String.valueOf(response.statusCode)));
                     }
-
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
@@ -234,21 +217,15 @@ public class RequestsVolley {
         final String mLocality = locality;
         final String mToken = token;
 
-
         String url = URL + "/profile/addfollow/" + mLocality;
-
 
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-
+                        System.out.println("OK USER REPORTS: " + response);
                         Toast.makeText(context, "Locality added!", Toast.LENGTH_LONG).show();
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -271,13 +248,7 @@ public class RequestsVolley {
                 System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
 
                 if (response.statusCode == 200) {
-
-
-                    System.out.println("RESPONSE HERE ->>> " + response);
-
                     return Response.success("Votes sent", HttpHeaderParser.parseCacheHeaders(response));
-
-
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
@@ -340,12 +311,8 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
-
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -385,7 +352,6 @@ public class RequestsVolley {
 
         url = URL + "/report/comment/get/" + mReportId + "?cursor=" + mCursor;
 
-
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -398,6 +364,7 @@ public class RequestsVolley {
                             activity.setListComments(response);
                         } else {
                             System.out.println("Continuar a pedir...");
+                            activity.setListComments(response);
                             reportCommentsRequest(mReportId, mIsFinish, context, activity);
                         }
 
@@ -428,19 +395,14 @@ public class RequestsVolley {
                 System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
 
                 if (response.statusCode == 200) {
-
                     try {
-
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
                             mIsFinish = "FINISHED";
 
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -552,7 +514,6 @@ public class RequestsVolley {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                         JSONObject jsonobject = new JSONObject(json);
 
-
                         return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
 
                     } catch (Exception e) {
@@ -586,7 +547,6 @@ public class RequestsVolley {
         final String mToken = token;
         final String mCursor = cursor;
 
-        System.out.println("RAIOOOOO: ->>> " + mRadius);
         try {
             activity.addresses = activity.mCoder.getFromLocation(lat, lng, 1);
         } catch (IOException e) {
@@ -609,11 +569,10 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONArray response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK MAPA: " + response);
 
                         activity.isReady = true;
 
-                        System.out.println("RESPONSE DATA: ->>> " + response);
                         if (activity.mRole.equals("USER"))
                             activity.setMarkers(response, mLat, mLng, mLocality);
                         else if (activity.mRole.equals("WORKER"))
@@ -633,7 +592,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO MAP: " + error.toString());
+                        System.out.println("ERRO DO MAPA: " + error.toString());
 
                         if (error.toString().equals("com.android.volley.VolleyError: 204")) {
                             Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
@@ -661,17 +620,13 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
-
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
                             mIsFinish = "FINISHED";
 
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -707,8 +662,7 @@ public class RequestsVolley {
         final String mToken = token;
         final String mCursor = cursor;
 
-        System.out.println("PEDIR REPORTS DE --->>>" + mLocation);
-
+        System.out.println("PEDIR REPORTS DE --->" + mLocation);
 
         String url = URL + "/report/getinlocation?location=" + mLocation + "&cursor=" + mCursor;
 
@@ -717,12 +671,9 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONArray response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
+                        System.out.println("OK LOCATION: " + response);
 
                         activity.setMarkers(response, mLat, mLng, mLocation);
-
 
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
@@ -737,7 +688,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO MAP: " + error.toString());
+                        System.out.println("ERRO DO LOCATION: " + error.toString());
 
                         if (error.toString().equals("com.android.volley.VolleyError: 204")) {
                             Toast.makeText(context, "No reports to show in this area!", Toast.LENGTH_LONG).show();
@@ -765,17 +716,13 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
-
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
                             mIsFinish = "FINISHED";
 
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -818,10 +765,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONArray response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-
+                        System.out.println("OK REPORTS: " + response);
 
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");
@@ -864,19 +808,14 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
-
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
                             mIsFinish = "FINISHED";
 
-                        System.out.println("CURSOR DE AHBFAHDB: " + mIsFinish);
-
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -919,12 +858,10 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONArray response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
+                        System.out.println("OK NOTES: " + response);
 
                         if (mIsFinish.equals("FINISHED")) {
-                            System.out.println("ACABARAM OS REPORTS");
+                            System.out.println("ACABARAM AS NOTAS");
 
                             activity.setNotesList(response);
                         } else {
@@ -959,7 +896,6 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
-
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
@@ -968,8 +904,6 @@ public class RequestsVolley {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
                         JSONArray jsonArray = new JSONArray(json);
-
-                        System.out.println("RESPONSE HERE ->>> " + jsonArray);
 
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -1006,16 +940,12 @@ public class RequestsVolley {
 
         String url = URL + "/report/vote/multiple";
 
-
         stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-
+                        System.out.println("OK SEND VOTES: " + response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -1035,15 +965,11 @@ public class RequestsVolley {
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
 
-                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
 
                 if (response.statusCode == 200) {
 
-
-                    System.out.println("RESPONSE HERE ->>> " + response);
-
                     return Response.success("Votes sent", HttpHeaderParser.parseCacheHeaders(response));
-
 
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
@@ -1105,10 +1031,6 @@ public class RequestsVolley {
             activity.imgByteArray = imgStream.toByteArray();
             base64Img = Base64.encodeToString(activity.imgByteArray, Base64.DEFAULT);
 
-            System.out.println("BYTE COUNT IMG: " + bitmap.getByteCount());
-            System.out.println("BYTEARRAY ENVIADO DA IMG: " + activity.imgByteArray.length);
-
-
             if (jsonArray != null) {
                 report.put("points", jsonArray.toString());
             } else {
@@ -1125,7 +1047,6 @@ public class RequestsVolley {
             report.put("city", mDistrict);
             report.put("locality", mLocality);
             report.put("imgorientation", mOrientation);
-            System.out.println("PRINT DA CATEGORY NO REPORT:" + category);
             report.put("category", mCategory);
 
 
@@ -1143,8 +1064,6 @@ public class RequestsVolley {
 
             }
 
-            System.out.println("REPORT JSON: " + report);
-            System.out.println("ADDRESS DO DETAILED: " + mAddress + "Localidade e cidade " + mLocality + " " + mDistrict);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1158,7 +1077,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK REPORTAR: " + response);
                         activity.setResult(Activity.RESULT_OK, new Intent());
                         Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
                         activity.finish();
@@ -1174,18 +1093,19 @@ public class RequestsVolley {
 
                             System.out.println("REPORT volley -> ERRO " + response.statusCode);
 
-                            Log.e("REPORT volley -> ERRO ", "" + response.statusCode);
-
                             if (response.statusCode == BAD_REQUEST_ERROR)
                                 activity.showProgress(false);
                             else
                                 activity.showProgress(false);
+
+                            Toast.makeText(context, "Ups, failed to send report!", Toast.LENGTH_LONG).show();
                         } else {
                             System.out.println("REPORT volley -> ERRO Response veio null ");
                             activity.showProgress(false);
+                            activity.finish();
+                            Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
                         }
 
-                        Toast.makeText(context, "Ups, failed to send report!", Toast.LENGTH_LONG).show();
 
                     }
                 }
@@ -1230,10 +1150,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
-
-                        System.out.println("RESPONSE DATA: ->>> " + response);
-
+                        System.out.println("OK STATUS: " + response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -1253,16 +1170,10 @@ public class RequestsVolley {
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
 
-                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
 
                 if (response.statusCode == 200) {
-
-
-                    System.out.println("RESPONSE HERE ->>> " + response);
-
                     return Response.success("Report Status changed", HttpHeaderParser.parseCacheHeaders(response));
-
-
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);
@@ -1309,7 +1220,6 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK COMMENT");
                         Toast.makeText(context, "Comment added!", Toast.LENGTH_LONG).show();
-                        activity.arrayList.add(new CommentClass("", "", "", mComment));
                         activity.marker_comment.setText("");
                     }
                 },
@@ -1461,7 +1371,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK CONFIRM ACCOUNT: " + response);
 
                         SharedPreferences.Editor editor = sharedPref.edit();
 
@@ -1539,7 +1449,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK AVATAR: " + response);
                         try {
 
                             String base64 = response.getString(mUsername);
@@ -1588,7 +1498,6 @@ public class RequestsVolley {
                     try {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                         JSONObject jsonobject = new JSONObject(json);
-
 
                         return Response.success(jsonobject, HttpHeaderParser.parseCacheHeaders(response));
 
@@ -1650,7 +1559,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK LOGIN: " + response);
 
                         SharedPreferences sharedPref = context.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -1663,8 +1572,6 @@ public class RequestsVolley {
                             if (response.has("activated"))
                                 editor.putString("isConfirmed", response.getString("activated"));
 
-                            System.out.println("LOGIIIN CENAS " + (response.getString("level")).contains("LEVEL") + " " + response.getString("level"));
-
                             if ((response.getString("level")).contains("LEVEL")) {
                                 editor.putString("userLevel", response.getString("level"));
                                 editor.putString("userRole", "USER");
@@ -1675,7 +1582,6 @@ public class RequestsVolley {
                                     editor.putString("org_name", response.getString("Org"));
                                     System.out.println("NOME DA ORG" + (response.getString("Org")));
                                 }
-
                             }
 
                             editor.apply();
@@ -1745,10 +1651,7 @@ public class RequestsVolley {
 
                         result.put("level", response.headers.get("Level"));
 
-                        System.out.println("PRINT DO QUE RECEBES " + response.headers);
-
                         if (response.headers.get("Org") != null) {
-                            System.out.println("NOME DA ORG" + (response.headers.get("Org")));
                             result.put("Org", response.headers.get("Org"));
                         }
 
@@ -1788,7 +1691,6 @@ public class RequestsVolley {
                         System.out.println("TOKEN VALIDO");
                         SharedPreferences sharedPref = context.getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        System.out.println("LOGIIIN CENAS " + response.contains("LEVEL"));
 
                         if (response.contains("LEVEL")) {
                             editor.putString("userRole", "USER");
@@ -1799,7 +1701,6 @@ public class RequestsVolley {
                         editor.apply();
 
                         String level = sharedPref.getString("userRole", "");
-                        System.out.println("VERIFY TOKEN LEVEL: " + level);
                         if (level.equals("USER"))
                             profileRequest(sharedPref.getString("username", ""), context, activity);
                         else {
@@ -1863,7 +1764,6 @@ public class RequestsVolley {
         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
         final String token = sharedPref.getString("token", "");
 
-
         RequestQueue queue = Volley.newRequestQueue(context);
 
         url = URL + "/profile/view/" + mUsername;
@@ -1873,7 +1773,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK PROFILE: " + response);
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -1939,7 +1839,6 @@ public class RequestsVolley {
                             } else
                                 editor.putString("Avatar", "");
 
-
                             editor.putString("askForProfile", "YES");
 
                             editor.apply();
@@ -1965,7 +1864,6 @@ public class RequestsVolley {
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-
 
                         //activity.showProgress(false);
                         editor.putString("askForProfile", "YES");
@@ -1993,7 +1891,6 @@ public class RequestsVolley {
                     try {
                         String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
                         result = new JSONObject(json);
-                        System.out.println("RESPONSE DO VIEW PROFILE NO PARSERESPONSE --->>> " + json);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                         result = new JSONObject();
@@ -2082,8 +1979,6 @@ public class RequestsVolley {
 
                         JSONArray jsonArray = new JSONArray(json);
 
-                        System.out.println("RESPONSE VOTES HERE ->>> " + jsonArray);
-
                         return Response.success(jsonArray, HttpHeaderParser.parseCacheHeaders(response));
 
                     } catch (Exception e) {
@@ -2135,7 +2030,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK ADD NOTE: " + response);
                         Toast.makeText(context, "Note Added!", Toast.LENGTH_LONG).show();
                         activity.recreate();
                     }
@@ -2212,7 +2107,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK: " + response);
+                        System.out.println("OK CHANGE PASSWORD: " + response);
                         mAlert.dismiss();
                         Toast.makeText(context, "Password Changed!", Toast.LENGTH_LONG).show();
                     }
@@ -2405,7 +2300,6 @@ public class RequestsVolley {
         final JSONObject json = new JSONObject();
 
         try {
-
             json.put("phone", mPhone);
             json.put("name", mName);
             json.put("gender", mGender);
@@ -2416,7 +2310,6 @@ public class RequestsVolley {
             json.put("job", mJob);
             json.put("skills", mSkills);
 
-            System.out.println("JSON EDIT PROFILE ->  " + json);
         } catch (Exception e) {
             e.printStackTrace();
         }

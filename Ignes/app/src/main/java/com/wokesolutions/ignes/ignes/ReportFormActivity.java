@@ -215,7 +215,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mGravity = progress;
-                System.out.println(mGravity);
             }
 
             @Override
@@ -310,7 +309,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                                            String permissions[], int[] grantResults) {
         if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                System.out.println("Permission Granted");
             }
         }
     }
@@ -369,7 +367,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                     try {
                         ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
                         orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                        System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                             matrix.postRotate(90);
@@ -386,7 +383,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                                 mThumbnail.getHeight(), matrix, true);
 
                     } catch (Exception e) {
-                        System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();
                     }
 
@@ -414,12 +410,9 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                                 THUMBSIZE);*/
                     mImageView.setVisibility(View.VISIBLE);
 
-                    System.out.println("BYTE COUNT THUMB: " + mThumbnail.getByteCount());
-
                     try {
                         ExifInterface exif = new ExifInterface(getRealPathFromURI(mImageURI));
                         orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                        System.out.println("EXIF: " + orientation);
                         Matrix matrix = new Matrix();
                         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
                             matrix.postRotate(90);
@@ -434,9 +427,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                             orientation = 0;
                         mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(),
                                 mThumbnail.getHeight(), matrix, true);
-
-                        System.out.println("BYTE COUNT 2 THUMB: " + mThumbnail.getByteCount());
-                    } catch (Exception e) {
+                        } catch (Exception e) {
                         System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();
                     }
@@ -450,9 +441,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     mThumbnail.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream);
                     byteArray = stream.toByteArray();
-
-                    System.out.println("BYTEARRAY ENVIADO DO THUMB: " + byteArray.length);
-
                 }
                 break;
         }
@@ -597,7 +585,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                 if (!mCheckBox.isChecked()) {
                     address = mAddress.getText().toString();
                     try {
-                        System.out.println("MORADA DENTRO DO LONG: " + address);
                         List<Address> addresses = mCoder.getFromLocationName(address, 1);
                         lat = addresses.get(0).getLatitude();
                         lng = addresses.get(0).getLongitude();
@@ -619,42 +606,38 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
 
         LatLng pointAddress = new LatLng(lat, lng);
 
-        System.out.println("ESTOU A ENVIAR PONTO: " + pointAddress + " " + mCurrentLocation);
         if (jsonArray != null)
-            System.out.println("ESTOU A ENVIAR PONTOSSSSSSS: " + jsonArray + "  " + mPoints);
-
-        switch (category) {
-            case LIXO:
-                category = "LIXO";
-                break;
-            case PESADOS:
-                category = "PESADOS";
-                break;
-            case PERIGOSOS:
-                category = "PERIGOSOS";
-                break;
-            case PESSOAS:
-                category = "PESSOAS";
-                break;
-            case TRANSPORTE:
-                category = "TRANSPORTE";
-                break;
-            case MADEIRAS:
-                category = "MADEIRAS";
-                break;
-            case CARCACAS:
-                category = "CARCACAS";
-                break;
-            case BIOLOGICO:
-                category = "BIOLOGICO";
-                break;
-            case JARDINAGEM:
-                category = "JARDINAGEM";
-                break;
-            case MATAS:
-                category = "MATAS";
-        }
-
+            switch (category) {
+                case LIXO:
+                    category = "LIXO";
+                    break;
+                case PESADOS:
+                    category = "PESADOS";
+                    break;
+                case PERIGOSOS:
+                    category = "PERIGOSOS";
+                    break;
+                case PESSOAS:
+                    category = "PESSOAS";
+                    break;
+                case TRANSPORTE:
+                    category = "TRANSPORTE";
+                    break;
+                case MADEIRAS:
+                    category = "MADEIRAS";
+                    break;
+                case CARCACAS:
+                    category = "CARCACAS";
+                    break;
+                case BIOLOGICO:
+                    category = "BIOLOGICO";
+                    break;
+                case JARDINAGEM:
+                    category = "JARDINAGEM";
+                    break;
+                case MATAS:
+                    category = "MATAS";
+            }
 
         reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
     }

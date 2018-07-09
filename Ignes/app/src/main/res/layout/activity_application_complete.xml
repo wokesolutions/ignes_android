@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_note"
+        android:id="@+id/toolbar_app_complete"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -18,7 +18,7 @@
     </android.support.v7.widget.Toolbar>
 
     <TextView
-        android:id="@+id/note_username"
+        android:id="@+id/application_orgname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorIgnesPrimary"
@@ -30,12 +30,35 @@
         android:textSize="17dp"
         android:textStyle="bold" />
 
-    <View
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="5dp"
-        android:background="@color/backgroundColor" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/quicksand_light"
+            android:inputType="textAutoCorrect"
+            android:text="Candidatura para "
+            android:textColor="@color/colorIgnesPrimary"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/marker_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/quicksand_light"
+            android:inputType="textMultiLine"
+            android:text="Report"
+            android:textColor="#000000"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -129,22 +152,12 @@
         android:text="10000$"
         android:textColor="#000000" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/application_yes"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        >
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Aceitar" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Recusar" />
-    </LinearLayout>
+        android:layout_gravity="center"
+        android:text="Aceitar" />
 
 
 </LinearLayout>

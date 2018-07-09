@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,6 +23,7 @@ public class ApplicationActivity extends AppCompatActivity {
     private Context mContext;
     private ArrayList<ApplicationClass> mApplications;
     private ListView listview;
+    private boolean isRecreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class ApplicationActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_applications);
         setToolbar(myToolbar);
 
+        isRecreate = false;
+
         mApplications = ProfileActivity.mApplicationsArray;
 
         listview = findViewById(R.id.listview);
@@ -39,10 +43,23 @@ public class ApplicationActivity extends AppCompatActivity {
         listview.setAdapter(new MyAdapter(mContext, mApplications));
     }
 
+    public void onBackPressed() {
+        if (isRecreate)
+            recreate();
+        else
+            finish();
+    }
+
     public void setToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ignesred);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -83,20 +100,52 @@ public class ApplicationActivity extends AppCompatActivity {
             TextView orgname = convertView.findViewById(R.id.org_name);
             TextView reportdate = convertView.findViewById(R.id.report_date);
             TextView reportitle = convertView.findViewById(R.id.report_title);
+
             orgname.setText(applications.get(position).getmNameOrg());
             reportdate.setText(markerClass.getmDMY());
             reportitle.setText(markerClass.getmTitle());
 
-           /* Button accept = convertView.findViewById(R.id.org_accept);
-            accept.setOnClickListener(new View.OnClickListener() {
+            convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setContentView(R.layout.activity_application_complete);
 
-                    RequestsVolley.reportAcceptApplicationRequest(applications.get(position).getmNIFOrg(), reportId, mContext);
+                    final ApplicationClass applicationClass = applications.get(position);
+                    final MarkerClass markerClass = MapActivity.mReportMap.get(applicationClass.getmReportId());
+
+                    Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_app_complete);
+                    setSupportActionBar(myToolbar);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    getSupportActionBar().setIcon(R.drawable.ignesred);
+                    isRecreate = true;
+
+                    TextView orgname = findViewById(R.id.application_orgname);
+                    TextView markername = findViewById(R.id.marker_name);
+                    TextView orgnif = findViewById(R.id.org_nif);
+                    TextView orgemail = findViewById(R.id.org_email);
+                    TextView orginfo = findViewById(R.id.org_information);
+                    TextView orgbudget = findViewById(R.id.org_budget);
+                    Button applicationYes = findViewById(R.id.application_yes);
+
+                    orgname.setText(applicationClass.getmNameOrg());
+                    markername.setText(markerClass.getmTitle());
+                    orgnif.setText(applicationClass.getmNIFOrg());
+                    orgemail.setText(applicationClass.getmEmailOrg());
+                    orginfo.setText(applicationClass.getmInfo());
+                    orgbudget.setText(applicationClass.getmBudget());
+
+                    applicationYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RequestsVolley.reportAcceptApplicationRequest(markerClass.getmId(), applicationClass.getmNIFOrg(), ApplicationActivity.this,  mContext);
+                        }
+                    });
                 }
-            });*/
+            });
 
             return convertView;
         }
+
+
     }
 }

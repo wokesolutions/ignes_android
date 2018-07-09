@@ -53,7 +53,6 @@ public class NoteActivity extends AppCompatActivity {
         mSharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mToken = mSharedPref.getString("token", "");
 
-
         mContext = this;
         queue = Volley.newRequestQueue(this);
 

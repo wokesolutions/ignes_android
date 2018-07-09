@@ -278,7 +278,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_light"
                     android:inputType="textMultiLine"
-                    android:text="catarinapm@gmail.com"
+                    android:text="emailholder@email.com"
                     android:textColor="#000000"
                     android:textSize="15dp"
                     android:textStyle="bold" />

@@ -25,15 +25,14 @@
             android:fontFamily="@font/quicksand_bold"
             android:gravity="center"
             android:background="@color/colorIgnesPrimary"
-            android:text="Candidaturas"
+            android:text="@string/applications"
             android:textColor="@color/backgroundColor"
             android:textSize="20dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lista de candidaturas de Organizações para resolução das sua ocorrências.
-         Leia com atenção as propostas recebidas."
+        android:text="@string/lista_de_candidaturas_de_organizacoes_hint"
         android:textSize="15dp"
         android:textColor="#000000"
         android:inputType="textMultiLine"

@@ -18,7 +18,7 @@
         android:fontFamily="@font/quicksand_light"
         android:textStyle="bold"
         android:gravity="center_horizontal"
-        android:text="Please insert the code sent to your email and press confirm to validate your account."
+        android:text="@string/insert_code_sent_to_email_to_validate"
         android:inputType="textMultiLine"/>
 
     <EditText
@@ -37,7 +37,7 @@
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:background="@drawable/button"
         android:fontFamily="@font/quicksand_bold"
-        android:text="Confirm"
+        android:text="@string/confirm"
         android:textColor="@color/backgroundColor"
         android:textStyle="bold" />
     </LinearLayout>

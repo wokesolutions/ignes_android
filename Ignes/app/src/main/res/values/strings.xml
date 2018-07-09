@@ -120,6 +120,54 @@
     <string name="submit">Submit</string>
     <string name="new_password">New Password</string>
 
+    <!-- ApplicationActivity String -->
+    <string name="candidate_to">Application to&#160;</string>
+    <string name="email_application" translatable="false">Email :&#160;</string>
+    <string name="information">Information :&#160;</string>
+    <string name="budget">Budget :&#160;</string>
+    <string name="accept">Accept</string>
+    <string name="applications">Applications</string>
+    <string name="lista_de_candidaturas_de_organizacoes_hint">List of applications from Organizations to\nresolve your reports.\nRead carefully the received propositions.</string>
+
+    <!-- MapActivity String -->
+    <string name="next">Next</string>
+    <string name="finish_draw">Finish draw</string>
+    <string name="refreshing">Refreshing ...</string>
+    <string name="finish_path_view">Finish Path View</string>
+
+    <!-- ReportActivity String -->
+    <string name="private_location">Private location</string>
+    <string name="title">Title</string>
+    <string name="use_my_current_location">Use my current location</string>
+    <string name="description_report">Description</string>
+    <string name="category_report">Category:</string>
+    <string name="image">Image</string>
+    <string name="camera">Camera</string>
+    <string name="upload">Upload</string>
+    <string name="rank_report_gravity">Rank report gravity</string>
+
+    <!-- Add Localities String -->
+    <string name="add_addresses_to_keep">Add the addresses that you want to keep close.</string>
+    <string name="add_addresses_explanation">By adding a new address, you can check the reports around it in the Feed.</string>
+    <string name="example_add_address">For example, you can see the reports around your holiday home.</string>
+    <string name="can_use_locality_instead">If you do not want to share your address you can use just the locality (less precision).</string>
+    <string name="insert_the_address">Insert the address</string>
+
+    <!-- Change Radius String -->
+    <string name="select_the_map_radius_here">Select the map radius here:</string>
+    <string name="kilometers">Kilometers</string>
+    <string name="meters">Meters</string>
+    <string name="our_default_value_for_the_radius_to_show_reports_is_5_km_from_your_current_location">Our default value for the radius to show reports is 5 km from your current location.</string>
+
+    <!-- Confirm Account String -->
+    <string name="insert_code_sent_to_email_to_validate">Please insert the code sent to your email and press confirm to validate your account.</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Random String -->
+    <string name="report">REPORT :</string>
+    <string name="refuse">Refuse</string>
+
+
 
     <string-array name="month_array">
         <item>January</item>

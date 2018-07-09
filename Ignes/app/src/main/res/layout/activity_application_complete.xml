@@ -42,7 +42,7 @@
             android:layout_margin="5dp"
             android:fontFamily="@font/quicksand_light"
             android:inputType="textAutoCorrect"
-            android:text="Candidatura para "
+            android:text="@string/candidate_to"
             android:textColor="@color/colorIgnesPrimary"
             android:textSize="17dp"
             android:textStyle="bold" />
@@ -87,7 +87,7 @@
         android:layout_margin="5dp"
         android:fontFamily="@font/quicksand_light"
         android:inputType="textAutoCorrect"
-        android:text="Email : "
+        android:text="@string/email_application"
         android:textColor="@color/colorIgnesPrimary"
         android:textSize="17dp"
         android:textStyle="bold" />
@@ -114,7 +114,7 @@
         android:layout_margin="5dp"
         android:fontFamily="@font/quicksand_light"
         android:inputType="textAutoCorrect"
-        android:text="Information : "
+        android:text="@string/information"
         android:textColor="@color/colorIgnesPrimary"
         android:textSize="17dp"
         android:textStyle="bold" />
@@ -136,7 +136,7 @@
         android:fontFamily="@font/quicksand_light"
         android:gravity="center"
         android:inputType="textAutoCorrect"
-        android:text="Budget : "
+        android:text="@string/budget"
         android:textColor="@color/colorIgnesPrimary"
         android:textSize="17dp"
         android:textStyle="bold" />
@@ -157,7 +157,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Aceitar" />
+        android:text="@string/accept" />
 
 
 </LinearLayout>

@@ -47,7 +47,7 @@
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/worker_shadow_about"
                     android:fontFamily="@font/quicksand_light"
-                    android:text="Finish Path View"
+                    android:text="@string/finish_path_view"
                     android:textColor="@color/colorIgnesWorker"
                     android:textSize="10dp"
                     android:textStyle="bold" />

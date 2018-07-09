@@ -37,7 +37,7 @@
         android:layout_margin="5dp"
         android:fontFamily="@font/quicksand_light"
         android:inputType="textAutoCorrect"
-        android:text="REPORT : "
+        android:text="@string/report"
         android:textColor="@color/colorIgnesPrimary"
         android:textSize="17dp"
         android:textStyle="bold" />
@@ -60,11 +60,11 @@
             android:id="@+id/aceitar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aceitar" />
+            android:text="@string/accept" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recusar" />
+            android:text="@string/refuse" />
     </LinearLayout>
 </LinearLayout>

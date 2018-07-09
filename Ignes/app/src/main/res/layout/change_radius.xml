@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/quicksand_light"
-        android:text="Define your own radius here:"
+        android:text="@string/select_the_map_radius_here"
         android:textSize="15dp"
         android:textStyle="bold" />
 
@@ -31,13 +31,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Kilometers" />
+                android:text="@string/kilometers" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_light"
-                android:text="Meters" />
+                android:text="@string/meters" />
 
         </LinearLayout>
 
@@ -101,7 +101,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:fontFamily="@font/quicksand_light"
         android:inputType="textMultiLine"
-        android:text="Our default value for radius to show reports is 5 km from your current location."
+        android:text="@string/our_default_value_for_the_radius_to_show_reports_is_5_km_from_your_current_location"
         android:textColor="@color/colorIgnesPrimary"
         android:textSize="10dp"
         android:textStyle="bold" />
@@ -116,7 +116,7 @@
         android:layout_marginTop="15dp"
         android:background="@drawable/button"
         android:fontFamily="@font/quicksand_bold"
-        android:text="Submit"
+        android:text="@string/submit"
         android:textColor="@color/backgroundColor"
         android:textStyle="bold" />
 

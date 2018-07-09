@@ -14,14 +14,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ApplicationActivity  extends AppCompatActivity {
+public class ApplicationActivity extends AppCompatActivity {
 
     private Context mContext;
-    private MarkerClass mMarker;
-    private ArrayList<ApplicationClass> mArrayList;
+    private ArrayList<ApplicationClass> mApplications;
     private ListView listview;
-    private TextView mReportTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,16 +32,11 @@ public class ApplicationActivity  extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_applications);
         setToolbar(myToolbar);
 
-        Intent intent = getIntent();
-        String reportId = intent.getExtras().getString("ReportId");
-        mMarker = MapActivity.mReportMap.get(reportId);
-        mArrayList = mMarker.getmArrayApplications();
-
-        mReportTitle = findViewById(R.id.report_title);
-        mReportTitle.setText(mMarker.getmTitle());
+        mApplications = ProfileActivity.mApplicationsArray;
 
         listview = findViewById(R.id.listview);
-        listview.setAdapter(new MyAdapter(mContext, mArrayList,reportId));
+
+        listview.setAdapter(new MyAdapter(mContext, mApplications));
     }
 
     public void setToolbar(Toolbar toolbar) {
@@ -54,12 +49,10 @@ public class ApplicationActivity  extends AppCompatActivity {
 
         private Context context;
         private ArrayList<ApplicationClass> applications;
-        private String reportId;
 
-        public MyAdapter(Context context, ArrayList<ApplicationClass> applications, String reportId) {
+        public MyAdapter(Context context, ArrayList<ApplicationClass> applications) {
             this.context = context;
             this.applications = applications;
-            this.reportId = reportId;
         }
 
         @Override
@@ -86,18 +79,22 @@ public class ApplicationActivity  extends AppCompatActivity {
                 convertView = (View) inflater.inflate(
                         R.layout.activity_feed_orgs_listitem, null);
             }
-
+            MarkerClass markerClass = MapActivity.mReportMap.get(applications.get(position).getmReportId());
             TextView orgname = convertView.findViewById(R.id.org_name);
+            TextView reportdate = convertView.findViewById(R.id.report_date);
+            TextView reportitle = convertView.findViewById(R.id.report_title);
             orgname.setText(applications.get(position).getmNameOrg());
-            Button accept = convertView.findViewById(R.id.org_accept);
+            reportdate.setText(markerClass.getmDMY());
+            reportitle.setText(markerClass.getmTitle());
 
+           /* Button accept = convertView.findViewById(R.id.org_accept);
             accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     RequestsVolley.reportAcceptApplicationRequest(applications.get(position).getmNIFOrg(), reportId, mContext);
                 }
-            });
+            });*/
 
             return convertView;
         }

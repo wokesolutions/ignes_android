@@ -81,26 +81,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
         TextView interacts_text = holder.marker_interactions_text;
-        Button applicationsButton = holder.button_applications;
-
-        if (mIsProfile && !markerItem.getmApplicationRequested()) {
-            markerItem.setmApplicationRequested(true);
-
-            RequestsVolley.reportApplicationsRequest(markerItem.getmId(), mContext, applicationsButton, MarkerAdapter.this);
-
-            if (!markerItem.getmArrayApplications().isEmpty()) {
-                applicationsButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(holder.itemViewContext, ApplicationActivity.class);
-                        i.putExtra("ReportId", markerItem.getmId());
-                        holder.itemViewContext.startActivity(i);
-                    }
-                });
-            }
-            else
-                applicationsButton.setVisibility(View.GONE);
-        }
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -135,7 +115,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             interacts_text.setText(R.string.person_interacted_with_report);
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
-      //  avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
+        //  avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
 
         more_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,32 +145,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         RequestsVolley.userAvatarRequest(username, marker, position, mContext, this, null, null);
     }
 
-    public void setListApplications(JSONArray applications, String reportId) {
-        ApplicationClass applicationClass;
-        try {
 
-            JSONArray jsonarray = applications;
-
-            for (int i = 0; i < jsonarray.length(); i++) {
-
-                JSONObject jsonobject = jsonarray.getJSONObject(i);
-
-                String name = jsonobject.getString("name");
-
-                String nif = jsonobject.getString("nif");
-                String phone = jsonobject.getString("phone");
-                String budget = jsonobject.getString("budget");
-                String info = jsonobject.getString("info");
-                String email = jsonobject.getString("email");
-
-                applicationClass = new ApplicationClass(name, budget, info, email, nif, phone);
-
-                MapActivity.mReportMap.get(reportId).addArrayApplication(applicationClass);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -199,7 +154,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 marker_gravity, marker_gravity_title, marker_interactions_text;
         Button button_more, button_applications;
         Context itemViewContext;
-        ListView marker_listview;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -214,8 +168,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
-            button_applications = itemView.findViewById(R.id.application_alert_button);
-          //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
+            //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
             user_avatar = itemView.findViewById(R.id.avatar_icon_marker);
         }

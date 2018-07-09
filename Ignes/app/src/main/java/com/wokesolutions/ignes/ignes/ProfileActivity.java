@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,11 +61,11 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton;
+    private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton, mApplicationLayout;
     private LinearLayout mConfirmLayout;
     private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
-    private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton, mSaveButton;
+    private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton, mSaveButton, mApplicationsButton;
     private LinearLayout mAboutLayout, mEditAboutLayout;
     private TextView mDay, mMonth, mYear;
     private TextView mPoints, mReportNum, mGender, mAddress, mName, mJob, mPhonenumber, mSkills,
@@ -72,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
     private String storedAvatar;
+    public static ArrayList<ApplicationClass> mApplicationsArray;
 
 
     @Override
@@ -125,6 +127,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
         mAboutButton = findViewById(R.id.profile_about_button);
         mLessAboutButton = findViewById(R.id.profile_less_button);
+        mApplicationLayout = findViewById(R.id.applications_layout);
 
         mAboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +159,8 @@ public class ProfileActivity extends AppCompatActivity {
         mLocality = findViewById(R.id.locality);
         mProfileName = findViewById(R.id.profile_name);
         mProfileLevel = findViewById(R.id.profile_userLevel);
+        mApplicationsArray = new ArrayList<>();
+        mApplicationsButton = findViewById(R.id.application_alert_button);
 
         mProfileName.setHint(mUsername);
         mProfileLevel.setText(mUserLevel);
@@ -173,14 +178,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         userReportsRequest("");
 
-        Button random = findViewById(R.id.random_button);
-        random.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, RandomActivity.class));
-            }
-        });
+            mApplicationsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ProfileActivity.this, ApplicationActivity.class);
+                    startActivity(intent);
+                }
+            });
+    }
 
+    private void checkApplications() {
+
+        if (!mApplicationsArray.isEmpty())
+            mApplicationLayout.setVisibility(View.VISIBLE);
 
     }
 
@@ -343,6 +353,9 @@ public class ProfileActivity extends AppCompatActivity {
         mYear.setText(sharedPref.getString("user_year", ""));
         mSkills.setText(sharedPref.getString("user_skills", ""));
         mProfileName.setText(sharedPref.getString("user_name", mUsername));
+
+        for (String id : MapActivity.userMarkerMap.keySet())
+            RequestsVolley.reportApplicationsRequest(id, mContext, ProfileActivity.this);
     }
 
     private void onAboutClick() {
@@ -653,5 +666,35 @@ public class ProfileActivity extends AppCompatActivity {
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
+    }
+
+    public void setListApplications(JSONArray applications, String reportId) {
+        ApplicationClass applicationClass;
+        try {
+
+            JSONArray jsonarray = applications;
+            if (jsonarray.length() != 0)
+                for (int i = 0; i < jsonarray.length(); i++) {
+
+                    JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                    String name = jsonobject.getString("name");
+                    String nif = jsonobject.getString("nif");
+                    String phone = jsonobject.getString("phone");
+                    String budget = jsonobject.getString("budget");
+                    String info = jsonobject.getString("info");
+                    String email = jsonobject.getString("email");
+
+                    applicationClass = new ApplicationClass(name, budget, info, email, nif, phone, reportId);
+
+                    MapActivity.mReportMap.get(reportId).addArrayApplication(applicationClass);
+                    mApplicationsArray.add(applicationClass);
+                }
+
+            checkApplications();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

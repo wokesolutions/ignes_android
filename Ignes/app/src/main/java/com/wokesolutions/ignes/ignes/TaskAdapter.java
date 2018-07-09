@@ -87,7 +87,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             title.setVisibility(View.GONE);
 
         username.setText(taskItem.getmCreator_username());
-        date.setText(taskItem.getmDate());
+        date.setText(taskItem.getmDMY());
         address.setText(taskItem.getmAddress());
 
         if (!taskItem.getIndications().equals(""))

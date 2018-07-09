@@ -226,10 +226,10 @@ public class MarkerActivity extends AppCompatActivity {
                     mCommentPostLayout.setVisibility(View.VISIBLE);
                      marker_comment.requestFocus();
                 }
-
                 isClicked = !isClicked;
             }
         });
+
         setPostComment(markerID);
 
         setButtonLikes();

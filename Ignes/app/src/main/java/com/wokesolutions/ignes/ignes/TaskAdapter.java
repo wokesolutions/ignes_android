@@ -80,6 +80,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         Button directions_button = holder.task_directions_button;
         LinearLayout contacts_layout = holder.task_contacts_layout;
         LinearLayout indications_layout = holder.task_indications_layout;
+        LinearLayout description_layout = holder.task_description_layout;
 
         if (!taskItem.getmTitle().isEmpty())
             title.setText(taskItem.getmTitle());
@@ -98,7 +99,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (!taskItem.getmDescription().equals(""))
             description.setText(taskItem.getmDescription());
         else
-            description.setVisibility(View.GONE);
+            description_layout.setVisibility(View.GONE);
 
         if (!taskItem.getPhoneNumber().equals(""))
             contact.setText(taskItem.getPhoneNumber());
@@ -204,7 +205,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 task_gravity_title, task_description, task_indications, task_contact;
         Button button_notes, task_directions_button, button_status;
         Context itemViewContext;
-        LinearLayout task_contacts_layout, task_indications_layout;
+        LinearLayout task_contacts_layout, task_indications_layout, task_description_layout;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -225,6 +226,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             task_directions_button = itemView.findViewById(R.id.gps_directions);
             task_contacts_layout = itemView.findViewById(R.id.contacts_layout);
             task_indications_layout = itemView.findViewById(R.id.indications_layout);
+            task_description_layout = itemView.findViewById(R.id.description_layout);
         }
     }
 }

@@ -66,10 +66,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         if (markerItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], markerItem, position);
 
-        //TODO - esta a dar 403
-      /*  if (markerItem.getmAvatar_bitmap() == null)
-            avatarRequest(markerItem.getmCreator_username(), markerItem, position);*/
-
         ImageView avatar = holder.user_avatar;
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
@@ -115,7 +111,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             interacts_text.setText(R.string.person_interacted_with_report);
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
-        //  avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
+
+        if (markerItem.getmAvatar_bitmap() != null)
+            avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
 
         more_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,11 +138,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null, null, null);
     }
 
-    private void avatarRequest(String username, MarkerClass marker, final int position) {
-
-        RequestsVolley.userAvatarRequest(username, marker, position, mContext, this, null, null);
-    }
-    
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView marker_status_image, marker_image, user_avatar;

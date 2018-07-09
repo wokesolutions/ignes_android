@@ -878,8 +878,8 @@ public class RequestsVolley {
                     public void onErrorResponse(VolleyError error) {
 
                         System.out.println("ERRO DO TASK NOTES: " + error.toString());
-                        if (error.toString().equals("204"))
-                            Toast.makeText(context, "No notes found for this task", Toast.LENGTH_LONG).show();
+                        if (error.toString().equals("com.android.volley.VolleyError: 204"))
+                            Toast.makeText(context, "Zero notes found for this task", Toast.LENGTH_LONG).show();
                         else
                             Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
 
@@ -1487,9 +1487,8 @@ public class RequestsVolley {
         activity.queue.add(stringRequest);
     }
 
-    public static void userAvatarRequest(String username, MarkerClass marker, final int position,
-                                         final Context mContext, final MarkerAdapter markerAdapter,
-                                         TaskClass task, final TaskAdapter taskAdapter) {
+    public static void userAvatarRequest(String username, MarkerClass marker,TaskClass task,
+                                         final Context mContext) {
 
         final String mUsername = username;
 
@@ -1527,11 +1526,11 @@ public class RequestsVolley {
 
                             if (mMarker != null) {
                                 mMarker.makeAvatar(data);
-                                markerAdapter.notifyItemChanged(position);
+                               // markerAdapter.notifyItemChanged(position);
 
                             } else if (mTask != null) {
                                 mTask.makeAvatar(data);
-                                taskAdapter.notifyItemChanged(position);
+                               // taskAdapter.notifyItemChanged(position);
                             }
 
 
@@ -2154,7 +2153,6 @@ public class RequestsVolley {
         final String mOldPass = oldpass;
         final String mNewPass = newpass;
         final android.support.v7.app.AlertDialog mAlert = alert;
-
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
 
@@ -2278,10 +2276,8 @@ public class RequestsVolley {
     public static void changeProfPicRequest(String avatar, final Context context) {
 
         final String mAvatar = avatar;
-
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String token = sharedPref.getString("token", null);
-
         final JSONObject profilePic = new JSONObject();
 
         try {

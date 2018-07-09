@@ -86,14 +86,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
-
-    private static final int COLOR_BLACK_ARGB = 0xff000000;
-    private static final int COLOR_WHITE_ARGB = 0xffffffff;
-    private static final int COLOR_GREEN_ARGB = 0xff388E3C;
-    private static final int COLOR_PURPLE_ARGB = 0xff81C784;
-    private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
-    private static final int COLOR_BLUE_ARGB = 0xffF9A825;
-
     public static final String LIXO = "Limpeza de lixo geral";
     public static final String PESADOS = "Transportes pesados";
     public static final String PERIGOSOS = "Transportes perigosos";
@@ -104,7 +96,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final String BIOLOGICO = "Outros resíduos biológicos";
     public static final String JARDINAGEM = "Jardinagem";
     public static final String MATAS = "Limpeza de matas/florestas";
-
+    private static final int COLOR_BLACK_ARGB = 0xff000000;
+    private static final int COLOR_WHITE_ARGB = 0xffffffff;
+    private static final int COLOR_GREEN_ARGB = 0xff388E3C;
+    private static final int COLOR_PURPLE_ARGB = 0xff81C784;
+    private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
+    private static final int COLOR_BLUE_ARGB = 0xffF9A825;
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
@@ -124,7 +121,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
-    private ArrayList<Polygon> currentPolygonsArray;
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
@@ -132,6 +128,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static GoogleMap mMap;
     public static RequestQueue queue;
     public static String mRole;
+    public static boolean isSearch;
     private static Context mContext;
     private static Button mGoogleMapsButton;
     private static Polyline mMapPollyLine;
@@ -139,9 +136,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static List<String> orderedIds;
     public Geocoder mCoder;
     public boolean isReady;
-    public static boolean isSearch;
     public List<Address> addresses;
     public String mUserRadius;
+    private ArrayList<Polygon> currentPolygonsArray;
     private Map<String, Polygon> mapPolygons;
     private Button mFinishTaskPathButton;
     private Button mFinishDrawButton, mFinishDrawAddress, mNextButton;
@@ -249,15 +246,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             mGoogleMapsButtonLayout = findViewById(R.id.googlemapsbutton_layout);
             mFinishTaskPathButton = findViewById(R.id.finish_task_path);
+
             mFinishTaskPathButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mGoogleMapsButtonLayout.setVisibility(View.GONE);
-                    mMapPollyLine.remove();
+                    if(mMapPollyLine!=null)
+                          mMapPollyLine.remove();
 
                     Toast.makeText(mContext, "Finish Path", Toast.LENGTH_LONG).show();
                 }
             });
+
         }
 
         mContext = this;
@@ -432,6 +432,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void setMarkers(JSONArray markers, double lat, double lng, String locality, boolean search) {
 
+
         try {
             JSONArray jsonarray = markers;
 
@@ -517,6 +518,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
                         points, category, reportID, isPrivate);
+
+                //TODO - 404 e 403 - AVATAR DA PESSOA PARA POR NO FEED
+                RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
+
 
                 if (!search) {
                     if (!mReportMap.containsKey(reportID)) {
@@ -1336,8 +1341,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 lineOptions.color(Color.RED);
 
             }
-
-            mMapPollyLine = mMap.addPolyline(lineOptions);
+            if (lineOptions == null)
+                Toast.makeText(mContext, "Já se encontra no local!", Toast.LENGTH_LONG).show();
+            else
+                mMapPollyLine = mMap.addPolyline(lineOptions);
         }
     }
 
@@ -1396,8 +1403,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wipmine));
                         else if (item.getmStatus().equals("closed"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2closedmine));
-                    }
-                    else {
+                    } else {
                         if (item.getmStatus().equals("standby"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2standby));
                         else if (item.getmStatus().equals("open"))
@@ -1418,8 +1424,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wipmine));
                         else if (item.getmStatus().equals("closed"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3closedmine));
-                    }
-                    else {
+                    } else {
                         if (item.getmStatus().equals("standby"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3standby));
                         else if (item.getmStatus().equals("open"))
@@ -1440,8 +1445,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wipmine));
                         else if (item.getmStatus().equals("closed"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4closedmine));
-                    }
-                    else {
+                    } else {
                         if (item.getmStatus().equals("standby"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4standby));
                         else if (item.getmStatus().equals("open"))
@@ -1470,7 +1474,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         else if (item.getmStatus().equals("wip"))
                             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
                         else if (item.getmStatus().equals("closed"))
-                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5closed));                    }
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5closed));
+                    }
             }
         }
 

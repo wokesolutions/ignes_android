@@ -9,24 +9,20 @@ import android.location.Location;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +30,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -189,9 +184,11 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (mRole.equals("USER")) {
             inflater.inflate(R.menu.menu, menu);
-
             MenuItem item2 = menu.findItem(R.id.searchicon);
             item2.setVisible(false);
+            MenuItem item1 = menu.findItem(R.id.reporticon);
+            item1.setVisible(false);
+
         } else if (mRole.equals("WORKER")) {
             inflater.inflate(R.menu.worker_menu, menu);
         }

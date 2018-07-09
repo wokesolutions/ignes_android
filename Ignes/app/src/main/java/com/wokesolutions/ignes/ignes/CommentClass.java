@@ -3,7 +3,6 @@ package com.wokesolutions.ignes.ignes;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 
 public class CommentClass extends AppCompatActivity {

@@ -1,46 +1,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shadow"
+    android:gravity="center"
     android:orientation="vertical"
-    android:id="@+id/orgs_item_layout">
+    android:padding="@dimen/activity_horizontal_margin"
+    tools:context=".ApplicationActivity">
 
     <LinearLayout
-        android:id="@+id/application_org_layout"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_marginVertical="5dp"
-        android:gravity="center"
-        android:background="@drawable/button"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/activity_horizontal_margin">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:weightSum="2">
 
         <TextView
-            android:id="@+id/org_name"
+            android:id="@+id/report_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/quicksand_light"
             android:gravity="left"
-            android:text="Org name"
-            android:textColor="#ffffff"
-            android:inputType="textCapCharacters"
-            android:textSize="14dp"
+            android:text="date"
+            android:textColor="#000000"
             android:textStyle="bold" />
 
-
-        <Button
-            android:id="@+id/org_accept"
+        <TextView
+            android:id="@+id/report_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/shadow"
-            android:inputType="textCapCharacters"
+            android:layout_weight="1"
             android:fontFamily="@font/quicksand_light"
-            android:textStyle="bold"
-            style="@style/Base.Widget.AppCompat.Button.Borderless"
-            android:text="Aceitar"/>
-
-
+            android:gravity="right"
+            android:inputType="textCapCharacters"
+            android:text="title"
+            android:textColor="#000000"
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/backgroundColor" />
+
+    <TextView
+        android:id="@+id/org_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
+        android:inputType="textCapCharacters"
+        android:text="org"
+        android:textColor="#000000" />
 
 </LinearLayout>

@@ -59,7 +59,7 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
-    public static void commentDeleteRequest(String commentId, final Context context) {
+    public static void commentDeleteRequest(String commentId, final MarkerActivity activity, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mComment = commentId;
@@ -76,7 +76,7 @@ public class RequestsVolley {
                         System.out.println("OK APAGAR COMENTARIO: " + response);
 
                         Toast.makeText(context, "Comentário apagado!", Toast.LENGTH_LONG).show();
-                     //   activity.recreate();
+                        activity.recreate();
                     }
                 },
                 new Response.ErrorListener() {

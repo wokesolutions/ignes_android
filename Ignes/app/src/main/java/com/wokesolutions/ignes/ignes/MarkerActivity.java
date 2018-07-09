@@ -452,7 +452,7 @@ public class MarkerActivity extends AppCompatActivity {
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                             @SuppressWarnings("unused") final int id) {
-                            RequestsVolley.commentDeleteRequest(commentid, mContext);
+                            RequestsVolley.commentDeleteRequest(commentid, MarkerActivity.this, mContext);
                         }
                     })
                     .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

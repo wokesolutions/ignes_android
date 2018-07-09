@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -2526,7 +2527,8 @@ public class RequestsVolley {
         params.put("Device-ID", Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         System.out.println("DEVICE ID: " + Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         params.put("Device-App", "Android");
-        params.put("Device-Info", "Coisas do telemóvel");
+        System.out.println("Device-Info: "+android.os.Build.MODEL + " "+  Build.BRAND);
+        params.put("Device-Info", Build.BRAND + " " + Build.MODEL);
 
         return params;
     }

@@ -503,9 +503,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("title"))
                     title = jsonobject.getString("title");
 
+                boolean isPrivate = jsonobject.getBoolean("isprivate");
+
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
-                        points, category, reportID);
+                        points, category, reportID, isPrivate);
 
                 if (!mReportMap.containsKey(reportID)) {
                     mReportMap.put(reportID, report);
@@ -580,9 +582,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (jsonobject.has("indications"))
                     indications = jsonobject.getString("indications");
 
+                boolean isPrivate = jsonobject.getBoolean("isprivate");
 
                 TaskClass report = new TaskClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, locality, reportID, indications, category, phonenumber);
+                        description, gravity, title, likes, dislikes, locality, reportID, indications, category, phonenumber, isPrivate);
 
                 if (!mWorkerTaskMap.containsKey(reportID)) {
                     mWorkerTaskMap.put(reportID, report);

@@ -24,13 +24,14 @@ public class MarkerClass implements ClusterItem {
     private boolean mIsArea;
     private boolean mIsClicked;
     private boolean mApplicationRequested;
+    private boolean mIsPrivate;
     private ArrayList<ApplicationClass> mArrayApplications;
 
 
     public MarkerClass(double lat, double lng, String status, String address,
                        String date, String username, String description, String gravity,
                        String title, String likes, String dislikes, String locality, boolean isArea,
-                       boolean isClicked, String points, String category, String marker_id) {
+                       boolean isClicked, String points, String category, String marker_id, boolean isPrivate) {
 
         mPosition = new LatLng(lat, lng);
         mStatus = status;
@@ -57,6 +58,11 @@ public class MarkerClass implements ClusterItem {
         mDMY = tokens[0];
         mHours = tokens[1];
         mArrayApplications = new ArrayList<>();
+        mIsPrivate = isPrivate;
+    }
+
+    public boolean ismIsPrivate() {
+        return mIsPrivate;
     }
 
     public String getmDMY() {

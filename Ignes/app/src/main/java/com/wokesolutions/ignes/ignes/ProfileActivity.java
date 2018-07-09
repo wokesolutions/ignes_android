@@ -50,6 +50,7 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    public static ArrayList<ApplicationClass> mApplicationsArray;
     public Uri mImageURI;
     public RequestQueue queue;
     public RecyclerView recyclerView;
@@ -73,8 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean backBool;
     private String isConfirmed;
     private String storedAvatar;
-    public static ArrayList<ApplicationClass> mApplicationsArray;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,13 +177,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         userReportsRequest("");
 
-            mApplicationsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(ProfileActivity.this, ApplicationActivity.class);
-                    startActivity(intent);
-                }
-            });
+        mApplicationsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, ApplicationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void checkApplications() {
@@ -246,8 +245,10 @@ public class ProfileActivity extends AppCompatActivity {
                 if (jsonobject.has("title"))
                     title = jsonobject.getString("title");
 
+                boolean isPrivate = jsonobject.getBoolean("isprivate");
+
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
-                        description, gravity, title, likes, dislikes, "", isArea, isClicked, points, category, reportID);
+                        description, gravity, title, likes, dislikes, "", isArea, isClicked, points, category, reportID, isPrivate);
 
                 if (!MapActivity.userMarkerMap.containsKey(reportID)) {
                     MapActivity.userMarkerMap.put(reportID, report);
@@ -354,8 +355,10 @@ public class ProfileActivity extends AppCompatActivity {
         mSkills.setText(sharedPref.getString("user_skills", ""));
         mProfileName.setText(sharedPref.getString("user_name", mUsername));
 
-        for (String id : MapActivity.userMarkerMap.keySet())
-            RequestsVolley.reportApplicationsRequest(id, mContext, ProfileActivity.this);
+        for (String id : MapActivity.userMarkerMap.keySet()) {
+            if (MapActivity.userMarkerMap.get(id).ismIsPrivate())
+                RequestsVolley.reportApplicationsRequest(id, mContext, ProfileActivity.this);
+        }
     }
 
     private void onAboutClick() {

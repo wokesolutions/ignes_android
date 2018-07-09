@@ -168,7 +168,6 @@
     <string name="refuse">Refuse</string>
 
 
-
     <string-array name="month_array">
         <item>January</item>
         <item>February</item>
@@ -196,7 +195,6 @@
         <item>Jardinagem</item>
         <item>Limpeza de matas/florestas</item>
     </string-array>
-
 
 
 </resources>

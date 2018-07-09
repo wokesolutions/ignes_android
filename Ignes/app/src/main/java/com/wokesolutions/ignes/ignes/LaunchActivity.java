@@ -48,6 +48,7 @@ public class LaunchActivity extends AppCompatActivity {
             public void onClick(View v) {
                 validateToken();
                 showProgress(true);
+                layout.setOnClickListener(null);
             }
         });
     }

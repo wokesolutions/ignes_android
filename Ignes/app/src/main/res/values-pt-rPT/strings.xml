@@ -85,4 +85,5 @@
     <string name="email_was_used_to_create_account">Certifique-se que o email é o que foi usado para criar a sua conta.</string>
     <string name="send">Enviar</string>
     <string name="insert_your_email">Insira o seu email</string>
+    <string name="click_to_view_applications">Tem novas candidaturas aos seus reportes!</string>
 </resources>

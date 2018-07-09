@@ -2,12 +2,15 @@ package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -46,6 +49,7 @@ public class MarkerActivity extends AppCompatActivity {
     public static EditText marker_comment;
     private static String markerID;
     public ImageView marker_image, marker_status_image;
+    public ArrayList<CommentClass> arrayList;
     private TextView marker_title, marker_description, marker_address, marker_username, marker_date,
             marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number,
             marker_gravity_title, marker_category;
@@ -58,7 +62,6 @@ public class MarkerActivity extends AppCompatActivity {
     private boolean mTouchLike, mTouchDislike;
     private LinearLayout mNumbCommentsLayout, mCommentPostLayout;
     private Context mContext;
-    public ArrayList<CommentClass> arrayList;
     private ListView listview;
     private boolean isClicked;
 
@@ -103,7 +106,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
         marker_button_post_comment = findViewById(R.id.marker_comment_post_button);
-      //  marker_status_image = findViewById(R.id.marker_lock_img);
+        //  marker_status_image = findViewById(R.id.marker_lock_img);
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
         marker_description = findViewById(R.id.marker_description);
@@ -131,17 +134,13 @@ public class MarkerActivity extends AppCompatActivity {
         if (isProfile) {
             mMarker = MapActivity.userMarkerMap.get(markerID);
             mSecondMarker = MapActivity.mReportMap.get(markerID);
-        }
-        else {
+        } else {
             mMarker = MapActivity.mReportMap.get(markerID);
             mSecondMarker = MapActivity.userMarkerMap.get(markerID);
         }
 
-        Log.e("MAPPPPAAA ", mMarker + "     " + MapActivity.mReportMap.get(markerID));
-
-        //TODO
         Bitmap bitmap = mMarker.getmImg_bitmap();
-        if(bitmap==null)
+        if (bitmap == null)
             RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext,
                     null, null, null, MarkerActivity.this);
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
@@ -224,7 +223,7 @@ public class MarkerActivity extends AppCompatActivity {
                     mCommentPostLayout.setVisibility(View.GONE);
                 else {
                     mCommentPostLayout.setVisibility(View.VISIBLE);
-                     marker_comment.requestFocus();
+                    marker_comment.requestFocus();
                 }
                 isClicked = !isClicked;
             }
@@ -355,7 +354,7 @@ public class MarkerActivity extends AppCompatActivity {
                 String dateComment = jsonobject.getString("creationtime");
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
-                byte [] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
+                byte[] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
@@ -409,7 +408,7 @@ public class MarkerActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context
@@ -418,18 +417,52 @@ public class MarkerActivity extends AppCompatActivity {
                         R.layout.activity_comment_item, null);
             }
 
+            CommentClass commentClass = comments.get(position);
+
             comment_owner = convertView.findViewById(R.id.comment_ownername);
             comment_date = convertView.findViewById(R.id.comment_date);
             comment_text = convertView.findViewById(R.id.comment_text);
             comment_ownerpic = convertView.findViewById(R.id.comment_ownerpic);
 
-            comment_text.setText(comments.get(position).mText);
-            comment_date.setText(comments.get(position).mDMY);
-            comment_owner.setText(comments.get(position).mOwner);
-            //comment_ownerpic.setImageBitmap(comments.get(position).getmAvatar_bitmap());
-            comment_ownerpic.setImageDrawable(comments.get(position).getmAvatar_rounded());
+            comment_text.setText(commentClass.mText);
+            comment_date.setText(commentClass.mDMY);
+            comment_owner.setText(commentClass.mOwner);
+            comment_ownerpic.setImageDrawable(commentClass.getmAvatar_rounded());
 
+            SharedPreferences sharedPref = context.getSharedPreferences("Shared", MODE_PRIVATE);
+            String currentUser = sharedPref.getString("username", "");
+
+            if (currentUser.equals(commentClass.mOwner))
+                convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        buildAlertMessage(comments.get(position).getmId());
+                        return true;
+                    }
+                });
             return convertView;
+        }
+
+        private void buildAlertMessage(final String commentid) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setIcon(R.drawable.deletecomment);
+
+            builder.setMessage("Eliminar comentário?")
+                    .setCancelable(false)
+                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
+                                            @SuppressWarnings("unused") final int id) {
+                            RequestsVolley.commentDeleteRequest(commentid, mContext);
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            final AlertDialog alert = builder.create();
+            alert.show();
         }
 
 

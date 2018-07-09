@@ -39,8 +39,6 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
-
-
         // Set up the login form.
         mIdentificationView = (EditText) findViewById(R.id.login_identification);
 

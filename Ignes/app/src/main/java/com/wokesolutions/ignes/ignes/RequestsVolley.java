@@ -59,6 +59,69 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
+    public static void commentDeleteRequest(String commentId, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final String mComment = commentId;
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        String url = URL + "/report/comment/delete/"+mComment;
+
+        stringRequest = new StringRequest(Request.Method.DELETE, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK APAGAR COMENTARIO: " + response);
+
+                        Toast.makeText(context, "Comentário apagado!", Toast.LENGTH_LONG).show();
+                     //   activity.recreate();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO APAGAR COMENTARIO: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
+
+                if (response.statusCode == 200) {
+                    return Response.success("Apagado com sucesso", HttpHeaderParser.parseCacheHeaders(response));
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
+
     public static void reportAcceptApplicationRequest(String report, String nif, final ApplicationActivity activity, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);

@@ -40,6 +40,11 @@
     <string name="create_a_new_one">Create a new one</string>
     <string name="enter_without_an_account">Continue without an account</string>
     <string name="forgot_my_password">Forgot my password</string>
+    <string name="recover_password">Recover Password</string>
+    <string name="email_was_used_to_create_account">Make sure your email is the one used to create your account.</string>
+    <string name="send">Send</string>
+    <string name="insert_your_email">Insert your email</string>
+
 
     <string name="title_activity_nav_bar" translatable="false">NavBarActivity</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
@@ -108,7 +113,12 @@
     <string name="logout_everywhere_logged_in">Logout everywhere logged in</string>
     <string name="change_map_area_radius">Change map area radius</string>
     <string name="add_localities">Add localities</string>
-    <string name="Description">Description:</string>
+    <string name="current_password">Current Password</string>
+    <string name="digit_your_current_password">Insert your current password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="make_sure_your_password_is_the_safest_in_the_world">Make sure your password is as safe as possible.</string>
+    <string name="submit">Submit</string>
+    <string name="new_password">New Password</string>
 
 
     <string-array name="month_array">

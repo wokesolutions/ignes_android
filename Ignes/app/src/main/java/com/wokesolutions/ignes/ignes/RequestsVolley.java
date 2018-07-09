@@ -2394,6 +2394,65 @@ public class RequestsVolley {
 
     }
 
+    public static void forgotPasswordRequest(String email, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        final String mEmail = email;
+
+
+        String url = URL + "/worker/profile/forgotpassword/" + mEmail;
+
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK STATUS: " + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO REPORT CHANGE STATUS: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
+
+                if (response.statusCode == 200) {
+                    return Response.success("Report Status changed", HttpHeaderParser.parseCacheHeaders(response));
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
     private static void setRetry(Request request) {
 
         request.setRetryPolicy(new DefaultRetryPolicy(

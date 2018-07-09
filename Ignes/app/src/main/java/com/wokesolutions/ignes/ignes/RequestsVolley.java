@@ -136,8 +136,8 @@ public class RequestsVolley {
     }
 
 
-    public static void reportApplicationsRequest(String reportId, final Context context, final Button button,
-                                                 final MarkerAdapter activity) {
+    public static void reportApplicationsRequest(String reportId, final Context context,
+                                                 final ProfileActivity activity) {
 
         final String mReportId = reportId;
 
@@ -157,8 +157,6 @@ public class RequestsVolley {
                         System.out.println("OK REPORT APPLICATIONS ORGS : " + response);
 
                         activity.setListApplications(response, mReportId);
-                        button.setVisibility(View.VISIBLE);
-
                     }
                 },
                 new Response.ErrorListener() {

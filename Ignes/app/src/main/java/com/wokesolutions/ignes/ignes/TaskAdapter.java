@@ -123,12 +123,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (taskItem.getmGravity().equals("5"))
             gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
-        if (taskItem.getmStatus().equals("CLOSE"))
-            img_status.setImageResource(R.drawable.lockclose);
-
-        if (taskItem.getmStatus().equals("OPEN")) {
-            img_status.setImageResource(R.drawable.lockopen);
-        }
         status_button.setText("Aberto");
 
         image.setImageBitmap(taskItem.getmImg_bitmap());
@@ -168,12 +162,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                         }
                         else if(newStatus.equals("Fechado")) {
                             status_button.setText("Fechado");
-                            img_status.setImageResource(R.drawable.lockclose);
+                            RequestsVolley.changeRepStatusClosedRequest(mReportID, mContext);
 
                         }
                         else if(newStatus.equals("Aberto")) {
                             status_button.setText("Aberto");
-                            img_status.setImageResource(R.drawable.lockopen);
                         }
                     }
                 });

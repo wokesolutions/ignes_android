@@ -59,7 +59,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     private TaskAdapter taskAdapter;
     private Spinner address_spinner;
     private ArrayList<String> localities_array;
-    private  Geocoder mGeocoder;
+    private Geocoder mGeocoder;
 
 
     @Override
@@ -117,7 +117,11 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         } else if (mRole.equals("USER")) {
-            markerMap = MapActivity.mReportMap;
+            if (MapActivity.isSearch)
+                markerMap = MapActivity.mSearchMap;
+            else
+                markerMap = MapActivity.mReportMap;
+            
             address_spinner = findViewById(R.id.feed_address_spinner);
             address_spinner.setOnItemSelectedListener(this);
             localities_array = new ArrayList<>();
@@ -254,7 +258,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        if(position!=0){
+        if (position != 0) {
             try {
                 List<Address> addresses = mGeocoder.getFromLocationName(localities_array.get(position), 1);
                 double lat = addresses.get(0).getLatitude();

@@ -120,6 +120,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Arrays.asList(DOT, GAP, DASH, GAP);
 
     public static Map<String, MarkerClass> mReportMap;
+    public static Map<String, MarkerClass> mSearchMap;
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
@@ -138,6 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static List<String> orderedIds;
     public Geocoder mCoder;
     public boolean isReady;
+    public static boolean isSearch;
     public List<Address> addresses;
     public String mUserRadius;
     private Map<String, Polygon> mapPolygons;
@@ -261,6 +263,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mContext = this;
         queue = Volley.newRequestQueue(this);
         isReady = false;
+        isSearch = false;
         orderedIds = new LinkedList<>();
         mFinishDrawButton = findViewById(R.id.done_button);
         mNextButton = findViewById(R.id.next_button);
@@ -274,6 +277,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mCurrentLocation = null;
         mLatLng = null;
         mReportMap = new HashMap<>();
+        mSearchMap = new HashMap<>();
         mWorkerTaskMap = new HashMap<>();
         votesMap = new HashMap<>();
         userMarkerMap = new HashMap<>();
@@ -328,15 +332,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    private void setUpCluster(LatLng latLng) {
+    private void setUpCluster(LatLng latLng, Map<String, MarkerClass> map) {
+        mMap.clear();
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         if (mRole.equals("USER")) {
-            // Add cluster items (markers) to the cluster manager.
+            if(map == mReportMap)
+                isSearch = false;
+            else if(map == mSearchMap)
+                isSearch = true;
 
+            // Add cluster items (markers) to the cluster manager.
             mClusterManager = new ClusterManager<MarkerClass>(mContext, mMap);
 
             // Point the map's listeners at the listeners implemented by the cluster
@@ -345,11 +354,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mMap.setOnMarkerClickListener(mClusterManager);
 
             // Add ten cluster items in close proximity, for purposes of this example.
-            Iterator it = mReportMap.keySet().iterator();
+            Iterator it = map.keySet().iterator();
 
             while (it.hasNext()) {
                 String key = (String) it.next();
-                final MarkerClass item = mReportMap.get(key);
+                final MarkerClass item = map.get(key);
                 mClusterManager.cluster();
                 mClusterManager.addItem(item);
                 mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
@@ -421,7 +430,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    public void setMarkers(JSONArray markers, double lat, double lng, String locality) {
+    public void setMarkers(JSONArray markers, double lat, double lng, String locality, boolean search) {
 
         try {
             JSONArray jsonarray = markers;
@@ -509,18 +518,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
                         points, category, reportID, isPrivate);
 
-                if (!mReportMap.containsKey(reportID)) {
-                    mReportMap.put(reportID, report);
-                    orderedIds.add(reportID);
-                }
-                if (!userMarkerMap.containsKey(reportID)) {
-                    if (name.equals(mUsername)) {
-                        userMarkerMap.put(reportID, report);
+                if(!search) {
+                    if (!mReportMap.containsKey(reportID)) {
+                        mReportMap.put(reportID, report);
+                        orderedIds.add(reportID);
                     }
+                    if (!userMarkerMap.containsKey(reportID)) {
+                        if (name.equals(mUsername)) {
+                            userMarkerMap.put(reportID, report);
+                        }
+                    }
+                    setUpCluster(new LatLng(lat, lng), mReportMap);
+                } else {
+                    if (!mSearchMap.containsKey(reportID)) {
+                        mSearchMap.put(reportID, report);
+                    }
+
+                    setUpCluster(new LatLng(lat, lng), mSearchMap);
                 }
             }
 
-            setUpCluster(new LatLng(lat, lng));
+
 
 
         } catch (JSONException e) {
@@ -593,7 +611,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
 
-            setUpCluster(new LatLng(lat, lng));
+            setUpCluster(new LatLng(lat, lng), null);
 
 
         } catch (JSONException e) {
@@ -787,6 +805,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public boolean onMyLocationButtonClick() {
                         LatLng loc = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                        setUpCluster(loc, mReportMap);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
                         try {
                             addresses = mCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);

@@ -578,7 +578,7 @@ public class RequestsVolley {
                         activity.isReady = true;
 
                         if (activity.mRole.equals("USER"))
-                            activity.setMarkers(response, mLat, mLng, mLocality);
+                            activity.setMarkers(response, mLat, mLng, mLocality, false);
                         else if (activity.mRole.equals("WORKER"))
                             activity.setWorkerMarkers(response, mLat, mLng, mLocality);
 
@@ -677,7 +677,7 @@ public class RequestsVolley {
                         // response
                         System.out.println("OK LOCATION: " + response);
 
-                        activity.setMarkers(response, mLat, mLng, mLocation);
+                        activity.setMarkers(response, mLat, mLng, mLocation, true);
 
                         if (mIsFinish.equals("FINISHED")) {
                             System.out.println("ACABARAM OS REPORTS");

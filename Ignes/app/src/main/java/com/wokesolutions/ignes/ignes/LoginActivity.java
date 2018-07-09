@@ -90,12 +90,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 alert.show();
 
+                final EditText email = mView.findViewById(R.id.email_forgot_password);
+
                 Button forgotPassButton = mView.findViewById(R.id.send_forgot_pass);
 
                 forgotPassButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         System.out.println("CLIQUEI NO SEND");
+                        String mEmail = email.getText().toString();
+                        RequestsVolley.forgotPasswordRequest(mEmail, context);
                     }
                 });
             }

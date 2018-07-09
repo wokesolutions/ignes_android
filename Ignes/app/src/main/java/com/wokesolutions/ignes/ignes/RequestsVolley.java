@@ -58,7 +58,7 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
-    public static void reportAcceptApplicationRequest(String report, String nif, final Context context) {
+    public static void reportAcceptApplicationRequest(String report, String nif, final ApplicationActivity activity, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mNif = nif;
@@ -85,6 +85,7 @@ public class RequestsVolley {
                         System.out.println("OK ACEITAR APPLICATION: " + response);
 
                         Toast.makeText(context, "Application Accepted!", Toast.LENGTH_LONG).show();
+                        activity.recreate();
                     }
                 },
                 new Response.ErrorListener() {
@@ -146,7 +147,7 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        url = URL + "/profile/getapplications/" + mReportId;
+        url = URL + "/report/getapplications/" + mReportId;
 
 
         arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -2398,13 +2399,10 @@ public class RequestsVolley {
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
-        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
-        final String mToken = sharedPref.getString("token", null);
-
         final String mEmail = email;
 
 
-        String url = URL + "/worker/profile/forgotpassword/" + mEmail;
+        String url = URL + "/profile/forgotpassword/" + mEmail;
 
 
         stringRequest = new StringRequest(Request.Method.POST, url,
@@ -2426,7 +2424,7 @@ public class RequestsVolley {
             @Override
             public Map<String, String> getHeaders() {
 
-                return setHeaders(mToken, context);
+                return setHeaders("", context);
             }
 
             @Override
@@ -2435,7 +2433,7 @@ public class RequestsVolley {
                 System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
 
                 if (response.statusCode == 200) {
-                    return Response.success("Report Status changed", HttpHeaderParser.parseCacheHeaders(response));
+                    return Response.success("Recover Password Request Sent", HttpHeaderParser.parseCacheHeaders(response));
                 } else if (response.statusCode == 403) {
                     VolleyError error = new VolleyError(String.valueOf(response.statusCode));
                     return Response.error(error);

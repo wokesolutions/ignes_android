@@ -150,6 +150,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
+    private LinearLayout mContactsButton;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private int counter;
@@ -520,7 +521,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         points, category, reportID, isPrivate);
 
                 //TODO - 404 e 403 - AVATAR DA PESSOA PARA POR NO FEED
-                RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
+                //RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
 
 
                 if (!search) {
@@ -839,6 +840,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 startActivity(new Intent(MapActivity.this, FeedActivity.class));
+            }
+        });
+
+        mContactsButton = (LinearLayout) findViewById(R.id.botao_contacts);
+        mContactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, ContactsActivity.class));
             }
         });
 

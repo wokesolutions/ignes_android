@@ -167,6 +167,14 @@
     <string name="report">REPORT :</string>
     <string name="refuse">Refuse</string>
 
+    <!-- ContactsActivity String -->
+    <string name="national_emergency_number">National Emergency Number</string>
+    <string name="emergency">Emergency</string>
+    <string name="others">Others</string>
+    <string name="civil_protection_prociv_pt">Civil Protection - prociv.pt</string>
+    <string name="safe_village_aldeiasegura_pt">Safe Village - aldeiasegura.pt</string>
+    <string name="wokesolutions_wokesolutions_gmail_com" translatable="false">WokeSolutions - wokesolutions@gmail.com</string>
+
 
     <string-array name="month_array">
         <item>January</item>

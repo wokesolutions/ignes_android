@@ -118,4 +118,9 @@
     <string name="report">REPORTE :</string>
     <string name="refuse">Recusar</string>
     <string name="finish_path_view">Limpar Vista de Caminho</string>
+    <string name="national_emergency_number">Número de Emergência Nacional</string>
+    <string name="emergency">Emergência</string>
+    <string name="others">Outros</string>
+    <string name="civil_protection_prociv_pt">Proteção Civil - prociv.pt</string>
+    <string name="safe_village_aldeiasegura_pt">Aldeia Segura - aldeiasegura.pt</string>
 </resources>

@@ -144,9 +144,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         RequestsVolley.userAvatarRequest(username, marker, position, mContext, this, null, null);
     }
-
-
-
+    
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView marker_status_image, marker_image, user_avatar;

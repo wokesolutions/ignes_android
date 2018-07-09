@@ -117,7 +117,6 @@ public class MarkerActivity extends AppCompatActivity {
         marker_comments_number = findViewById(R.id.marker_comments_number);
         marker_gravity_title = findViewById(R.id.marker_gravity_title);
         marker_comment = findViewById(R.id.marker_comment);
-        marker_comment.setFocusable(false);
         marker_comment.setFocusableInTouchMode(true);
         marker_category = findViewById(R.id.marker_category);
 
@@ -223,8 +222,10 @@ public class MarkerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isClicked)
                     mCommentPostLayout.setVisibility(View.GONE);
-                else
+                else {
                     mCommentPostLayout.setVisibility(View.VISIBLE);
+                     marker_comment.requestFocus();
+                }
 
                 isClicked = !isClicked;
             }

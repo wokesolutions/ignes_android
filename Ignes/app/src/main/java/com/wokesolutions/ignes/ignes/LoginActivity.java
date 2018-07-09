@@ -6,11 +6,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -25,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     // UI references.
     private EditText mIdentificationView;
+    private TextView mForgotPassword;
     private View mLoginFormView;
 
     private Context context;
@@ -72,6 +75,31 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mForgotPassword = findViewById(R.id.forgot_password);
+        mForgotPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+                mBuilder.setTitle(R.string.recover_password);
+                mBuilder.setIcon(R.drawable.keyicon);
+
+                LayoutInflater inflater = LoginActivity.this.getLayoutInflater();
+                final View mView = inflater.inflate(R.layout.forgot_password, null);
+                mBuilder.setView(mView);
+                final AlertDialog alert = mBuilder.create();
+
+                alert.show();
+
+                Button forgotPassButton = mView.findViewById(R.id.send_forgot_pass);
+
+                forgotPassButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println("CLIQUEI NO SEND");
+                    }
+                });
+            }
+        });
 
         context = this;
     }
@@ -123,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 3;
+        return password.length() > 5;
     }
 
     /**

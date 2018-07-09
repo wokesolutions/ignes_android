@@ -178,7 +178,7 @@
                     android:layout_gravity="top|center"
                     android:layout_marginHorizontal="5dp"
                     android:fontFamily="@font/quicksand_light"
-                    android:text="@string/Description"
+                    android:text="@string/description"
                     android:textColor="@color/colorIgnesWorker"
                     android:textSize="17dp"
                     android:textStyle="bold" />

@@ -182,7 +182,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
-                mBuilder.setTitle("Change Password");
+                mBuilder.setTitle(R.string.change_password);
                 mBuilder.setIcon(R.drawable.keyicon);
 
                 LayoutInflater inflater = SettingsActivity.this.getLayoutInflater();

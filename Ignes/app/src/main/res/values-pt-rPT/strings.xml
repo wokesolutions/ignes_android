@@ -75,4 +75,14 @@
     <string name="note_by">Nota por&#160;</string>
     <string name="task_s_notes">Notas da Tarefa</string>
     <string name="new_note">Nova nota</string>
+    <string name="recover_password">Recuperar Password</string>
+    <string name="current_password">Senha Atual</string>
+    <string name="digit_your_current_password">Insira a sua senha atual</string>
+    <string name="repeat_new_password">Repita a nova senha</string>
+    <string name="make_sure_your_password_is_the_safest_in_the_world">Garanta que a sua senha é o mais segura possível.</string>
+    <string name="submit">Submeter</string>
+    <string name="new_password">Nova Senha</string>
+    <string name="email_was_used_to_create_account">Certifique-se que o email é o que foi usado para criar a sua conta.</string>
+    <string name="send">Enviar</string>
+    <string name="insert_your_email">Insira o seu email</string>
 </resources>

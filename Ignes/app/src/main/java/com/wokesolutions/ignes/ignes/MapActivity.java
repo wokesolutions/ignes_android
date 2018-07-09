@@ -340,9 +340,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         if (mRole.equals("USER")) {
-            if(map == mReportMap)
+            if (map == mReportMap)
                 isSearch = false;
-            else if(map == mSearchMap)
+            else if (map == mSearchMap)
                 isSearch = true;
 
             // Add cluster items (markers) to the cluster manager.
@@ -518,7 +518,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
                         points, category, reportID, isPrivate);
 
-                if(!search) {
+                if (!search) {
                     if (!mReportMap.containsKey(reportID)) {
                         mReportMap.put(reportID, report);
                         orderedIds.add(reportID);
@@ -537,8 +537,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     setUpCluster(new LatLng(lat, lng), mSearchMap);
                 }
             }
-
-
 
 
         } catch (JSONException e) {
@@ -905,9 +903,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return super.onOptionsItemSelected(item);
     }
 
-    private void cleanMapPolygons(){
+    private void cleanMapPolygons() {
 
-        for(Polygon polygon : currentPolygonsArray)
+        for (Polygon polygon : currentPolygonsArray)
             polygon.remove();
     }
 
@@ -1368,34 +1366,111 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             switch (item.getmGravity()) {
                 case "1":
-                    if (item.getmCreator_username().equals(mUsername))
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wipmine));
-                    else
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    if (item.getmCreator_username().equals(mUsername)) {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1standbymine));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1openmine));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wipmine));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1closedmine));
+                    } else {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1standby));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1open));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1closed));
+                    }
                     break;
                 case "2":
-                    if (item.getmCreator_username().equals(mUsername))
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wipmine));
-                    else
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    if (item.getmCreator_username().equals(mUsername)) {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2standbymine));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2openmine));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wipmine));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2closedmine));
+                    }
+                    else {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2standby));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2open));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2closed));
+                    }
                     break;
                 case "3":
-                    if (item.getmCreator_username().equals(mUsername))
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wipmine));
-                    else
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    if (item.getmCreator_username().equals(mUsername)) {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3standbymine));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3openmine));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wipmine));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3closedmine));
+                    }
+                    else {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3standby));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3open));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3closed));
+                    }
                     break;
                 case "4":
-                    if (item.getmCreator_username().equals(mUsername))
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wipmine));
-                    else
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    if (item.getmCreator_username().equals(mUsername)) {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4standbymine));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4openmine));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wipmine));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4closedmine));
+                    }
+                    else {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4standby));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4open));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4closed));
+                    }
                     break;
                 case "5":
-                    if (item.getmCreator_username().equals(mUsername))
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wipmine));
-                    else
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+                    if (item.getmCreator_username().equals(mUsername)) {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5standbymine));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5openmine));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wipmine));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5closedmine));
+                    } else {
+                        if (item.getmStatus().equals("standby"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5standby));
+                        else if (item.getmStatus().equals("open"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5open));
+                        else if (item.getmStatus().equals("wip"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+                        else if (item.getmStatus().equals("closed"))
+                            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5closed));                    }
             }
         }
 

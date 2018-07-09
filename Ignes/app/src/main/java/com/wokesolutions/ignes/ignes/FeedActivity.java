@@ -121,7 +121,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
                 markerMap = MapActivity.mSearchMap;
             else
                 markerMap = MapActivity.mReportMap;
-            
+
             address_spinner = findViewById(R.id.feed_address_spinner);
             address_spinner.setOnItemSelectedListener(this);
             localities_array = new ArrayList<>();

@@ -1521,7 +1521,7 @@ public class RequestsVolley {
                         System.out.println("OK AVATAR: " + response);
                         try {
 
-                            String base64 = response.getString(mUsername);
+                            String base64 = response.getString("profpic");
                             byte[] data = Base64.decode(base64, Base64.DEFAULT);
 
                             if (mMarker != null) {

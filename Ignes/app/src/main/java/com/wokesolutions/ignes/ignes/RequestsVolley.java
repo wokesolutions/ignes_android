@@ -688,6 +688,7 @@ public class RequestsVolley {
                 if (response.statusCode == 200) {
 
                     try {
+                        System.out.println("PRINT DO CURSOR: " + response.headers.get("Cursor"));
                         if (response.headers.get("Cursor") != null)
                             mIsFinish = response.headers.get("Cursor");
                         else
@@ -740,7 +741,7 @@ public class RequestsVolley {
                     public void onResponse(JSONArray response) {
                         // response
                         System.out.println("OK LOCATION: " + response);
-
+                        activity.clearMap();
                         activity.setMarkers(response, mLat, mLng, mLocation, true);
 
                         if (mIsFinish.equals("FINISHED")) {

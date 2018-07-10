@@ -334,7 +334,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void setUpCluster(LatLng latLng, Map<String, MarkerClass> map) {
-        mMap.clear();
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
@@ -1258,6 +1257,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 vector.add(latLng);
             }
         });
+    }
+
+    public void clearMap() {
+        mMap.clear();
     }
 
     // Fetches data from url passed

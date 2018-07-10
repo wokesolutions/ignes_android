@@ -98,8 +98,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final String MATAS = "Limpeza de matas/florestas";
     private static final int COLOR_BLACK_ARGB = 0xff000000;
     private static final int COLOR_WHITE_ARGB = 0xffffffff;
-    private static final int COLOR_GREEN_ARGB = 0xff388E3C;
-    private static final int COLOR_PURPLE_ARGB = 0xff81C784;
+    private static final int COLOR_GREEN_ARGB = 0x80388E3C;
+    private static final int COLOR_PURPLE_ARGB = 0x8081C784;
     private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
     private static final int COLOR_BLUE_ARGB = 0xffF9A825;
     private static final int POLYGON_STROKE_WIDTH_PX = 8;

@@ -66,7 +66,7 @@ public class RequestsVolley {
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String mToken = sharedPref.getString("token", null);
 
-        String url = URL + "/report/comment/delete/"+mComment;
+        String url = URL + "/report/comment/delete/" + mComment;
 
         stringRequest = new StringRequest(Request.Method.DELETE, url,
                 new Response.Listener<String>() {
@@ -92,6 +92,7 @@ public class RequestsVolley {
 
                 return setHeaders(mToken, context);
             }
+
             @Override
             public String getBodyContentType() {
                 return "application/json";
@@ -496,7 +497,7 @@ public class RequestsVolley {
 
     public static void thumbnailRequest(String reportId, MarkerClass marker, final int position,
                                         final Context mContext, final MarkerAdapter markerAdapter,
-                                        TaskClass task, final TaskAdapter taskAdapter, final  MarkerActivity activity) {
+                                        TaskClass task, final TaskAdapter taskAdapter, final MarkerActivity activity) {
 
         final String report = reportId;
 
@@ -1098,7 +1099,7 @@ public class RequestsVolley {
             activity.imgByteArray = imgStream.toByteArray();
             base64Img = Base64.encodeToString(activity.imgByteArray, Base64.DEFAULT);
 
-            System.out.println("JSONARRAY DO REPORT ----> "+ jsonArray);
+            System.out.println("JSONARRAY DO REPORT ----> " + jsonArray);
 
             if (jsonArray != null) {
                 report.put("points", jsonArray.toString());
@@ -1149,7 +1150,7 @@ public class RequestsVolley {
                         System.out.println("OK REPORTAR: " + response);
                         activity.setResult(Activity.RESULT_OK, new Intent());
                         int reportNum = Integer.parseInt(sharedPref.getString("user_reportNum", "0"));
-                        sharedPref.edit().putString("user_reportNum", ""+(reportNum+1)).apply();
+                        sharedPref.edit().putString("user_reportNum", "" + (reportNum + 1)).apply();
                         Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
                         activity.finish();
                     }
@@ -1550,7 +1551,7 @@ public class RequestsVolley {
         activity.queue.add(stringRequest);
     }
 
-    public static void userAvatarRequest(String username, MarkerClass marker,TaskClass task,
+    public static void userAvatarRequest(String username, MarkerClass marker, TaskClass task,
                                          final Context mContext) {
 
         final String mUsername = username;
@@ -1589,11 +1590,11 @@ public class RequestsVolley {
 
                             if (mMarker != null) {
                                 mMarker.makeAvatar(data);
-                               // markerAdapter.notifyItemChanged(position);
+                                // markerAdapter.notifyItemChanged(position);
 
                             } else if (mTask != null) {
                                 mTask.makeAvatar(data);
-                               // taskAdapter.notifyItemChanged(position);
+                                // taskAdapter.notifyItemChanged(position);
                             }
 
 
@@ -1726,8 +1727,14 @@ public class RequestsVolley {
                         if (level.equals("USER"))
                             profileRequest(sharedPref.getString("username", ""), context, activity);
                         else {
-                            activity.startActivity(new Intent(activity, MapActivity.class));
-                            activity.finish();
+                            if (level.equals("WORKER")) {
+                                activity.startActivity(new Intent(activity, MapActivity.class));
+                                activity.finish();
+                            } else {
+                                Toast.makeText(context, "Invalid account type", Toast.LENGTH_LONG).show();
+                                activity.showProgress(false);
+                            }
+
                         }
 
                     }
@@ -2586,7 +2593,7 @@ public class RequestsVolley {
         params.put("Device-ID", Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         System.out.println("DEVICE ID: " + Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID));
         params.put("Device-App", "Android");
-        System.out.println("Device-Info: "+android.os.Build.MODEL + " "+  Build.BRAND);
+        System.out.println("Device-Info: " + android.os.Build.MODEL + " " + Build.BRAND);
         params.put("Device-Info", Build.BRAND + " " + Build.MODEL);
 
         return params;

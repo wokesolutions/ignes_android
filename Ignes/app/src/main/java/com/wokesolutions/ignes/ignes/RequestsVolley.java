@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.content.IntentCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -2318,7 +2319,12 @@ public class RequestsVolley {
 
                         Toast.makeText(context, "User Logged Out", Toast.LENGTH_LONG).show();
 
-                        activity.startActivity(new Intent(activity, LoginActivity.class));
+                        Intent intents = new Intent(activity, LoginActivity.class);
+                        intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                        activity.startActivity(intents);
                         activity.finish();
                     }
                 },

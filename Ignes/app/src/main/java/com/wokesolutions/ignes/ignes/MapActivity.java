@@ -1259,6 +1259,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+    public void changeMapType() {
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+    }
+
     public void clearMap() {
         mMap.clear();
     }

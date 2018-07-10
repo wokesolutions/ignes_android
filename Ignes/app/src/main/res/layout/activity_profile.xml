@@ -17,7 +17,7 @@
         android:elevation="4dp"
         android:theme="@style/ActionBar"
         app:contentInsetEnd="60dp"
-        app:contentInsetRight="60dp"></android.support.v7.widget.Toolbar>
+        app:contentInsetRight="60dp"/>
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawerlayout_profile"

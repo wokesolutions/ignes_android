@@ -62,11 +62,13 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
-    private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton, mApplicationLayout;
+    private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton,
+            mContactsButton,mApplicationLayout;
     private LinearLayout mConfirmLayout;
     private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
-    private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton, mSaveButton, mApplicationsButton;
+    private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton,
+            mSaveButton, mApplicationsButton;
     private LinearLayout mAboutLayout, mEditAboutLayout;
     private TextView mDay, mMonth, mYear;
     private TextView mPoints, mReportNum, mGender, mAddress, mName, mJob, mPhonenumber, mSkills,
@@ -291,6 +293,16 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+                finish();
+            }
+        });
+
+        mContactsButton = (LinearLayout) findViewById(R.id.botao_contacts);
+        mContactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
                 finish();
             }
         });
@@ -532,9 +544,12 @@ public class ProfileActivity extends AppCompatActivity {
                             }
 
                             RequestsVolley.editProfileRequest(mPhonenumber.getText().toString(),
-                                    mName.getText().toString(), mGender.getText().toString(), mAddress.getText().toString(),
-                                    mLocality.getText().toString(), "zip", mDay.getText().toString(), mMonth.getText().toString(),
-                                    mYear.getText().toString(), mJob.getText().toString(), mSkills.getText().toString()
+                                    mName.getText().toString(), mGender.getText().toString(),
+                                    mAddress.getText().toString(),
+                                    mLocality.getText().toString(), "zip", mDay.getText().toString(),
+                                    mMonth.getText().toString(),
+                                    mYear.getText().toString(), mJob.getText().toString(),
+                                    mSkills.getText().toString()
                                     , mUsername, mContext, ProfileActivity.this);
 
                         }
@@ -611,7 +626,8 @@ public class ProfileActivity extends AppCompatActivity {
                         } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                             matrix.postRotate(270);
                         }
-                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(), mThumbnail.getHeight(), matrix, true);
+                        mThumbnail = Bitmap.createBitmap(mThumbnail, 0, 0, mThumbnail.getWidth(),
+                                mThumbnail.getHeight(), matrix, true);
                     } catch (Exception e) {
                         System.out.println("NO ORIENTATION FOUND");
                         e.printStackTrace();

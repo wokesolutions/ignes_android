@@ -45,7 +45,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mMapButton;
     private TextView mAlertMessage, mOrganization, mUsername;
-    private LinearLayout mProfileButton, mSettingsButton;
+    private LinearLayout mProfileButton, mSettingsButton, mContactsButton;
     private Context mContext;
     private Location mCurrentLocation;
     private SharedPreferences sharedPref;
@@ -161,6 +161,15 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
 
                 startActivity(new Intent(FeedActivity.this, SettingsActivity.class));
+                finish();
+            }
+        });
+        mContactsButton = (LinearLayout) findViewById(R.id.botao_contacts);
+        mContactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(FeedActivity.this, ContactsActivity.class));
                 finish();
             }
         });

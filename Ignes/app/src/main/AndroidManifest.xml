@@ -68,6 +68,9 @@
             android:name=".LoginActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
+            android:name=".ContactsActivity"
+            android:theme="@style/WelcomeTheme" />
+        <activity
             android:name=".ApplicationActivity"
             android:theme="@style/WelcomeTheme" />
         <activity
@@ -104,7 +107,8 @@
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/WelcomeTheme" />
-        <activity android:name=".ContactsActivity"></activity>
+
+
     </application>
 
 </manifest>

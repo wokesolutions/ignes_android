@@ -40,7 +40,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Context mContext;
     private String mRole, mToken;
     private SharedPreferences sharedPref;
-    private LinearLayout mLoggoutButton, mFeedButton, mMapButton, mProfileButton, mSettingsButton;
+    private LinearLayout mLoggoutButton, mFeedButton, mMapButton, mProfileButton, mSettingsButton,
+            mContactsButton;
     private List<Address> mAddresses;
     private Geocoder mGeocoder;
 
@@ -311,6 +312,16 @@ public class SettingsActivity extends AppCompatActivity {
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mContactsButton = (LinearLayout) findViewById(R.id.botao_contacts);
+        mContactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(SettingsActivity.this, ContactsActivity.class));
                 finish();
             }
         });

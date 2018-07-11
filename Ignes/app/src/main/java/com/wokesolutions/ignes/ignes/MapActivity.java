@@ -131,11 +131,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static boolean isSearch;
     private static Context mContext;
     private static Button mGoogleMapsButton;
+    private static Button mMapTypeButton;
     private static Polyline mMapPollyLine;
     private static ArrayList<LatLng> vector;
     private static List<String> orderedIds;
     public Geocoder mCoder;
     public boolean isReady;
+    public boolean mapSatellite;
     public List<Address> addresses;
     public String mUserRadius;
     private ArrayList<Polygon> currentPolygonsArray;
@@ -150,7 +152,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
-    private LinearLayout mContactsButton;
+    private LinearLayout mContactsButton, mTeste;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private int counter;
@@ -252,14 +254,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 @Override
                 public void onClick(View v) {
                     mGoogleMapsButtonLayout.setVisibility(View.GONE);
-                    if(mMapPollyLine!=null)
-                          mMapPollyLine.remove();
+                    if (mMapPollyLine != null)
+                        mMapPollyLine.remove();
 
                     Toast.makeText(mContext, "Finish Path", Toast.LENGTH_LONG).show();
                 }
             });
 
         }
+
+        mapSatellite = false;
+
+        mMapTypeButton = (Button) findViewById(R.id.maptype_button);
+        mMapTypeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeMapType();
+                //mapSatellite = !mapSatellite;
+                System.out.println("BOTAO NOVO: " + mapSatellite);
+            }
+        });
 
         mContext = this;
         queue = Volley.newRequestQueue(this);
@@ -908,8 +922,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     filterTask();
 
             }
-            if (item.getItemId() == R.id.refreshicon)
+            if (item.getItemId() == R.id.refreshicon) {
                 recreate();
+            }
         } else
             Toast.makeText(mContext, "Try again later", Toast.LENGTH_LONG).show();
 
@@ -1260,7 +1275,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void changeMapType() {
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        mapSatellite = !mapSatellite;
+        if (mapSatellite) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            mMapTypeButton.setBackgroundResource(R.drawable.map_type_clear);
+        } else {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMapTypeButton.setBackgroundResource(R.drawable.map_type_satelite);
+        }
     }
 
     public void clearMap() {

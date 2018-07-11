@@ -124,7 +124,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         if (taskItem.getmGravity().equals("5"))
             gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
-        status_button.setText("Aberto");
+        status_button.setText(taskItem.getmStatus());
 
         image.setImageBitmap(taskItem.getmImg_bitmap());
 

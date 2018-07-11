@@ -1541,19 +1541,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             switch (item.getmGravity()) {
                 case "1":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    if (item.getmStatus().equals("open"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1open));
+                    else if (item.getmStatus().equals("wip"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1wip));
+                    else if (item.getmStatus().equals("closed"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g1closed));
                     break;
                 case "2":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    if (item.getmStatus().equals("open"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2open));
+                    else if (item.getmStatus().equals("wip"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2wip));
+                    else if (item.getmStatus().equals("closed"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g2closed));
                     break;
                 case "3":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    if (item.getmStatus().equals("open"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3open));
+                    else if (item.getmStatus().equals("wip"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3wip));
+                    else if (item.getmStatus().equals("closed"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g3closed));
                     break;
                 case "4":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    if (item.getmStatus().equals("open"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4open));
+                    else if (item.getmStatus().equals("wip"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4wip));
+                    else if (item.getmStatus().equals("closed"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g4closed));
                     break;
                 case "5":
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+                    if (item.getmStatus().equals("open"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5open));
+                    else if (item.getmStatus().equals("wip"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5wip));
+                    else if (item.getmStatus().equals("closed"))
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.g5closed));
 
             }
         }

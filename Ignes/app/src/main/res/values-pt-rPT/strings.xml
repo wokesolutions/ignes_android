@@ -45,13 +45,13 @@
     <string name="save">Guardar</string>
     <string name="locality">Localidade&#160;</string>
     <string name="more_about">Mais SOBRE&#160;</string>
-    <string name="people_interacted_with_this_report">&#160;pessoas interagiram com este reporte</string>
+    <string name="people_interacted_with_this_report"> pessoas interagiram com esta ocorrência</string>
     <string name="gravity">Gravidade:&#160;</string>
     <string name="category">Categoria:&#160;</string>
     <string name="comments">comentários</string>
     <string name="comment">&#160;Comentar...</string>
     <string name="post">postar</string>
-    <string name="person_interacted_with_report">&#160;pessoa interagiu com este reporte</string>
+    <string name="person_interacted_with_report"> pessoa interagiu com esta ocorrência</string>
     <string name="change_password">Mudar password</string>
     <string name="logout_everywhere_logged_in">Sair em todos os dispositivos</string>
     <string name="change_map_area_radius">Mudar raio no mapa</string>
@@ -64,7 +64,7 @@
     <string name="contacts">Contactos</string>
     <string name="tasks">Tarefas</string>
     <string name="zero_tasks_atributted">Sem tarefas atribuídas</string>
-    <string name="no_reports_to_list_area">Não há reportes a listar nesta zona</string>
+    <string name="no_reports_to_list_area">Não há ocorrências a listar nesta zona</string>
     <string name="description">Descrição</string>
     <string name="created_on">Criado a</string>
     <string name="work_start">Início trabalhos</string>

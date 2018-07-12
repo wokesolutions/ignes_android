@@ -165,7 +165,7 @@ public class RequestsVolley {
 
             @Override
             public byte[] getBody() {
-                return jsonObject.toString().getBytes();
+                return "".getBytes();
             }
 
             @Override

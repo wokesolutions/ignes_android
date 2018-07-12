@@ -29,19 +29,23 @@ import java.util.Map;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
 
+    public static Map<String, MarkerClass> mMap;
     RequestQueue queue;
     private Context mContext;
-    private Map<String, MarkerClass> mMap;
     private boolean mIsProfile;
     private ArrayList<ApplicationClass> mArrayList;
     private int isReady;
     private String mCurrentUser;
+    private ProfileActivity mProfileActivity;
+    private FeedActivity mFeedActivity;
 
-    MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile, String currentUser) {
+    MarkerAdapter(Context context, Map<String, MarkerClass> map, FeedActivity feedActivity, ProfileActivity profileActivity, String currentUser) {
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
-        mIsProfile = isProfile;
+        mProfileActivity = profileActivity;
+        mIsProfile = (mProfileActivity != null);
+        mFeedActivity = feedActivity;
         mArrayList = new ArrayList<>();
         isReady = 0;
         mCurrentUser = currentUser;
@@ -163,7 +167,10 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                         @SuppressWarnings("unused") final int id) {
-                        RequestsVolley.reportDeleteRequest(marker.getmId(), mContext);
+                        if (mIsProfile)
+                            RequestsVolley.reportDeleteRequest(marker.getmId(), null, mProfileActivity, mContext);
+                        else
+                            RequestsVolley.reportDeleteRequest(marker.getmId(), mFeedActivity, null, mContext);
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

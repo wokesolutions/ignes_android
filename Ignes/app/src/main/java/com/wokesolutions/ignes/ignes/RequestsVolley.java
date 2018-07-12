@@ -123,7 +123,7 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportDeleteRequest(String reportId, final Context context) {
+    public static void reportDeleteRequest(final String reportId, final FeedActivity feedActivity, final ProfileActivity profileActivity, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mReport = reportId;
@@ -132,28 +132,39 @@ public class RequestsVolley {
         final JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("info","info");
+            jsonObject.put("info", "");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         String url = URL + "/report/delete/" + mReport;
 
-        stringRequest = new StringRequest(Request.Method.DELETE, url,
+        stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // response
                         System.out.println("OK APAGARO OCORRENCIA: " + response);
-
                         Toast.makeText(context, "Ocorrência apagada!", Toast.LENGTH_LONG).show();
+
+                        MarkerAdapter.mMap.remove(reportId);
+                        FeedActivity.markerMap.remove(reportId);
+
+                        if (feedActivity != null)
+                            feedActivity.recreate();
+                        else if (profileActivity != null)
+                            profileActivity.recreate();
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO APAGAR OCORRENCIA: " + error.toString());
+                        System.out.println("ERRO DO APAGAR OCORRENCIA: " + error.toString() + " " + error.networkResponse.statusCode);
+
+                        if (error.networkResponse.statusCode == 403)
+                            Toast.makeText(context, "Não pode apagar uma ocorrência a ser tratada.", Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
@@ -165,7 +176,7 @@ public class RequestsVolley {
 
             @Override
             public byte[] getBody() {
-                return "".getBytes();
+                return jsonObject.toString().getBytes();
             }
 
             @Override
@@ -915,7 +926,8 @@ public class RequestsVolley {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserMap(response);
-                            activity.markerAdapter = new MarkerAdapter(context, MapActivity.userMarkerMap, true, username);
+                            activity.markerAdapter = new MarkerAdapter(context, MapActivity.userMarkerMap,
+                                    null, activity, username);
                             activity.recyclerView.setAdapter(activity.markerAdapter);
                             activity.recyclerView.setNestedScrollingEnabled(false);
 

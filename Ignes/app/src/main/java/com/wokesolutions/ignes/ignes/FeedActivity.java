@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class FeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    Map<String, MarkerClass> markerMap;
+    public static Map<String, MarkerClass> markerMap;
     Map<String, TaskClass> taskMap;
 
     private RecyclerView recyclerView;
@@ -122,7 +122,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             address_spinner = findViewById(R.id.feed_address_spinner);
             address_spinner.setOnItemSelectedListener(this);
             localities_array = new ArrayList<>();
-            markerAdapter = new MarkerAdapter(this, markerMap, false, mCurrentUser);
+            markerAdapter = new MarkerAdapter(this, markerMap, this, null, mCurrentUser);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
 

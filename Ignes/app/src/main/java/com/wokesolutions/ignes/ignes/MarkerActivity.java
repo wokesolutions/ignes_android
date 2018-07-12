@@ -429,7 +429,11 @@ public class MarkerActivity extends AppCompatActivity {
             comment_text.setText(commentClass.mText);
             comment_date.setText(commentClass.mDMY);
             comment_owner.setText(commentClass.mOwner);
-            comment_ownerpic.setImageDrawable(commentClass.getmAvatar_rounded());
+
+            if (commentClass.getmAvatar_rounded() != null)
+                comment_ownerpic.setImageDrawable(commentClass.getmAvatar_rounded());
+            else
+                comment_ownerpic.setImageResource(R.drawable.userdefaultavatar);
 
             SharedPreferences sharedPref = context.getSharedPreferences("Shared", MODE_PRIVATE);
             String currentUser = sharedPref.getString("username", "");

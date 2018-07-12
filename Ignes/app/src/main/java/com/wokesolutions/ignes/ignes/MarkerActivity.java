@@ -354,14 +354,16 @@ public class MarkerActivity extends AppCompatActivity {
                 String dateComment = jsonobject.getString("creationtime");
 
                 commentClass = new CommentClass(commentID, dateComment, ownerComment, textComment);
-                byte[] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
 
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (jsonobject.has("profpic")) {
+                    byte[] bytes = Base64.decode(jsonobject.getString("profpic"), Base64.DEFAULT);
 
-                RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-                roundedBitmap.setCircular(true);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    RoundedBitmapDrawable roundedBitmap = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                    roundedBitmap.setCircular(true);
 
-                commentClass.setAvatar(roundedBitmap);
+                    commentClass.setAvatar(roundedBitmap);
+                }
                 //commentClass.makeAvatar(bytes);
                 arrayList.add(commentClass);
             }

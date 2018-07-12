@@ -1921,9 +1921,9 @@ public class RequestsVolley {
                             else
                                 editor.putString("user_name", mUsername);
 
-                            if (response.has("birth")) {
-                                String[] tokens = response.getString("birth").split(" ");
+                            if (response.has("birth") && !response.getString("birth").equals("  ")) {
 
+                                String[] tokens = response.getString("birth").split(" ");
                                 editor.putString("user_day", tokens[0]);
                                 editor.putString("user_month", tokens[1]);
                                 editor.putString("user_year", tokens[2]);
@@ -1997,6 +1997,17 @@ public class RequestsVolley {
 
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("user_day", "");
+                        editor.putString("user_month", "");
+                        editor.putString("user_year", "");
+                        editor.putString("user_locality", "");
+                        editor.putString("user_phone", "");
+                        editor.putString("user_address", "");
+                        editor.putString("user_gender", "");
+                        editor.putString("user_job", "");
+                        editor.putString("user_skills", "");
+                        editor.putString("Avatar", "");
+                        editor.putString("user_name", "");
 
                         //activity.showProgress(false);
                         editor.putString("askForProfile", "YES");

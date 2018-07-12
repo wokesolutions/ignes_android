@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton,
-            mContactsButton,mApplicationLayout;
+            mContactsButton, mApplicationLayout;
     private LinearLayout mConfirmLayout;
     private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
@@ -551,6 +551,8 @@ public class ProfileActivity extends AppCompatActivity {
                                     mYear.getText().toString(), mJob.getText().toString(),
                                     mSkills.getText().toString()
                                     , mUsername, mContext, ProfileActivity.this);
+
+                            finish();
 
                         }
                     }

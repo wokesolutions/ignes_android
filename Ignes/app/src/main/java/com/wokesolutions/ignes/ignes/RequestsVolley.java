@@ -1154,7 +1154,6 @@ public class RequestsVolley {
                         int reportNum = Integer.parseInt(sharedPref.getString("user_reportNum", "0"));
                         sharedPref.edit().putString("user_reportNum", "" + (reportNum + 1)).apply();
                         Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
-                        activity.finish();
                     }
                 },
                 new Response.ErrorListener() {
@@ -1166,21 +1165,11 @@ public class RequestsVolley {
                         if (response != null) {
 
                             System.out.println("REPORT volley -> ERRO " + response.statusCode);
-
-                            if (response.statusCode == BAD_REQUEST_ERROR)
-                                activity.showProgress(false);
-                            else
-                                activity.showProgress(false);
-
                             Toast.makeText(context, "Ups, failed to send report!", Toast.LENGTH_LONG).show();
                         } else {
                             System.out.println("REPORT volley -> ERRO Response veio null ");
-                            activity.showProgress(false);
-                            activity.finish();
                             Toast.makeText(context, "Your report has been registered!", Toast.LENGTH_LONG).show();
                         }
-
-
                     }
                 }
         ) {
@@ -1454,6 +1443,9 @@ public class RequestsVolley {
                             } else {
                                 Toast.makeText(context, "Ups, something went wrong!", Toast.LENGTH_LONG).show();
                             }
+
+                            activity.showProgress(false);
+
                         } else
                             System.out.println("REGISTER volley -> ERRO Response veio a null");
 

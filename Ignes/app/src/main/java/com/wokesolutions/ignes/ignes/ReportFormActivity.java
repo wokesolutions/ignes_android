@@ -90,7 +90,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
     private Button mUploadButton, mCameraButton, mSubmitButton;
     private CheckBox mCheckBox, mCheckBox_Private;
     private SeekBar mGravitySlider;
-    private View mProgressView;
     private LinearLayout mMediumForm, mSliderForm, mLongForm, mReportForm, mUploadPicture, mAddressLayout;
     private EditText mTitle, mMediumTitle, mAddress, mDescription;
     private ImageView mImageView;
@@ -200,11 +199,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         mMediumTitle = (EditText) findViewById(R.id.report_medium_title);
         mAddress = (EditText) findViewById(R.id.report_address);
         mDescription = (EditText) findViewById(R.id.report_description);
-
         mImageView = (ImageView) findViewById(R.id.report_image);
-        mProgressView = findViewById(R.id.login_progress);
-
-
         mGravitySlider = (SeekBar) findViewById(R.id.gravity_slider);
 
         mGravity = 0;
@@ -233,7 +228,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(View v) {
                 attemptReport();
-                showProgress(true);
+                finish();
             }
         });
 
@@ -493,39 +488,6 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                     mAddressLayout.setVisibility(View.GONE);
             }
             break;
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            mReportForm.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mReportForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 

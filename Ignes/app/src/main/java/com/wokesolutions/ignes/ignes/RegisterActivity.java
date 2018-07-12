@@ -1,6 +1,10 @@
 package com.wokesolutions.ignes.ignes;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,10 +17,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     public int CONFLICT_ERROR = 409;
     public EditText mUsername;
+    public View mProgressView;
     private Context context;
-    private View mRegister_username_form, mRegister_email_form, mRegister_password_form;
+    private View mRegister_username_form, mRegister_email_form, mRegister_password_form, mRegisterView;
     private Button mUsername_button, mEmail_button, mPassword_button, mSignUp_button;
-    private EditText mEmail, mPassword,  mPasswordConfirm;
+    private EditText mEmail, mPassword, mPasswordConfirm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,9 @@ public class RegisterActivity extends AppCompatActivity {
         mRegister_username_form = (View) findViewById(R.id.register_username_form);
         mRegister_email_form = (View) findViewById(R.id.register_email_form);
         mRegister_password_form = (View) findViewById(R.id.register_password_form);
+        mProgressView = findViewById(R.id.register_progress);
+        mRegisterView = findViewById(R.id.register_form);
+
 
         mUsername_button = (Button) findViewById(R.id.register_username_button);
         mEmail_button = (Button) findViewById(R.id.register_email_button);
@@ -165,8 +173,44 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user register attempt.
-            // showProgress(true);
+            showProgress(true);
             registerRequest(username, password, email);
+        }
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mRegisterView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 

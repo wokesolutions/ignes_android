@@ -243,6 +243,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (mRole.equals("USER")) {
             setContentView(R.layout.activity_map);
             mFinishDrawAddress = findViewById(R.id.done_button);
+            mMapInfoButton = (Button) findViewById(R.id.information_button);
+            mMapInfoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewMapInfo();
+                }
+            });
+
         } else if (mRole.equals("WORKER")) {
             setTheme(R.style.WorkerTheme);
             setContentView(R.layout.worker_map);
@@ -272,15 +280,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 changeMapType();
             }
         });
-
-        mMapInfoButton = (Button) findViewById(R.id.information_button);
-        mMapInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewMapInfo();
-            }
-        });
-
         mContext = this;
         queue = Volley.newRequestQueue(this);
         isReady = false;

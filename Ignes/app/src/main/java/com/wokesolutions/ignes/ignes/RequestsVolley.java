@@ -123,6 +123,80 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
+    public static void reportDeleteRequest(String reportId, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final String mReport = reportId;
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("info","info");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String url = URL + "/report/delete/" + mReport;
+
+        stringRequest = new StringRequest(Request.Method.DELETE, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK APAGARO OCORRENCIA: " + response);
+
+                        Toast.makeText(context, "Ocorrência apagada!", Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO APAGAR OCORRENCIA: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            public byte[] getBody() {
+                return jsonObject.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response);
+
+                if (response.statusCode == 200) {
+                    return Response.success("Apagado com sucesso", HttpHeaderParser.parseCacheHeaders(response));
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
+    }
+
 
     public static void reportAcceptApplicationRequest(String report, String nif, final ApplicationActivity activity, final Context context) {
 
@@ -819,7 +893,7 @@ public class RequestsVolley {
         MapActivity.queue.add(arrayRequest);
     }
 
-    public static void userReportsRequest(String username, String token, String cursor,
+    public static void userReportsRequest(final String username, String token, String cursor,
                                           final Context context, final ProfileActivity activity) {
 
         final String mUsername = username;
@@ -841,7 +915,7 @@ public class RequestsVolley {
                             System.out.println("ACABARAM OS REPORTS");
 
                             activity.setUserMap(response);
-                            activity.markerAdapter = new MarkerAdapter(context, MapActivity.userMarkerMap, true);
+                            activity.markerAdapter = new MarkerAdapter(context, MapActivity.userMarkerMap, true, username);
                             activity.recyclerView.setAdapter(activity.markerAdapter);
                             activity.recyclerView.setNestedScrollingEnabled(false);
 

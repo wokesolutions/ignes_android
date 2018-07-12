@@ -1,9 +1,12 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,14 +35,16 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     private boolean mIsProfile;
     private ArrayList<ApplicationClass> mArrayList;
     private int isReady;
+    private String mCurrentUser;
 
-    MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile) {
+    MarkerAdapter(Context context, Map<String, MarkerClass> map, boolean isProfile, String currentUser) {
         mContext = context;
         mMap = map;
         queue = Volley.newRequestQueue(mContext);
         mIsProfile = isProfile;
         mArrayList = new ArrayList<>();
         isReady = 0;
+        mCurrentUser = currentUser;
 
     }
 
@@ -77,6 +82,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
         TextView interacts_text = holder.marker_interactions_text;
+        Button delete = holder.button_delete;
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -126,6 +132,16 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                 holder.itemViewContext.startActivity(i);
             }
         });
+
+        if (mCurrentUser.equals(markerItem.getmCreator_username())) {
+            delete.setVisibility(View.VISIBLE);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buildAlertMessage(markerItem);
+                }
+            });
+        }
     }
 
     @Override
@@ -138,12 +154,34 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null, null, null);
     }
 
+    private void buildAlertMessage(final MarkerClass marker) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setIcon(R.drawable.deletecomment);
+
+        builder.setMessage("Eliminar ocorrência?")
+                .setCancelable(false)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
+                                        @SuppressWarnings("unused") final int id) {
+                        RequestsVolley.reportDeleteRequest(marker.getmId(), mContext);
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView marker_status_image, marker_image, user_avatar;
         TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
                 marker_gravity, marker_gravity_title, marker_interactions_text;
-        Button button_more, button_applications;
+        Button button_more, button_applications, button_delete;
         Context itemViewContext;
 
         public ViewHolder(View itemView) {
@@ -159,6 +197,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_gravity_title = itemView.findViewById(R.id.feed_gravity_title);
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
+            button_delete = itemView.findViewById(R.id.button_delete);
             //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
             user_avatar = itemView.findViewById(R.id.avatar_icon_marker);

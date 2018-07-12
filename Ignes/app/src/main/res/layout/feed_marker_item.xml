@@ -15,6 +15,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/shadow"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,6 +42,14 @@
                     android:textColor="#000000"
                     android:textSize="15dp"
                     android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/button_delete"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/deleteicon"
+                    android:visibility="gone" />
 
                 <View
                     android:layout_width="1dp"

@@ -55,6 +55,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner address_spinner;
     private ArrayList<String> localities_array;
     private Geocoder mGeocoder;
+    private String mCurrentUser;
 
 
     @Override
@@ -66,6 +67,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userRole", "");
         mToken = sharedPref.getString("token", "");
+        mCurrentUser = sharedPref.getString("username", "");
         mContext = this;
         mGeocoder = new Geocoder(this, Locale.getDefault());
 
@@ -120,7 +122,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             address_spinner = findViewById(R.id.feed_address_spinner);
             address_spinner.setOnItemSelectedListener(this);
             localities_array = new ArrayList<>();
-            markerAdapter = new MarkerAdapter(this, markerMap, false);
+            markerAdapter = new MarkerAdapter(this, markerMap, false, mCurrentUser);
             recyclerView.setAdapter(markerAdapter);
             getSupportActionBar().setIcon(R.drawable.ignesred);
 

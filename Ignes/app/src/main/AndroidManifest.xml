@@ -107,6 +107,9 @@
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/WelcomeTheme" />
+        <activity
+            android:name=".InformationActivity"
+            android:theme="@style/WelcomeTheme" />
 
 
     </application>

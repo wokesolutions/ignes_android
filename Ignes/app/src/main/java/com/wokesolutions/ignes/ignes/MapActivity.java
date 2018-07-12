@@ -131,7 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static boolean isSearch;
     private static Context mContext;
     private static Button mGoogleMapsButton;
-    private static Button mMapTypeButton;
+    private static Button mMapTypeButton, mMapInfoButton;
     private static Polyline mMapPollyLine;
     private static ArrayList<LatLng> vector;
     private static List<String> orderedIds;
@@ -270,8 +270,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 changeMapType();
-                //mapSatellite = !mapSatellite;
-                System.out.println("BOTAO NOVO: " + mapSatellite);
+            }
+        });
+
+        mMapInfoButton = (Button) findViewById(R.id.information_button);
+        mMapInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewMapInfo();
             }
         });
 
@@ -345,6 +351,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
 
+    }
+
+    private void viewMapInfo() {
+        Intent i = new Intent(MapActivity.this, InformationActivity.class);
+        startActivity(i);
     }
 
     private void setUpCluster(LatLng latLng, Map<String, MarkerClass> map) {

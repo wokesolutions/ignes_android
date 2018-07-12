@@ -8,12 +8,15 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -83,6 +86,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView address = holder.marker_address;
         TextView gravity = holder.marker_gravity;
         Button more_button = holder.button_more;
+        LinearLayout layout = holder.marker_item_layout;
         TextView gravity_title = holder.marker_gravity_title;
         TextView interacts = holder.marker_interacts;
         TextView interacts_text = holder.marker_interactions_text;
@@ -125,7 +129,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         if (markerItem.getmAvatar_bitmap() != null)
             avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
 
-        more_button.setOnClickListener(new View.OnClickListener() {
+        layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(holder.itemViewContext, MarkerActivity.class);
@@ -137,15 +141,33 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             }
         });
 
-        if (mCurrentUser.equals(markerItem.getmCreator_username())) {
-            delete.setVisibility(View.VISIBLE);
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    buildAlertMessage(markerItem);
+        more_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
+
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                final View mView = inflater.inflate(R.layout.report_more_layout, null);
+                mBuilder.setView(mView);
+                final AlertDialog alert = mBuilder.create();
+                alert.show();
+
+                final LinearLayout delete_layout = mView.findViewById(R.id.delete_layout);
+
+                if (mCurrentUser.equals(markerItem.getmCreator_username())) {
+                    delete_layout.setVisibility(View.VISIBLE);
+                    delete_layout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            buildAlertMessage(markerItem, alert);
+                        }
+                    });
+
                 }
-            });
-        }
+            }
+        });
+
     }
 
     @Override
@@ -158,7 +180,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         RequestsVolley.thumbnailRequest(reportId, marker, position, mContext, this, null, null, null);
     }
 
-    private void buildAlertMessage(final MarkerClass marker) {
+    private void buildAlertMessage(final MarkerClass marker, final AlertDialog alertDialog) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setIcon(R.drawable.deletecomment);
 
@@ -168,9 +190,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                         @SuppressWarnings("unused") final int id) {
                         if (mIsProfile)
-                            RequestsVolley.reportDeleteRequest(marker.getmId(), null, mProfileActivity, mContext);
+                            RequestsVolley.reportDeleteRequest(marker.getmId(), null, mProfileActivity, mContext, alertDialog);
                         else
-                            RequestsVolley.reportDeleteRequest(marker.getmId(), mFeedActivity, null, mContext);
+                            RequestsVolley.reportDeleteRequest(marker.getmId(), mFeedActivity, null, mContext, alertDialog);
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -189,6 +211,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
                 marker_gravity, marker_gravity_title, marker_interactions_text;
         Button button_more, button_applications, button_delete;
+        LinearLayout marker_item_layout;
         Context itemViewContext;
 
         public ViewHolder(View itemView) {
@@ -205,6 +228,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_interacts = itemView.findViewById(R.id.feed_total_number);
             marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
             button_delete = itemView.findViewById(R.id.button_delete);
+            marker_item_layout = itemView.findViewById(R.id.marker_item_layout);
             //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
             user_avatar = itemView.findViewById(R.id.avatar_icon_marker);

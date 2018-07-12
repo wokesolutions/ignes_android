@@ -1,6 +1,7 @@
 package com.wokesolutions.ignes.ignes;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -123,7 +124,9 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportDeleteRequest(final String reportId, final FeedActivity feedActivity, final ProfileActivity profileActivity, final Context context) {
+    public static void reportDeleteRequest(final String reportId, final FeedActivity feedActivity,
+                                           final ProfileActivity profileActivity, final Context context,
+                                           final android.support.v7.app.AlertDialog alertDialog) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mReport = reportId;
@@ -155,6 +158,8 @@ public class RequestsVolley {
                         else if (profileActivity != null)
                             profileActivity.recreate();
 
+                        alertDialog.dismiss();
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -165,6 +170,8 @@ public class RequestsVolley {
 
                         if (error.networkResponse.statusCode == 403)
                             Toast.makeText(context, "Não pode apagar uma ocorrência a ser tratada.", Toast.LENGTH_LONG).show();
+
+                        alertDialog.dismiss();
                     }
                 }
         ) {

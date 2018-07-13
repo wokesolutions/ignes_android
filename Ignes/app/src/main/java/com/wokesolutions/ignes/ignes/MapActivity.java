@@ -931,15 +931,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         for (Polygon polygon : currentPolygonsArray)
             polygon.remove();
+
+        currentPolygonsArray.clear();
     }
 
     private void cleanMapCircles() {
 
         for (Circle circle : currentCirclesArray)
             circle.remove();
+
+        currentCirclesArray.clear();
     }
 
     public void onReportStart() {
+        isReady = false;
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
@@ -974,7 +979,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void onReport(final boolean isArea) {
-
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
@@ -985,6 +989,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         final AlertDialog alert = mBuilder.create();
 
         alert.show();
+
+        isReady = true;
 
         if (mCurrentLocation != null) {
             Button mFast = (Button) mView.findViewById(R.id.report_fast_button);
@@ -1050,6 +1056,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onDismiss(DialogInterface dialog) {
                 cleanMapPolygons();
                 cleanMapCircles();
+                vector.clear();
+
             }
         });
     }

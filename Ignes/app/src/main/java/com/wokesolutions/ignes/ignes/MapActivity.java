@@ -972,6 +972,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void onReport(final boolean isArea) {
+
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
@@ -1174,15 +1175,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         return null;
     }
-
-   /* public void createPolyline (LatLng c1, LatLng c2) {
-        PolylineOptions rectOptions = new PolylineOptions()
-                .add(c1,c2)
-                .width(5)
-                .color(Color.RED);
-
-       mMap.addPolyline(rectOptions);
-    }*/
 
     /**
      * Styles the polygon, based on type.
@@ -1439,7 +1431,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             super.onBeforeClusterItemRendered(item, markerOptions);
 
             if (!item.getmTitle().equals(""))
-                markerOptions.title("Report: " + item.getmTitle());
+                markerOptions.title(item.getmTitle());
             else
                 markerOptions.title("Quick Report");
 

@@ -151,7 +151,9 @@ public class RequestsVolley {
                         Toast.makeText(context, "Ocorrência apagada!", Toast.LENGTH_LONG).show();
 
                         MarkerAdapter.mMap.remove(reportId);
-                        FeedActivity.markerMap.remove(reportId);
+                        MapActivity.userMarkerMap.remove(reportId);
+                        if (MapActivity.mReportMap.get(reportId) != null)
+                            MapActivity.mReportMap.remove(reportId);
 
                         if (feedActivity != null)
                             feedActivity.recreate();

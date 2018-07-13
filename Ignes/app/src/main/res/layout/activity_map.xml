@@ -58,7 +58,8 @@
                 android:layout_marginRight="12dp"
                 android:layout_marginTop="105dp"
                 android:background="@drawable/shadow_satelite"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <Button
                     android:id="@+id/information_button"
@@ -67,6 +68,51 @@
                     android:layout_height="30dp"
                     android:background="@drawable/helpicon"
                     android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/done_layout"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_gravity="end"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="150dp"
+                android:background="@drawable/shadow_satelite"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/done_button"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/doneicon"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reedo_layout"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_gravity="end"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="195dp"
+                android:background="@drawable/shadow_satelite"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/reedo_button"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/undoicon"
+                    android:gravity="center"
+                />
             </LinearLayout>
 
 
@@ -88,21 +134,8 @@
                     android:textColor="@color/colorIgnesPrimary"
                     android:visibility="gone" />
 
-                <Button
-                    android:id="@+id/done_button"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left|top"
-                    android:background="@drawable/shadow"
-                    android:inputType="textCapCharacters"
-                    android:text="@string/finish_draw"
-                    android:textColor="@color/colorIgnesPrimary"
-                    android:visibility="gone" />
-
 
             </LinearLayout>
-
 
         </fragment>
 

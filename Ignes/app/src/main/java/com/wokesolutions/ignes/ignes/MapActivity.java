@@ -150,7 +150,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<Polygon> currentPolygonsArray;
     private ArrayList<Circle> currentCirclesArray;
     private Map<String, Polygon> mapPolygons;
-    private Button mFinishTaskPathButton;
+    private Button mFinishTaskPathButton, mUndoDraw;
     private Button mFinishDrawButton, mFinishDrawAddress, mNextButton;
     private FusedLocationProviderClient mFusedLocationClient;
     private ClusterManager<MarkerClass> mClusterManager;
@@ -160,7 +160,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
-    private LinearLayout mContactsButton, mTeste;
+    private LinearLayout mContactsButton, mTeste, mFinishDrawLayout, mUndoDrawLayout;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private int counter;
@@ -251,6 +251,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (mRole.equals("USER")) {
             setContentView(R.layout.activity_map);
             mFinishDrawAddress = findViewById(R.id.done_button);
+            mFinishDrawLayout = findViewById(R.id.done_layout);
+            mUndoDrawLayout = findViewById(R.id.reedo_layout);
+            mUndoDraw = findViewById(R.id.reedo_button);
             mMapInfoButton = (Button) findViewById(R.id.information_button);
             mMapInfoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -334,8 +337,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mFinishDrawButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createPolygon(vector);
-                    mNextButton.setVisibility(View.VISIBLE);
+                    if (vector.size() > 2) {
+                        createPolygon(vector);
+                        mNextButton.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(mContext, "Necessário uma área com mais de 2 pontos!", Toast.LENGTH_LONG).show();
+                        cleanMapCircles();
+                        vector.clear();
+                        mFinishDrawAddress.setVisibility(View.GONE);
+                        isReady = true;
+                    }
                 }
             });
         } else if (mRole.equals("WORKER")) {
@@ -944,7 +955,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void onReportStart() {
-        isReady = false;
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.report_alert);
         mBuilder.setIcon(R.drawable.ocorrenciared);
@@ -972,7 +982,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 alert.dismiss();
-                mFinishDrawAddress.setVisibility(View.VISIBLE);
+                mFinishDrawLayout.setVisibility(View.VISIBLE);
+                mUndoDrawLayout.setVisibility(View.VISIBLE);
                 buildAlertMessage();
             }
         });
@@ -1175,7 +1186,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             currentPolygonsArray.add(polygon);
 
-            mFinishDrawAddress.setVisibility(View.GONE);
+       //     mFinishDrawLayout.setVisibility(View.GONE);
+         //   mUndoDrawLayout.setVisibility(View.GONE);
 
             mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1293,12 +1305,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
                                         @SuppressWarnings("unused") final int id) {
                         onSelectArea();
+                        isReady = false;
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         dialog.cancel();
-                        mFinishDrawAddress.setVisibility(View.GONE);
+                        mFinishDrawLayout.setVisibility(View.GONE);
+                        mUndoDrawLayout.setVisibility(View.GONE);
 
                     }
                 });

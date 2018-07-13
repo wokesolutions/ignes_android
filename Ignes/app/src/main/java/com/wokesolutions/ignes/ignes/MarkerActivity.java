@@ -132,10 +132,10 @@ public class MarkerActivity extends AppCompatActivity {
         final boolean isProfile = intent.getExtras().getBoolean("IsProfile");
 
         if (isProfile) {
-            mMarker = MapActivity.userMarkerMap.get(markerID);
+            mMarker =FeedActivity.markerMap.get(markerID);
             mSecondMarker = MapActivity.mReportMap.get(markerID);
         } else {
-            mMarker = MapActivity.mReportMap.get(markerID);
+            mMarker =FeedActivity.markerMap.get(markerID);
             mSecondMarker = MapActivity.userMarkerMap.get(markerID);
         }
 

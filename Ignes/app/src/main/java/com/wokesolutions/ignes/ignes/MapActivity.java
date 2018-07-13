@@ -86,7 +86,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
@@ -146,7 +146,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public boolean mapSatellite;
     public List<Address> addresses;
     public String mUserRadius;
+    private boolean mDrawDots;
     private ArrayList<Polygon> currentPolygonsArray;
+    private ArrayList<Circle> currentCirclesArray;
     private Map<String, Polygon> mapPolygons;
     private Button mFinishTaskPathButton;
     private Button mFinishDrawButton, mFinishDrawAddress, mNextButton;
@@ -276,7 +278,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
 
         }
-
+        mDrawDots = false;
         mapSatellite = false;
 
         mMapTypeButton = (Button) findViewById(R.id.maptype_button);
@@ -294,6 +296,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mFinishDrawButton = findViewById(R.id.done_button);
         mNextButton = findViewById(R.id.next_button);
         currentPolygonsArray = new ArrayList<>();
+        currentCirclesArray = new ArrayList<>();
 
         String languageToLoad = "pt_PT";
         Locale locale = new Locale(languageToLoad);
@@ -321,12 +324,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         general_menuButtons();
 
         if (mRole.equals("USER")) {
-
             getSupportActionBar().setIcon(R.drawable.ignesred);
             user_menuButtons();
 
             addresses = null;
-
             vector = new ArrayList<>();
             counter = 0;
 
@@ -337,11 +338,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mNextButton.setVisibility(View.VISIBLE);
                 }
             });
-
         } else if (mRole.equals("WORKER")) {
-
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
-
         }
 
         /*----- About Google Maps -----*/
@@ -354,8 +352,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mGps = mManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-
     }
 
     private void viewMapInfo() {
@@ -390,7 +386,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Iterator it = map.keySet().iterator();
 
             while (it.hasNext()) {
-               String key = (String) it.next();
+                String key = (String) it.next();
                 MarkerClass item = map.get(key);
                 mClusterManager.cluster();
                 mClusterManager.addItem(item);
@@ -937,6 +933,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             polygon.remove();
     }
 
+    private void cleanMapCircles() {
+
+        for (Circle circle : currentCirclesArray)
+            circle.remove();
+    }
+
     public void onReportStart() {
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.report_alert);
@@ -1047,6 +1049,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onDismiss(DialogInterface dialog) {
                 cleanMapPolygons();
+                cleanMapCircles();
             }
         });
     }
@@ -1136,18 +1139,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void makePoint(LatLng point) {
 
-        CircleOptions circleOptions = new CircleOptions()
-                .center(point)
-                .radius(5) // In meters
-                .strokeWidth(2)
-                .strokeColor(Color.parseColor("#AD363B"));
-// Get back the mutable Circle
-        mMap.addCircle(circleOptions);
+        if (mDrawDots) {
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(point)
+                    .radius(2) // In meters
+                    .strokeWidth(10)
+                    .strokeColor(Color.parseColor("#AD363B"));
 
+            Circle circle = mMap.addCircle(circleOptions);
+            currentCirclesArray.add(circle);
+        }
     }
 
     public Polygon createPolygon(ArrayList<LatLng> points) {
-
+        cleanMapCircles();
+        mDrawDots = false;
         if (!points.isEmpty()) {
             // Add polygons to indicate areas on the map.
             Polygon polygon = mMap.addPolygon(new PolygonOptions()
@@ -1191,7 +1197,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         List<PatternItem> pattern = null;
         int strokeColor = COLOR_BLACK_ARGB;
         int fillColor = COLOR_WHITE_ARGB;
-        int ignescolor = Color.parseColor("#80AD363B");
+        int ignescolor = Color.parseColor("#CCAD363B");
 
         switch (type) {
             // If no type is given, allow the API to use the default.
@@ -1199,7 +1205,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 // Apply a stroke pattern to render a dashed line, and define colors.
                 pattern = PATTERN_POLYGON_ALPHA;
                 strokeColor = ignescolor;
-                fillColor = COLOR_PURPLE_ARGB;
+                fillColor = ignescolor;
                 break;
             case "beta":
                 // Apply a stroke pattern to render a line of dots and dashes, and define colors.
@@ -1294,7 +1300,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void onSelectArea() {
-
+        mDrawDots = true;
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -1318,6 +1324,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void clearMap() {
         mMap.clear();
     }
+
     // Fetches data from url passed
     private static class DownloadTask extends AsyncTask<String, Void, String> {
 

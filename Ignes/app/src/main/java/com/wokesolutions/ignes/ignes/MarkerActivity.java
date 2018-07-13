@@ -64,7 +64,7 @@ public class MarkerActivity extends AppCompatActivity {
     private Context mContext;
     private ListView listview;
     private boolean isClicked;
-    private String  mToken;
+    private String mToken;
     private SharedPreferences sharedPref;
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -138,13 +138,23 @@ public class MarkerActivity extends AppCompatActivity {
         final boolean isInfoWindow = intent.getExtras().getBoolean("InfoWindow");
 
         if (isInfoWindow) {
-            mMarker = MapActivity.mReportMap.get(markerID);
+
+            if (MapActivity.isSearch)
+                mMarker = MapActivity.mSearchMap.get(markerID);
+            else
+                mMarker = MapActivity.mReportMap.get(markerID);
         } else {
+
             if (isProfile) {
-                mMarker = FeedActivity.markerMap.get(markerID);
+                mMarker = MapActivity.userMarkerMap.get(markerID);
                 mSecondMarker = MapActivity.mReportMap.get(markerID);
             } else {
-                mMarker = FeedActivity.markerMap.get(markerID);
+
+                if (MapActivity.isSearch)
+                    mMarker = MapActivity.mSearchMap.get(markerID);
+                else
+                    mMarker = MapActivity.mReportMap.get(markerID);
+
                 mSecondMarker = MapActivity.userMarkerMap.get(markerID);
             }
         }

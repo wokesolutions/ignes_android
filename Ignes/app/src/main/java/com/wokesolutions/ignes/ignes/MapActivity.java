@@ -43,10 +43,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polygon;
@@ -54,6 +57,8 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
@@ -81,7 +86,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
@@ -102,6 +107,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int COLOR_PURPLE_ARGB = 0x8081C784;
     private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
     private static final int COLOR_BLUE_ARGB = 0xffF9A825;
+    private static final int COLOR_IGNES_ARGB = 0xAD363B;
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
@@ -376,49 +382,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // manager.
             mMap.setOnCameraIdleListener(mClusterManager);
             mMap.setOnMarkerClickListener(mClusterManager);
+            mMap.setOnInfoWindowClickListener(mClusterManager);
+            CustomInfoWindowMarker customInfoWindow = new CustomInfoWindowMarker(mContext);
+            mMap.setInfoWindowAdapter(customInfoWindow);
 
             // Add ten cluster items in close proximity, for purposes of this example.
             Iterator it = map.keySet().iterator();
 
             while (it.hasNext()) {
-                String key = (String) it.next();
-                final MarkerClass item = map.get(key);
+               String key = (String) it.next();
+                MarkerClass item = map.get(key);
                 mClusterManager.cluster();
                 mClusterManager.addItem(item);
                 mClusterManager.setRenderer(new OwnIconRendered(mContext, mMap, mClusterManager));
-
-                mMap.setOnInfoWindowClickListener(mClusterManager);
-                mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<MarkerClass>() {
-                    @Override
-                    public void onClusterItemInfoWindowClick(MarkerClass markerClass) {
-
-                        if (markerClass.mIsArea()) {
-
-                            try {
-                                if (!markerClass.mIsClicked()) {
-                                    markerClass.setmIsClicked(true);
-                                    Polygon polygon = setAreaReport(new JSONArray(markerClass.getmPoints()));
-                                    mapPolygons.put(markerClass.getmId(), polygon);
-                                } else {
-                                    markerClass.setmIsClicked(false);
-                                    Polygon polygon = mapPolygons.get(markerClass.getmId());
-                                    polygon.remove();
-                                }
-
-                            } catch (JSONException e) {
-
-                                e.printStackTrace();
-                            }
-
-                        } else {
-                            Intent i = new Intent(MapActivity.this, MarkerActivity.class);
-                            i.putExtra("MarkerClass", markerClass.getmId());
-                            startActivity(i);
-                        }
-                    }
-                });
-
             }
+
+            mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+                @Override
+                public void onInfoWindowLongClick(Marker marker) {
+                    Intent intent = new Intent(mContext, MarkerActivity.class);
+                    String id = marker.getSnippet().split("#%")[0];
+                    intent.putExtra("MarkerClass", id);
+                    intent.putExtra("InfoWindow", true);
+                    startActivity(intent);
+                }
+            });
+
+
         } else if (mRole.equals("WORKER")) {
             // Add cluster items (markers) to the cluster manager.
             mWorkerClusterManager = new ClusterManager<TaskClass>(mContext, mMap);
@@ -976,7 +966,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 alert.dismiss();
                 mFinishDrawAddress.setVisibility(View.VISIBLE);
-                onSelectArea();
+                buildAlertMessage();
             }
         });
     }
@@ -1143,6 +1133,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         RequestsVolley.mapRequest(lat, lng, radius, token, cursor, mContext, this);
     }
 
+    public void makePoint(LatLng point) {
+
+        CircleOptions circleOptions = new CircleOptions()
+                .center(point)
+                .radius(5) // In meters
+                .strokeWidth(2)
+                .strokeColor(Color.parseColor("#AD363B"));
+// Get back the mutable Circle
+        mMap.addCircle(circleOptions);
+
+    }
+
     public Polygon createPolygon(ArrayList<LatLng> points) {
 
         if (!points.isEmpty()) {
@@ -1197,13 +1199,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         List<PatternItem> pattern = null;
         int strokeColor = COLOR_BLACK_ARGB;
         int fillColor = COLOR_WHITE_ARGB;
+        int ignescolor = Color.parseColor("#80AD363B");
 
         switch (type) {
             // If no type is given, allow the API to use the default.
             case "alpha":
                 // Apply a stroke pattern to render a dashed line, and define colors.
                 pattern = PATTERN_POLYGON_ALPHA;
-                strokeColor = COLOR_GREEN_ARGB;
+                strokeColor = ignescolor;
                 fillColor = COLOR_PURPLE_ARGB;
                 break;
             case "beta":
@@ -1274,12 +1277,37 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return markerDescriptor;
     }
 
+    private void buildAlertMessage() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setIcon(R.drawable.deletecomment);
+
+        builder.setMessage("Selecione pontos no mapa que delimitem a zona da ocorrência.\nTermine o desenho para visualizar.")
+                .setCancelable(false)
+                .setPositiveButton("Compreendi", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog,
+                                        @SuppressWarnings("unused") final int id) {
+                        onSelectArea();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                        mFinishDrawAddress.setVisibility(View.GONE);
+
+                    }
+                });
+
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public void onSelectArea() {
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 vector.add(latLng);
+                makePoint(latLng);
             }
         });
     }
@@ -1298,7 +1326,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void clearMap() {
         mMap.clear();
     }
-
     // Fetches data from url passed
     private static class DownloadTask extends AsyncTask<String, Void, String> {
 
@@ -1416,7 +1443,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             else
                 markerOptions.title("Quick Report");
 
-            //  markerOptions.snippet(item.getSnippet());
+            markerOptions.snippet(item.getSnippet());
             BitmapDescriptor markerDescriptor = null;
 
             switch (item.getmGravity()) {

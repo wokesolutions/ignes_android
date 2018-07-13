@@ -51,7 +51,7 @@ public class RequestsVolley {
     private static final int NO_CONTENT_ERROR = 204;
     private static final int NOT_FOUND_ERROR = 404;
     private static final int BAD_REQUEST_ERROR = 400;
-    private static final String URL = "https://main-dot-mimetic-encoder-209111.appspot.com/api";
+    private static final String URL = "https://mimetic-encoder-209111.appspot.com/api";
 
     private static final int L_EVERYWHERE = 1;
     private static final int L_ONCE = 0;

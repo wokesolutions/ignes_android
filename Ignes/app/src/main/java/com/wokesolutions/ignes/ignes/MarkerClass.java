@@ -143,16 +143,7 @@ public class MarkerClass implements ClusterItem {
     }
 
     public String getSnippet() {
-
-        String title = "Title: " + mTitle;
-        String gravity = "Gravity: " + mGravity;
-
-        if (mTitle.equals(""))
-            title = "";
-
-        String mFinal = title + "\n" + gravity + "\n" + "Posted by: " + mCreator_username + "\n" + "Date: " + mDate;
-
-        return mFinal;
+        return mId+"#%"+mAddress;
     }
 
     public String getmDislikes() {

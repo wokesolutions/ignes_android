@@ -64,6 +64,8 @@ public class MarkerActivity extends AppCompatActivity {
     private Context mContext;
     private ListView listview;
     private boolean isClicked;
+    private String  mToken;
+    private SharedPreferences sharedPref;
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
 
@@ -97,6 +99,9 @@ public class MarkerActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.drawable.ignesred);
 
         mContext = this;
+        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        mToken = sharedPref.getString("token", "");
+
         isClicked = false;
         mProgressBar = findViewById(R.id.marker_progress_likes);
         // mListCommentsLayout = findViewById(R.id.list_comments_layout);
@@ -130,13 +135,18 @@ public class MarkerActivity extends AppCompatActivity {
 
         markerID = intent.getExtras().getString("MarkerClass");
         final boolean isProfile = intent.getExtras().getBoolean("IsProfile");
+        final boolean isInfoWindow = intent.getExtras().getBoolean("InfoWindow");
 
-        if (isProfile) {
-            mMarker =FeedActivity.markerMap.get(markerID);
-            mSecondMarker = MapActivity.mReportMap.get(markerID);
+        if (isInfoWindow) {
+            mMarker = MapActivity.mReportMap.get(markerID);
         } else {
-            mMarker =FeedActivity.markerMap.get(markerID);
-            mSecondMarker = MapActivity.userMarkerMap.get(markerID);
+            if (isProfile) {
+                mMarker = FeedActivity.markerMap.get(markerID);
+                mSecondMarker = MapActivity.mReportMap.get(markerID);
+            } else {
+                mMarker = FeedActivity.markerMap.get(markerID);
+                mSecondMarker = MapActivity.userMarkerMap.get(markerID);
+            }
         }
 
         Bitmap bitmap = mMarker.getmImg_bitmap();
@@ -379,6 +389,25 @@ public class MarkerActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (!MapActivity.votesMap.isEmpty())
+            try {
+
+                JSONObject json = new JSONObject();
+
+                for (String key : MapActivity.votesMap.keySet()) {
+                    json.put(key, MapActivity.votesMap.get(key));
+                }
+
+                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
 
     private class MyAdapter extends BaseAdapter {

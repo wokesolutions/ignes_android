@@ -218,25 +218,6 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (!MapActivity.votesMap.isEmpty())
-            try {
-
-                JSONObject json = new JSONObject();
-
-                for (String key : MapActivity.votesMap.keySet()) {
-                    json.put(key, MapActivity.votesMap.get(key));
-                }
-
-                RequestsVolley.sendAllVotesRequest(json, mToken, mContext);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-    }
-
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mMenu.onOptionsItemSelected(item))
             return true;

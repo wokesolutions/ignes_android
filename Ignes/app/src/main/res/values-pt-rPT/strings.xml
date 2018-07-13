@@ -20,7 +20,7 @@
     <string name="action_sign_in_short">Entrar</string>
     <string name="log_out">Sair</string>
     <string name="profile_navi">Perfil</string>
-    <string name="forgot_my_password">Esqueci a minha senha</string>
+    <string name="forgot_my_password">Esqueci-me da minha senha</string>
     <string name="report_alert">Reportar</string>
     <string name="report_by_an_address_or_in_an_area">Reportar por morada ou numa área?</string>
     <string name="address">Morada</string>

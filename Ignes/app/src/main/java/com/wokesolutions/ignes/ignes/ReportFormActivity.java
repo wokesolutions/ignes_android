@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -228,7 +229,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
             @Override
             public void onClick(View v) {
                 attemptReport();
-                finish();
+
             }
         });
 
@@ -502,6 +503,9 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
 
 
     private void attemptReport() {
+        mTitle.setError(null);
+        mMediumTitle.setError(null);
+        mAddress.setError(null);
 
         byte[] thumbnail = byteArray;
         String description = "";
@@ -514,6 +518,9 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         double lng = this.lng;
         int gravity = mGravity + 1;
         JSONArray jsonArray = null;
+
+        boolean cancel = false;
+        View focusView = null;
 
 
         if (mPoints != null) {
@@ -554,11 +561,20 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                         locality = addresses.get(0).getLocality();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        mAddress.setError("Morada inválida");
+                        focusView = mAddress;
+                        cancel = true;
                     }
                 }
             }
             title = mTitle.getText().toString();
             description = mDescription.getText().toString();
+
+            if (TextUtils.isEmpty(title)) {
+                mTitle.setError(getString(R.string.error_field_required));
+                focusView = mTitle;
+                cancel = true;
+            }
 
         } else if (mReportType.equals("medium")) {
 
@@ -600,7 +616,19 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                 category = "MATAS";
         }
 
-        reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
+        if (cancel) {
+            // There was an error; don't attempt register and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user register attempt.
+            //showProgress(true);
+            finish();
+            reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
+        }
+
+
     }
 
     private void reportRequest(String description, String title, String district, String address,

@@ -29,7 +29,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private Map<String, TaskClass> mMap;
     private String newStatus;
     private String mReportID;
-    final String[] values = new String[]{"Aberto","Em progresso", "Fechado"};
+    final String[] values = new String[]{"Em progresso", "Fechado"};
 
     TaskAdapter(Context context, Map<String, TaskClass> map) {
         mContext = context;
@@ -147,7 +147,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 mBuilder.setTitle("Change Report Status");
                 mBuilder.setIcon(R.drawable.ocorrenciared);
 
-                mBuilder.setSingleChoiceItems(values, -1, new DialogInterface.OnClickListener() {
+                System.out.println("STATUUUUUS ----> " + taskItem.getmStatus());
+
+                int checkedItem = -1;
+                if(taskItem.getmStatus().equals("wip"))
+                    checkedItem = 0;
+                else if(taskItem.getmStatus().equals("closed"))
+                    checkedItem = 1;
+
+                mBuilder.setSingleChoiceItems(values, checkedItem, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         System.out.println("The wrong button was tapped: " + values[whichButton]);
                         newStatus = values[whichButton];
@@ -157,22 +165,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
                 mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
                         if (newStatus.equals("Em progresso")) {
                             RequestsVolley.changeRepStatusWIPRequest(mReportID,mContext);
+                            taskItem.setmStatus("wip");
                             status_button.setText("Em progresso");
                         }
                         else if(newStatus.equals("Fechado")) {
                             status_button.setText("Fechado");
+                            taskItem.setmStatus("closed");
                             RequestsVolley.changeRepStatusClosedRequest(mReportID, mContext);
 
-                        }
-                        else if(newStatus.equals("Aberto")) {
-                            status_button.setText("Aberto");
                         }
                     }
                 });
 
-                mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                mBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {}
                 }).show();
             }

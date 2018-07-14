@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pressione para ver mais informações"
+            android:text="Mantenha premido para ver mais informações"
             android:fontFamily="@font/quicksand_light"
             android:textColor="@color/colorIgnesPrimary"
             android:gravity="center_horizontal"

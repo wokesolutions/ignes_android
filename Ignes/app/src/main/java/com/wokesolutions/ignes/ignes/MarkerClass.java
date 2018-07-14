@@ -126,6 +126,10 @@ public class MarkerClass implements ClusterItem {
         return mStatus;
     }
 
+    public void setmStatus(String newStatus) {
+        mStatus = newStatus;
+    }
+
     public String getmCreator_username() {
         return mCreator_username;
     }

@@ -83,9 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
         mChangePasswordButton = findViewById(R.id.changepassword_button);
         mLogoutAllButton = findViewById(R.id.logout_all_button);
         mAddLocalityButton = findViewById(R.id.add_localities_button);
-        mEmailNotificationsSwitch = findViewById(R.id.notifications_switch);
 
-        mEmailNotificationsSwitch.setChecked(mWantsEmail);
 
         setChangePassword();
 
@@ -93,6 +91,8 @@ public class SettingsActivity extends AppCompatActivity {
         if (mRole.equals("USER")) {
             setAddLocality();
             setChangeRadius();
+            mEmailNotificationsSwitch = findViewById(R.id.notifications_switch);
+            mEmailNotificationsSwitch.setChecked(mWantsEmail);
         }
 
         mLogoutAllButton.setOnClickListener(new View.OnClickListener() {
@@ -440,11 +440,12 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mWantsEmail != mEmailNotificationsSwitch.isChecked()) {
-            System.out.println("SEND REQUEST");
-            RequestsVolley.changeSendEmailRequest(mToken, mContext);
-            sharedPref.edit().putBoolean("sendemail", mEmailNotificationsSwitch.isChecked()).apply();
-        }
+        if (mRole.equals("USER"))
+            if (mWantsEmail != mEmailNotificationsSwitch.isChecked()) {
+                System.out.println("SEND REQUEST");
+                RequestsVolley.changeSendEmailRequest(mToken, mContext);
+                sharedPref.edit().putBoolean("sendemail", mEmailNotificationsSwitch.isChecked()).apply();
+            }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

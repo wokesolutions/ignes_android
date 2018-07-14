@@ -339,14 +339,14 @@ public class MarkerActivity extends AppCompatActivity {
                 String text = marker_comment.getText().toString();
 
                 if (!text.equals("")) {
-
                     RequestsVolley.postCommentRequest(id, text, mContext, MarkerActivity.this);
 
                     Calendar c = Calendar.getInstance();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String strDate = sdf.format(c.getTime());
 
-                    arrayList.add(new CommentClass(mMarker.getmId(), strDate, mMarker.getmCreator_username(), text));
+                    String user = sharedPref.getString("username", "");
+                    arrayList.add(new CommentClass(mMarker.getmId(), strDate, user, text));
 
                     MyAdapter myAdapter = new MarkerActivity.MyAdapter(mContext, arrayList);
                     listview.setAdapter(myAdapter);

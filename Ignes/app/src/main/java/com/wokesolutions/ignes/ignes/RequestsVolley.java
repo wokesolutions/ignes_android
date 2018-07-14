@@ -3,6 +3,7 @@ package com.wokesolutions.ignes.ignes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -42,6 +44,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -1569,8 +1573,7 @@ public class RequestsVolley {
                     public void onResponse(String response) {
                         // response
                         Toast.makeText(context, "User successfully registered!", Toast.LENGTH_LONG).show();
-                        activity.startActivity(new Intent(activity, LoginActivity.class));
-                        activity.finish();
+                        activity. onResponseCorrect();
                     }
                 },
                 new Response.ErrorListener() {
@@ -1995,7 +1998,8 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         System.out.println("REPORT volley -> ERRO - TOKEN INVALIDO");
-                        activity.startActivity(new Intent(activity, LoginActivity.class));
+                        Intent intent = new Intent(activity, LoginActivity.class);
+                        activity.startActivity(intent);
                         activity.finish();
                     }
                 }
@@ -2478,7 +2482,6 @@ public class RequestsVolley {
                         intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
                         activity.startActivity(intents);
                         activity.finish();
                     }

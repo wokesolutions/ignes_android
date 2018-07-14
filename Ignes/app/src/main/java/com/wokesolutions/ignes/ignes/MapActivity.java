@@ -1131,6 +1131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void filterTask() {
+      //  startActivity(new Intent(MapActivity.this, TutorialActivity.class));
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.search_alert);
         mBuilder.setIcon(R.drawable.lupared);

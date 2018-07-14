@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_email_alert"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ignesred" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"
+        android:text="Registo feito com Sucesso!"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:text="Para completar o registo confirme a conta no seu Perfil com o código enviado para o seu email."
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_light"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:text="Aquando da sua confirmação múltiplas permissões são desbloqueadas. Poderá começar a usufriur da Ignes de forma ativa!"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="Toque para continuar"
+        android:textColor="#000000"
+        android:textSize="15dp" />
+
+</LinearLayout>

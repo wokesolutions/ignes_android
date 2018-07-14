@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -176,6 +177,16 @@ public class RegisterActivity extends AppCompatActivity {
             showProgress(true);
             registerRequest(username, password, email);
         }
+    }
+    public void onResponseCorrect() {
+        setContentView(R.layout.email_alert_layout);
+        LinearLayout layout = findViewById(R.id.layout_email_alert);
+        layout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     /**

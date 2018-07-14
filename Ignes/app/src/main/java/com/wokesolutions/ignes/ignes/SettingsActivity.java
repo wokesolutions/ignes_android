@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,8 @@ public class SettingsActivity extends AppCompatActivity {
             mContactsButton;
     private List<Address> mAddresses;
     private Geocoder mGeocoder;
+    private Switch mEmailNotificationsSwitch;
+    private Boolean mWantsEmail;
 
 
     @Override
@@ -53,6 +56,8 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
         mRole = sharedPref.getString("userRole", "");
         mToken = sharedPref.getString("token", "");
+        mWantsEmail = sharedPref.getBoolean("sendemail", true);
+
 
         if (mRole.equals("USER"))
             setContentView(R.layout.activity_settings);
@@ -78,6 +83,9 @@ public class SettingsActivity extends AppCompatActivity {
         mChangePasswordButton = findViewById(R.id.changepassword_button);
         mLogoutAllButton = findViewById(R.id.logout_all_button);
         mAddLocalityButton = findViewById(R.id.add_localities_button);
+        mEmailNotificationsSwitch = findViewById(R.id.notifications_switch);
+
+        mEmailNotificationsSwitch.setChecked(mWantsEmail);
 
         setChangePassword();
 
@@ -426,6 +434,17 @@ public class SettingsActivity extends AppCompatActivity {
         super.onPause();
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mWantsEmail != mEmailNotificationsSwitch.isChecked()) {
+            System.out.println("SEND REQUEST");
+            RequestsVolley.changeSendEmailRequest(mToken, mContext);
+            sharedPref.edit().putBoolean("sendemail", mEmailNotificationsSwitch.isChecked()).apply();
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

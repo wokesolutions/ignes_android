@@ -174,6 +174,7 @@
     <string name="civil_protection_prociv_pt">Civil Protection - prociv.pt</string>
     <string name="safe_village_aldeiasegura_pt">Safe Village - aldeiasegura.pt</string>
     <string name="wokesolutions_wokesolutions_gmail_com" translatable="false">WokeSolutions - wokesolutions@gmail.com</string>
+    <string name="report_conclusion_email_notification">Email notifications</string>
 
 
     <string-array name="month_array">

@@ -385,7 +385,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        System.out.println("OK USER REPORTS: " + response);
+                        System.out.println("OK FOLLOW LOCALITY: " + response);
                         Toast.makeText(context, "Locality added!", Toast.LENGTH_LONG).show();
                     }
                 },
@@ -393,7 +393,7 @@ public class RequestsVolley {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        System.out.println("ERRO DO USER REPORTS: " + error.toString());
+                        System.out.println("ERRO DO FOLLOW LOCALITY: " + error.toString());
                     }
                 }
         ) {
@@ -498,6 +498,60 @@ public class RequestsVolley {
         setRetry(arrayRequest);
 
         queue.add(arrayRequest);
+    }
+
+    public static void changeSendEmailRequest(String token, final Context context) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        final String mToken = token;
+
+        String url = URL + "/profile/changesendemail";
+
+        stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        System.out.println("OK CHANGE EMAIL NOTIFI: " + response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        System.out.println("ERRO DO CHANGE EMAIL NOTIFI: " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                System.out.println("PARSE RESPONSE STATUS CODE --->>" + response.statusCode);
+
+                if (response.statusCode == 200) {
+                    return Response.success("Email notifications changed", HttpHeaderParser.parseCacheHeaders(response));
+                } else if (response.statusCode == 403) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else if (response.statusCode == NO_CONTENT_ERROR) {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                } else {
+                    VolleyError error = new VolleyError(String.valueOf(response.statusCode));
+                    return Response.error(error);
+                }
+            }
+        };
+        setRetry(stringRequest);
+
+        queue.add(stringRequest);
     }
 
     public static void reportCommentsRequest(String reportId, String cursor, final Context context,
@@ -2027,6 +2081,9 @@ public class RequestsVolley {
                                 editor.putString("user_month", "");
                                 editor.putString("user_year", "");
                             }
+
+                            if (response.has("sendemail"))
+                                editor.putBoolean("sendemail", response.getBoolean("sendemail"));
 
 
                             if (response.has("locality"))

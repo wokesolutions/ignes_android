@@ -125,4 +125,5 @@
     <string name="safe_village_aldeiasegura_pt">Aldeia Segura - aldeiasegura.pt</string>
     <string name="error_field_required">Campo obrigatório</string>
     <string name="error_invalid_email">Este email é inválido</string>
+    <string name="report_conclusion_email_notification">Notificações por email</string>
 </resources>

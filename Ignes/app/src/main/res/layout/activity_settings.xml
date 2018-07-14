@@ -128,6 +128,44 @@
                     android:inputType="textCapSentences"
                     android:text="@string/add_localities" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/shadow"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/baseline_email_black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/quicksand_light"
+                    android:textColor="#000"
+                    android:text="@string/report_conclusion_email_notification" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end">
+
+                    <Switch
+                        android:id="@+id/notifications_switch"
+                        style="@style/Base.Widget.AppCompat.Button.Borderless"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:fontFamily="@font/quicksand_light"
+                        android:gravity="end" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
         <include layout="@layout/sidebarnavigation" />

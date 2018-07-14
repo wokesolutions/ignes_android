@@ -553,17 +553,24 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
             if (mCurrentLocation != null) {
                 if (!mCheckBox.isChecked()) {
                     address = mAddress.getText().toString();
-                    try {
-                        List<Address> addresses = mCoder.getFromLocationName(address, 1);
-                        lat = addresses.get(0).getLatitude();
-                        lng = addresses.get(0).getLongitude();
-                        district = addresses.get(0).getAdminArea();
-                        locality = addresses.get(0).getLocality();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        mAddress.setError("Morada inválida");
+
+                    if (TextUtils.isEmpty(address)) {
+                        mAddress.setError(getString(R.string.error_field_required));
                         focusView = mAddress;
                         cancel = true;
+                    } else {
+                        try {
+                            List<Address> addresses = mCoder.getFromLocationName(address, 1);
+                            lat = addresses.get(0).getLatitude();
+                            lng = addresses.get(0).getLongitude();
+                            district = addresses.get(0).getAdminArea();
+                            locality = addresses.get(0).getLocality();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            mAddress.setError("Morada inválida");
+                            focusView = mAddress;
+                            cancel = true;
+                        }
                     }
                 }
             }
@@ -575,10 +582,26 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                 focusView = mTitle;
                 cancel = true;
             }
+            else if (!isTitleValid(title)) {
+                mTitle.setError("Máximo de 20 caracteres (Tem "+title.length()+")");
+                focusView = mTitle;
+                cancel = true;
+            }
 
         } else if (mReportType.equals("medium")) {
 
             title = mMediumTitle.getText().toString();
+
+            if (TextUtils.isEmpty(title)) {
+                mMediumTitle.setError(getString(R.string.error_field_required));
+                focusView = mMediumTitle;
+                cancel = true;
+            }
+            else if (!isTitleValid(title)) {
+                mMediumTitle.setError("Máximo de 20 caracteres (Tem "+title.length()+")");
+                focusView = mMediumTitle;
+                cancel = true;
+            }
 
         }
 
@@ -617,18 +640,17 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         }
 
         if (cancel) {
-            // There was an error; don't attempt register and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user register attempt.
-            //showProgress(true);
             finish();
             reportRequest(description, title, district, address, locality, category, gravity, pointAddress, jsonArray);
         }
 
 
+    }
+
+    private boolean isTitleValid(String title) {
+        return title.length() <= 20;
     }
 
     private void reportRequest(String description, String title, String district, String address,

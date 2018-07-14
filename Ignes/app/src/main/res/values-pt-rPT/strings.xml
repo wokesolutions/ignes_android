@@ -123,4 +123,6 @@
     <string name="others">Outros</string>
     <string name="civil_protection_prociv_pt">Proteção Civil - prociv.pt</string>
     <string name="safe_village_aldeiasegura_pt">Aldeia Segura - aldeiasegura.pt</string>
+    <string name="error_field_required">Campo obrigatório</string>
+    <string name="error_invalid_email">Este email é inválido</string>
 </resources>

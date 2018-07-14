@@ -160,7 +160,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
-    private LinearLayout mContactsButton, mTeste, mFinishDrawLayout, mUndoDrawLayout;
+    private LinearLayout mContactsButton, mTeste, mFinishDrawLayout, mUndoDrawLayout, mNextDrawLayout;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private int counter;
@@ -253,6 +253,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mFinishDrawAddress = findViewById(R.id.done_button);
             mFinishDrawLayout = findViewById(R.id.done_layout);
             mUndoDrawLayout = findViewById(R.id.reedo_layout);
+            mNextDrawLayout = findViewById(R.id.next_layout);
             mUndoDraw = findViewById(R.id.reedo_button);
             mMapInfoButton = (Button) findViewById(R.id.information_button);
             mMapInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -339,14 +340,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 public void onClick(View v) {
                     if (vector.size() > 2) {
                         createPolygon(vector);
-                        mNextButton.setVisibility(View.VISIBLE);
+                        mNextDrawLayout.setVisibility(View.VISIBLE);
                     } else {
                         Toast.makeText(mContext, "Necessário uma área com mais de 2 pontos!", Toast.LENGTH_LONG).show();
                         cleanMapCircles();
                         vector.clear();
-                        mFinishDrawAddress.setVisibility(View.GONE);
                         isReady = true;
                     }
+                    mFinishDrawLayout.setVisibility(View.GONE);
+                    mUndoDrawLayout.setVisibility(View.GONE);
                 }
             });
         } else if (mRole.equals("WORKER")) {
@@ -1193,7 +1195,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 @Override
                 public void onClick(View v) {
                     onReport(true);
-                    mNextButton.setVisibility(View.GONE);
+                    mNextDrawLayout.setVisibility(View.GONE);
 
                 }
             });

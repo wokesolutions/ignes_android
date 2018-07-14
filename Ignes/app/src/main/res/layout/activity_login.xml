@@ -18,123 +18,134 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <LinearLayout
-            android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/email_login_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingHorizontal="20dp"
-                android:layout_weight="4"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="400dp"
-                    android:layout_height="150dp"
-                    android:src="@drawable/ignesred"
-                    android:layout_marginBottom="20dp"/>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/login_identification"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_light"
-                        android:hint="@string/username"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/login_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/quicksand_light"
-                        android:hint="@string/password"
-                        android:imeActionId="6"
-                        android:imeActionLabel="Sign In"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/forgot_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/quicksand_light"
-                    android:textColor="@color/colorIgnesPrimary"
-                    android:layout_gravity="right"
-                    android:text="@string/forgot_my_password"
-                    android:textSize="12dp"/>
-
-                <Button
-                    android:id="@+id/login_sign_in_button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="@font/quicksand_bold"
-                    android:text="@string/sign_in"
-                    android:inputType="textCapCharacters"
-                    android:background="@drawable/button"
-                    android:textColor="@color/backgroundColor"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="20dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal">
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp">
+
+                    <ImageView
+                        android:layout_width="400dp"
+                        android:layout_height="150dp"
+                        android:layout_marginBottom="20dp"
+                        android:src="@drawable/ignesred" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/login_identification"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand_light"
+                            android:hint="@string/username"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/login_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand_light"
+                            android:hint="@string/password"
+                            android:imeActionId="6"
+                            android:imeActionLabel="Sign In"
+                            android:imeOptions="actionUnspecified"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+
+                    </android.support.design.widget.TextInputLayout>
 
                     <TextView
+                        android:id="@+id/forgot_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
                         android:fontFamily="@font/quicksand_light"
-                        android:text="@string/don_t_have_an_account" />
+                        android:text="@string/forgot_my_password"
+                        android:textColor="@color/colorIgnesPrimary"
+                        android:textSize="12dp" />
 
                     <Button
+                        android:id="@+id/login_sign_in_button"
                         style="@style/Widget.AppCompat.Button.Borderless"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/create_a_new_one"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/button"
                         android:fontFamily="@font/quicksand_bold"
-                        android:textColor="@color/colorIgnesPrimary"
-                        android:id="@+id/login_create_acc"/>
+                        android:inputType="textCapCharacters"
+                        android:text="@string/sign_in"
+                        android:textColor="@color/backgroundColor"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
-                <!---
-                <Button
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:fontFamily="@font/quicksand_bold"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/enter_without_an_account"
-                    android:id="@+id/login_continue_without"/>
-                    -->
+                    android:layout_marginTop="30dp"
+                    android:orientation="vertical">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand_light"
+                            android:text="@string/don_t_have_an_account" />
+
+                        <Button
+                            android:id="@+id/login_create_acc"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/quicksand_bold"
+                            android:text="@string/create_a_new_one"
+                            android:textColor="@color/colorIgnesPrimary" />
+                    </LinearLayout>
+
+                    <!---
+                    <Button
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/quicksand_bold"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enter_without_an_account"
+                        android:id="@+id/login_continue_without"/>
+                        -->
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 </LinearLayout>

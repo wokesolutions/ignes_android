@@ -39,7 +39,7 @@
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_a_new_one">Create a new one</string>
     <string name="enter_without_an_account">Continue without an account</string>
-    <string name="forgot_my_password">Forgot my password</string>
+    <string name="forgot_my_password">Forgot my password&lt;u>underline&lt;/u>.</string>
     <string name="recover_password">Recover Password</string>
     <string name="email_was_used_to_create_account">Make sure your email is the one used to create your account.</string>
     <string name="send">Send</string>

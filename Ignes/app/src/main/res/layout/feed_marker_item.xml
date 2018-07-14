@@ -83,8 +83,7 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="
-                            @+id/feed_image_marker"
+                        android:id="@+id/feed_image_marker"
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         android:gravity="left"
@@ -118,13 +117,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/activity_horizontal_margin">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:id="@+id/report_feed_icon"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginRight="10dp"
                         android:src="@drawable/ocorrenciared" />
 
@@ -136,10 +136,10 @@
                         android:inputType="textMultiLine"
                         android:text="ADDRESS"
                         android:textColor="#000000"
-                        android:textSize="15dp" />
+                        android:textSize="12dp" />
                 </LinearLayout>
 
-                <LinearLayout
+                <!--<LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -168,7 +168,7 @@
                         android:textColor="#000000"
                         android:textSize="15dp"
                         android:textStyle="bold" />
-                </LinearLayout>
+                </LinearLayout>-->
             </LinearLayout>
         </LinearLayout>
 

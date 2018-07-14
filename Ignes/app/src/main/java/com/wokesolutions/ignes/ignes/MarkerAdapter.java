@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +93,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         TextView interacts = holder.marker_interacts;
         TextView interacts_text = holder.marker_interactions_text;
         Button delete = holder.button_delete;
+        ImageView report_icon = holder.report_icon;
 
         if (!markerItem.getmTitle().isEmpty())
             title.setText(markerItem.getmTitle());
@@ -101,22 +104,119 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         date.setText(markerItem.getmDMY());
         address.setText(markerItem.getmAddress());
 
-        if (!markerItem.getmGravity().equals("0"))
+       /* if (!markerItem.getmGravity().equals("0"))
             gravity.setText(markerItem.getmGravity());
         else {
             gravity.setVisibility(View.GONE);
             gravity_title.setVisibility(View.GONE);
+        }*/
+
+        switch (markerItem.getmGravity()) {
+            case "1":
+                if (markerItem.getmCreator_username().equals(mCurrentUser)) {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g1standbymine);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g1openmine);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g1wipmine);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g1closedmine);
+                } else {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g1standby);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g1open);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g1wip);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g1closed);
+                }
+                break;
+            case "2":
+                if (markerItem.getmCreator_username().equals(mCurrentUser)) {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g2standbymine);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g2openmine);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g2wipmine);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g2closedmine);
+                } else {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g2standby);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g2open);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g2wip);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g2closed);
+                }
+                break;
+            case "3":
+                if (markerItem.getmCreator_username().equals(mCurrentUser)) {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g3standbymine);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g3openmine);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g3wipmine);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g3closedmine);
+                } else {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g3standby);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g3open);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g3wip);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g3closed);
+                }
+                break;
+            case "4":
+                if (markerItem.getmCreator_username().equals(mCurrentUser)) {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g4standbymine);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g4openmine);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g4wipmine);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g4closedmine);
+                } else {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g4standby);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g4open);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g4wip);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g4closed);
+                }
+                break;
+            case "5":
+                if (markerItem.getmCreator_username().equals(mCurrentUser)) {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g5standbymine);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g5openmine);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g5wipmine);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g5closedmine);
+                } else {
+                    if (markerItem.getmStatus().equals("standby"))
+                        report_icon.setImageResource(R.drawable.g5standby);
+                    else if (markerItem.getmStatus().equals("open"))
+                        report_icon.setImageResource(R.drawable.g5open);
+                    else if (markerItem.getmStatus().equals("wip"))
+                        report_icon.setImageResource(R.drawable.g5wip);
+                    else if (markerItem.getmStatus().equals("closed"))
+                        report_icon.setImageResource(R.drawable.g5closed);
+                }
         }
-        if (markerItem.getmGravity().equals("1"))
-            gravity_title.setTextColor(Color.parseColor("#E0DCBE"));
-        if (markerItem.getmGravity().equals("2"))
-            gravity_title.setTextColor(Color.parseColor("#CFD7C7"));
-        if (markerItem.getmGravity().equals("3"))
-            gravity_title.setTextColor(Color.parseColor("#70A9A1"));
-        if (markerItem.getmGravity().equals("4"))
-            gravity_title.setTextColor(Color.parseColor("#40798C"));
-        if (markerItem.getmGravity().equals("5"))
-            gravity_title.setTextColor(Color.parseColor("#0B2027"));
 
         int total = Integer.parseInt(markerItem.getmLikes()) + Integer.parseInt(markerItem.getmDislikes());
         interacts.setText("" + total);
@@ -207,7 +307,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView marker_status_image, marker_image, user_avatar;
+        ImageView marker_status_image, marker_image, user_avatar, report_icon;
         TextView marker_title, marker_interacts, marker_address, marker_username, marker_date,
                 marker_gravity, marker_gravity_title, marker_interactions_text;
         Button button_more, button_applications, button_delete;
@@ -229,6 +329,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             marker_interactions_text = itemView.findViewById(R.id.feed_report_interactions);
             button_delete = itemView.findViewById(R.id.button_delete);
             marker_item_layout = itemView.findViewById(R.id.marker_item_layout);
+            report_icon = itemView.findViewById(R.id.report_feed_icon);
             //  marker_status_image = itemView.findViewById(R.id.feed_lock_img);
 
             user_avatar = itemView.findViewById(R.id.avatar_icon_marker);

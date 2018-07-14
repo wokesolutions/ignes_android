@@ -167,14 +167,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         if (newStatus.equals("Em progresso")) {
-                            RequestsVolley.changeRepStatusWIPRequest(mReportID,mContext);
+                            RequestsVolley.changeRepStatusWIPRequest(taskItem.getmId(),mContext);
                             taskItem.setmStatus("wip");
                             status_button.setText("Em progresso");
                         }
                         else if(newStatus.equals("Fechado")) {
                             status_button.setText("Fechado");
                             taskItem.setmStatus("closed");
-                            RequestsVolley.changeRepStatusClosedRequest(mReportID, mContext);
+                            RequestsVolley.changeRepStatusClosedRequest(taskItem.getmId(), mContext);
 
                         }
                     }

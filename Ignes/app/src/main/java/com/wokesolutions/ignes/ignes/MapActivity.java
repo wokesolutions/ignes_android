@@ -351,6 +351,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     mUndoDrawLayout.setVisibility(View.GONE);
                 }
             });
+
+            mUndoDraw.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("Counter: "+counter);
+                    System.out.println("Vector: "+vector.size());
+                    System.out.println("Circles: "+currentCirclesArray.size());
+                    if (counter > 0) {
+                        currentCirclesArray.remove(counter-1).remove();
+                        vector.remove(counter-1);
+                        counter--;
+                    }
+                }
+            });
         } else if (mRole.equals("WORKER")) {
             getSupportActionBar().setIcon(R.drawable.ignesworkergreen);
         }
@@ -1164,9 +1178,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             CircleOptions circleOptions = new CircleOptions()
                     .center(point)
                     .radius(2) // In meters
-                    .strokeWidth(10)
+                    .strokeWidth(40)
                     .strokeColor(Color.parseColor("#AD363B"));
-
+            counter++;
             Circle circle = mMap.addCircle(circleOptions);
             currentCirclesArray.add(circle);
         }
@@ -1188,8 +1202,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             currentPolygonsArray.add(polygon);
 
-       //     mFinishDrawLayout.setVisibility(View.GONE);
-         //   mUndoDrawLayout.setVisibility(View.GONE);
+            //     mFinishDrawLayout.setVisibility(View.GONE);
+            //   mUndoDrawLayout.setVisibility(View.GONE);
 
             mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override

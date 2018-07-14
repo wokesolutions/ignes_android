@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,14 +31,14 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mIdentificationView;
     private TextView mForgotPassword;
     private View mLoginFormView;
-
+    private boolean mIsFromRegister;
     private Context context;
+    private boolean isReady;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
         // Set up the login form.
@@ -104,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         context = this;
+
     }
 
     /**

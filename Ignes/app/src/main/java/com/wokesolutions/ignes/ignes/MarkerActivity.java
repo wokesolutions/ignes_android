@@ -1,6 +1,5 @@
 package com.wokesolutions.ignes.ignes;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,16 +12,13 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,8 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +35,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
+
 
 public class MarkerActivity extends AppCompatActivity {
 
@@ -54,7 +47,7 @@ public class MarkerActivity extends AppCompatActivity {
             marker_gravity, marker_status, marker_likes, marker_dislikes, marker_comments_number,
             marker_gravity_title, marker_category;
     private TextView comment_owner, comment_date, comment_text;
-    private ImageView comment_ownerpic;
+    private ImageView comment_ownerpic, marker_ownerpic;
     private Button marker_button_likes, marker_button_dislikes, marker_button_post_comment;
     private ProgressBar mProgressBar;
     private MarkerClass mMarker, mSecondMarker;
@@ -66,6 +59,7 @@ public class MarkerActivity extends AppCompatActivity {
     private boolean isClicked;
     private String mToken;
     private SharedPreferences sharedPref;
+    private RoundedBitmapDrawable mRoundedBitmapDrawable;
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
 
@@ -111,6 +105,7 @@ public class MarkerActivity extends AppCompatActivity {
         marker_button_likes = findViewById(R.id.likes_button);
         marker_button_dislikes = findViewById(R.id.dislikes_button);
         marker_button_post_comment = findViewById(R.id.marker_comment_post_button);
+        marker_ownerpic = findViewById(R.id.marker_ownerpic);
         //  marker_status_image = findViewById(R.id.marker_lock_img);
         marker_image = findViewById(R.id.marker_image);
         marker_title = findViewById(R.id.marker_title);
@@ -164,6 +159,21 @@ public class MarkerActivity extends AppCompatActivity {
             RequestsVolley.thumbnailRequest(mMarker.getmId(), mMarker, -1, mContext,
                     null, null, null, MarkerActivity.this);
         marker_image.setImageBitmap(mMarker.getmImg_bitmap());
+
+        if (mMarker.getmAvatar_bitmap() == null) {
+            if (MapActivity.userAvatarMap.get(mMarker.getmCreator_username()).length > 1)
+                mMarker.makeAvatar(MapActivity.userAvatarMap.get(mMarker.getmCreator_username()));
+            else
+                mMarker.nullifymAvatar_bitmap();
+        }
+
+        if (mMarker.getmAvatar_bitmap() != null) {
+            mRoundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), mMarker.getmAvatar_bitmap());
+            mRoundedBitmapDrawable.setCircular(true);
+            marker_ownerpic.setImageDrawable(mRoundedBitmapDrawable);
+        } else
+            marker_ownerpic.setImageResource(R.drawable.userdefaultavatar);
+
 
         String title = mMarker.getmTitle();
         if (!title.equals(""))

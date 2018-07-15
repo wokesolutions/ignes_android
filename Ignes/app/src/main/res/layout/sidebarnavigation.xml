@@ -117,7 +117,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginVertical="15dp"
             android:fontFamily="@font/quicksand_light"
-            android:text="Leaderboard"
+            android:text="@string/leaderboard"
             android:textColor="@color/backgroundColor"
             android:textSize="17dp"
             android:textStyle="bold" />

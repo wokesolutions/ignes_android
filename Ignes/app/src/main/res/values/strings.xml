@@ -198,6 +198,7 @@
         <item>Material combustível</item>
         <item>Material elétrico</item>
     </string-array>
+    <string name="leaderboard">Leaderboard</string>
 
 
 </resources>

@@ -208,6 +208,8 @@ public class ProfileActivity extends AppCompatActivity {
     public void setUserMap(JSONArray markers) {
         try {
 
+            MapActivity.userMarkerMap.clear();
+
             JSONArray jsonarray = markers;
 
             for (int i = 0; i < jsonarray.length(); i++) {

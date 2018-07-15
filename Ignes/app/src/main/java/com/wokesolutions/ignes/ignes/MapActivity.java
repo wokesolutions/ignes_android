@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -127,6 +128,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static Map<String, TaskClass> mWorkerTaskMap;
     public static Map<String, String> votesMap;
     public static Map<String, MarkerClass> userMarkerMap;
+    public static Map<String, byte[]> userAvatarMap;
     public static Location mCurrentLocation;
     public static LatLng mLatLng;
     public static String mUsername;
@@ -312,6 +314,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mReportMap = new HashMap<>();
         mSearchMap = new HashMap<>();
         mWorkerTaskMap = new HashMap<>();
+        userAvatarMap = new HashMap<>();
         votesMap = new HashMap<>();
         userMarkerMap = new HashMap<>();
         mapPolygons = new HashMap<>();
@@ -558,7 +561,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 //TODO - 404 e 403 - AVATAR DA PESSOA PARA POR NO FEED
                 //RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
-
+                System.out.println("METI MARKER");
+                if(!userAvatarMap.containsKey(name)) {
+                    System.out.println("METI NO MAPA O " + report.getmCreator_username() + " " + name);
+                    RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
+                    userAvatarMap.put(name,new byte[1]);
+                }
+                /*else {
+                    report.makeAvatar(userAvatarMap.get(name));
+                }*/
 
                 if (!search) {
                     if (!mReportMap.containsKey(reportID)) {

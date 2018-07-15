@@ -1700,6 +1700,8 @@ public class RequestsVolley {
     public static void userAvatarRequest(String username, MarkerClass marker, TaskClass task,
                                          final Context mContext) {
 
+        System.out.println("Fiz avatar request para " + username);
+
         final String mUsername = username;
 
         final MarkerClass mMarker = marker;
@@ -1728,19 +1730,22 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
-                        System.out.println("OK AVATAR: " + response);
+                        System.out.println("OK AVATAR: "+mUsername + " " + response);
                         try {
+                            if (response.has("profpic")) {
+                                String base64 = response.getString("profpic");
+                                byte[] data = Base64.decode(base64, Base64.DEFAULT);
 
-                            String base64 = response.getString("profpic");
-                            byte[] data = Base64.decode(base64, Base64.DEFAULT);
+                                MapActivity.userAvatarMap.put(mUsername, data);
 
-                            if (mMarker != null) {
-                                mMarker.makeAvatar(data);
-                                // markerAdapter.notifyItemChanged(position);
+                                if (mMarker != null) {
+                                    mMarker.makeAvatar(data);
+                                    // markerAdapter.notifyItemChanged(position);
 
-                            } else if (mTask != null) {
-                                mTask.makeAvatar(data);
-                                // taskAdapter.notifyItemChanged(position);
+                                } else if (mTask != null) {
+                                    mTask.makeAvatar(data);
+                                    // taskAdapter.notifyItemChanged(position);
+                                }
                             }
 
 
@@ -1756,9 +1761,9 @@ public class RequestsVolley {
 
                         NetworkResponse response = error.networkResponse;
                         if (response != null) {
-                            System.out.println("THUMBNAIL volley -> ERRO " + response);
+                            System.out.println("AVATAR volley -> ERRO " + response + " " + mUsername);
                         } else
-                            System.out.println("THUMBNAIL volley -> ERRO Response veio a null");
+                            System.out.println("AVATAR volley -> ERRO Response veio a null " + mUsername);
 
                     }
                 }

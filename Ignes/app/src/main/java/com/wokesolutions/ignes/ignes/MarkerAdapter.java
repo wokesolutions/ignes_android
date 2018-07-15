@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
@@ -43,6 +45,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
     private String mCurrentUser;
     private ProfileActivity mProfileActivity;
     private FeedActivity mFeedActivity;
+    private RoundedBitmapDrawable roundedBitmap;
 
     MarkerAdapter(Context context, Map<String, MarkerClass> map, FeedActivity feedActivity, ProfileActivity profileActivity, String currentUser) {
         mContext = context;
@@ -77,6 +80,9 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         final MarkerClass markerItem = mMap.get(keys[position]);
 
+        if (markerItem.getmAvatar_bitmap() == null)
+            markerItem.makeAvatar(MapActivity.userAvatarMap.get(markerItem.getmCreator_username()));
+
         if (markerItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], markerItem, position);
 
@@ -103,13 +109,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         username.setText(markerItem.getmCreator_username());
         date.setText(markerItem.getmDMY());
         address.setText(markerItem.getmAddress());
-
-       /* if (!markerItem.getmGravity().equals("0"))
-            gravity.setText(markerItem.getmGravity());
-        else {
-            gravity.setVisibility(View.GONE);
-            gravity_title.setVisibility(View.GONE);
-        }*/
 
         switch (markerItem.getmGravity()) {
             case "1":
@@ -226,8 +225,16 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         image.setImageBitmap(markerItem.getmImg_bitmap());
 
-        if (markerItem.getmAvatar_bitmap() != null)
-            avatar.setImageBitmap(markerItem.getmAvatar_bitmap());
+        if (markerItem.getmAvatar_bitmap() != null) {
+            if (mFeedActivity != null)
+                roundedBitmap = RoundedBitmapDrawableFactory.create(mFeedActivity.getResources(), markerItem.getmAvatar_bitmap());
+            else if(mProfileActivity != null)
+                roundedBitmap = RoundedBitmapDrawableFactory.create(mProfileActivity.getResources(), markerItem.getmAvatar_bitmap());
+
+            roundedBitmap.setCircular(true);
+            avatar.setImageDrawable(roundedBitmap);
+        }
+
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override

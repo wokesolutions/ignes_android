@@ -37,7 +37,7 @@ public class LeaderboardActivity extends AppCompatActivity {
             mContactsButton, mProfileButton, mUserPlaceLayout;
     private SharedPreferences sharedPref;
     private String mUsername, mToken;
-    private TextView mUsernameBoard, mUserPlaceBoard, mUserPointsBoard;
+    private TextView mUsernameBoard, mUserPointsBoard;
 
 
     @Override
@@ -69,7 +69,6 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         mUserPlaceLayout = findViewById(R.id.user_place_layout);
         mUsernameBoard = findViewById(R.id.user_username);
-        mUserPlaceBoard = findViewById(R.id.user_position);
         mUserPointsBoard = findViewById(R.id.user_points);
 
         RequestsVolley.leaderboardRequest(mContext, this);
@@ -173,15 +172,14 @@ public class LeaderboardActivity extends AppCompatActivity {
 
                 System.out.println("USER POSITION" + position);
 
-                if(Integer.parseInt(position) == 0){
+                if (Integer.parseInt(position) == 0) {
                     mUserPlaceLayout.setVisibility(View.VISIBLE);
                     mUserPointsBoard.setText(points);
-                    mUserPlaceBoard.setText(position);
                     mUsernameBoard.setText(username);
+                } else {
+                    arrayList.add(rowClass);
+                    listview.setAdapter(new LeaderboardActivity.MyAdapter(mContext, arrayList));
                 }
-
-                arrayList.add(rowClass);
-                listview.setAdapter(new LeaderboardActivity.MyAdapter(mContext, arrayList));
             }
         } catch (JSONException e) {
             e.printStackTrace();

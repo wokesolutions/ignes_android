@@ -72,7 +72,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         mUserPlaceBoard = findViewById(R.id.user_position);
         mUserPointsBoard = findViewById(R.id.user_points);
 
-        RequestsVolley.leaderboardRequestfinal(mContext, this);
+        RequestsVolley.leaderboardRequest(mContext, this);
     }
 
     private void menuButtons() {

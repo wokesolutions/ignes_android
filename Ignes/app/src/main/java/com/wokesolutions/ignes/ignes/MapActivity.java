@@ -563,11 +563,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //TODO - 404 e 403 - AVATAR DA PESSOA PARA POR NO FEED
                 //RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
                 System.out.println("METI MARKER");
-                if(!userAvatarMap.containsKey(name)) {
+                /*if(!userAvatarMap.containsKey(name)) {
                     System.out.println("METI NO MAPA O " + report.getmCreator_username() + " " + name);
                     RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
                     userAvatarMap.put(name,new byte[1]);
-                }
+                }*/
                 /*else {
                     report.makeAvatar(userAvatarMap.get(name));
                 }*/

@@ -65,11 +65,13 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
-    public static void leaderboardRequestfinal(final Context context,
-                                               final LeaderboardActivity activity) {
+    public static void leaderboardRequest(final Context context,
+                                          final LeaderboardActivity activity) {
 
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String mToken = sharedPref.getString("token", null);
+
+        System.out.println("LEADERBOARD REQUEST");
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -103,6 +105,9 @@ public class RequestsVolley {
                 return setHeaders(mToken, context);
             }
         };
+
+        setRetry(arrayRequest);
+        queue.add(arrayRequest);
     }
 
     public static void commentDeleteRequest(String commentId, final MarkerActivity activity,

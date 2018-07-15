@@ -1933,7 +1933,7 @@ public class RequestsVolley {
 
                         String level = sharedPref.getString("userRole", "");
                         if (level.equals("USER"))
-                            profileRequest(sharedPref.getString("username", ""), context, activity);
+                            profileRequest(sharedPref.getString("username", ""), context, activity, true);
                         else {
                             if (level.equals("WORKER")) {
                                 activity.startActivity(new Intent(activity, MapActivity.class));
@@ -1956,7 +1956,7 @@ public class RequestsVolley {
                             System.out.println("LOGIN volley -> ERRO " + response + " " + error.getMessage());
 
                             if (response.statusCode == 403) {
-                                activity.mPasswordView.setError(context.getString(R.string.error_incorrect_password));
+                                activity.mPasswordView.setError(context.getString(R.string.error_incorrect_passwordl));
                                 activity.mPasswordView.requestFocus();
                             }
                         }
@@ -2050,7 +2050,7 @@ public class RequestsVolley {
 
                         String level = sharedPref.getString("userRole", "");
                         if (level.equals("USER"))
-                            profileRequest(sharedPref.getString("username", ""), context, activity);
+                            profileRequest(sharedPref.getString("username", ""), context, activity, true);
                         else {
                             activity.startActivity(new Intent(activity, MapActivity.class));
                             activity.finish();
@@ -2095,7 +2095,7 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void profileRequest(String username, Context context, final Activity activity) {
+    public static void profileRequest(String username, Context context, final Activity activity, boolean isCurrentUser) {
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -2110,6 +2110,8 @@ public class RequestsVolley {
 
         final String mUsername = username;
         final Context mContext = context;
+        final boolean currentUser = isCurrentUser;
+
         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
         final String token = sharedPref.getString("token", "");
 
@@ -2127,10 +2129,18 @@ public class RequestsVolley {
                         SharedPreferences sharedPref = mContext.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
 
+                        if (!currentUser) {
+                            sharedPref = mContext.getApplicationContext().getSharedPreferences("SecondProfile", MODE_PRIVATE);
+                            editor = sharedPref.edit();
+                            editor.putString("username", mUsername);
+                            editor.putString("isConfirmed", "true");
+                        }
+
                         try {
                             editor.putString("user_points", String.valueOf(response.getInt("points")));
                             editor.putString("user_reportNum", String.valueOf(response.getInt("reports")));
                             editor.putString("user_email", response.getString("email"));
+                            editor.putString("userLevel", response.getString("level"));
 
                             if (response.has("name"))
                                 editor.putString("user_name", response.getString("name"));
@@ -2199,7 +2209,15 @@ public class RequestsVolley {
                             e.printStackTrace();
                         }
 
-                        activity.startActivity(new Intent(activity, MapActivity.class));
+                        if (currentUser) {
+                            activity.startActivity(new Intent(activity, MapActivity.class));
+
+                        }
+                        else {
+                            Intent intent = new Intent(activity, ProfileActivity.class);
+                            intent.putExtra("isCurrentUser", false);
+                            activity.startActivity(intent);
+                        }
                         activity.finish();
                     }
                 },

@@ -74,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mPoints, mReportNum, mGender, mAddress, mName, mJob, mPhonenumber, mSkills,
             mLocality, mProfileName, mProfileLevel, mUsernameEditText;
     private boolean backBool;
+    private boolean userprofile;
     private String isConfirmed;
     private String storedAvatar;
 
@@ -82,7 +83,15 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        userprofile = true;
+        if (getIntent().getExtras() != null) {
+            userprofile = getIntent().getExtras().getBoolean("isCurrentUser");
+        }
+
+        if (!userprofile)
+            sharedPref = getSharedPreferences("SecondProfile", Context.MODE_PRIVATE);
+        else
+            sharedPref = getSharedPreferences("Shared", Context.MODE_PRIVATE);
 
         mImageView = findViewById(R.id.profile_avatar);
 
@@ -102,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
 
         mUsername = sharedPref.getString("username", "ERROR");
-        mToken = sharedPref.getString("token", "");
+        mToken = getSharedPreferences("Shared", Context.MODE_PRIVATE).getString("token", "");
         mUserLevel = sharedPref.getString("userLevel", "NO LEVEL");
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_profile);
@@ -190,8 +199,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void checkApplications() {
 
-        if (!mApplicationsArray.isEmpty())
-            mApplicationLayout.setVisibility(View.VISIBLE);
+        if (userprofile)
+            if (!mApplicationsArray.isEmpty())
+                mApplicationLayout.setVisibility(View.VISIBLE);
 
     }
 
@@ -384,7 +394,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void onAboutClick() {
 
-        mEditButton.setVisibility(View.VISIBLE);
+        if (userprofile)
+            mEditButton.setVisibility(View.VISIBLE);
         mAboutLayout.setVisibility(View.VISIBLE);
         mLessAboutButton.setVisibility(View.VISIBLE);
         mAboutButton.setVisibility(View.GONE);
@@ -666,7 +677,7 @@ public class ProfileActivity extends AppCompatActivity {
                 break;
         }
     }
-    
+
     public void userReportsRequest(String cursor) {
         RequestsVolley.userReportsRequest(mUsername, mToken, cursor, mContext, this);
 

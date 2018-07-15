@@ -204,6 +204,10 @@ public class MarkerClass implements ClusterItem {
         return mAvatar_bitmap;
     }
 
+    public void nullifymAvatar_bitmap() {
+        mAvatar_bitmap = null;
+    }
+
     public String getmVote() {
         return mVote;
     }

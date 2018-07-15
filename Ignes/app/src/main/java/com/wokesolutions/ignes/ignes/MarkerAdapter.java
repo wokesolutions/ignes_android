@@ -80,8 +80,18 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
 
         final MarkerClass markerItem = mMap.get(keys[position]);
 
-        if (markerItem.getmAvatar_bitmap() == null)
-            markerItem.makeAvatar(MapActivity.userAvatarMap.get(markerItem.getmCreator_username()));
+        if (markerItem.getmAvatar_bitmap() == null) {
+            // markerItem.makeAvatar(MapActivity.userAvatarMap.get(markerItem.getmCreator_username()));
+            System.out.println("DEU NULL PARA " + markerItem.getmCreator_username());
+            System.out.println("TAMANHO DA IMAGEM " + MapActivity.userAvatarMap.get(markerItem.getmCreator_username()).length);
+            if (MapActivity.userAvatarMap.get(markerItem.getmCreator_username()).length > 1) {
+                System.out.println("FIZ MAKE PARA " + markerItem.getmCreator_username());
+                markerItem.makeAvatar(MapActivity.userAvatarMap.get(markerItem.getmCreator_username()));
+            }
+            else
+                markerItem.nullifymAvatar_bitmap();
+
+        }
 
         if (markerItem.getmImg_bitmap() == null)
             thumbnailRequest((String) keys[position], markerItem, position);
@@ -89,7 +99,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         ImageView avatar = holder.user_avatar;
         ImageView image = holder.marker_image;
         final TextView title = holder.marker_title;
-        TextView username = holder.marker_username;
+        final TextView username = holder.marker_username;
         TextView date = holder.marker_date;
         TextView address = holder.marker_address;
         TextView gravity = holder.marker_gravity;
@@ -107,6 +117,14 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
             title.setVisibility(View.GONE);
 
         username.setText(markerItem.getmCreator_username());
+        username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("cliquei para abrir perfil do " + markerItem.getmCreator_username());
+                RequestsVolley.profileRequest(markerItem.getmCreator_username(), mContext, mFeedActivity, false);
+
+            }
+        });
         date.setText(markerItem.getmDMY());
         address.setText(markerItem.getmAddress());
 
@@ -226,14 +244,17 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder
         image.setImageBitmap(markerItem.getmImg_bitmap());
 
         if (markerItem.getmAvatar_bitmap() != null) {
+            System.out.println("Sou avatar de " + markerItem.getmCreator_username() + " "+markerItem.getmTitle());
             if (mFeedActivity != null)
                 roundedBitmap = RoundedBitmapDrawableFactory.create(mFeedActivity.getResources(), markerItem.getmAvatar_bitmap());
-            else if(mProfileActivity != null)
+            else if (mProfileActivity != null)
                 roundedBitmap = RoundedBitmapDrawableFactory.create(mProfileActivity.getResources(), markerItem.getmAvatar_bitmap());
 
             roundedBitmap.setCircular(true);
             avatar.setImageDrawable(roundedBitmap);
         }
+        else
+            avatar.setImageResource(R.drawable.userdefaultavatar);
 
 
         layout.setOnClickListener(new View.OnClickListener() {

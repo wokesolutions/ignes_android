@@ -62,16 +62,9 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
 
     public static final int MY_PERMISSIONS_REQUEST_STORAGE = 77;
 
-    public static final String LIXO = "Limpeza de lixo geral";
-    public static final String PESADOS = "Transportes pesados";
-    public static final String PERIGOSOS = "Transportes perigosos";
-    public static final String PESSOAS = "Transporte de pessoas";
-    public static final String TRANSPORTE = "Transportes gerais";
-    public static final String MADEIRAS = "Madeiras";
-    public static final String CARCACAS = "Carcaças";
-    public static final String BIOLOGICO = "Outros resíduos biológicos";
-    public static final String JARDINAGEM = "Jardinagem";
-    public static final String MATAS = "Limpeza de matas/florestas";
+    public static final String LIMPEZA = "Limpeza de terrenos";
+    public static final String COMBUSTIVEL = "Material combustível";
+    public static final String ELETRICIDADE = "Material elétrico";
 
     private final int REQUEST_IMAGE_CAPTURE = 0;
     public byte[] imgByteArray;
@@ -536,7 +529,8 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                     jsonArray.put(jsonObject);
                 }
 
-                List<Address> addresses = mCoder.getFromLocation(mPoints.get(0).latitude, mPoints.get(0).longitude, 1);
+                List<Address> addresses = mCoder.getFromLocation(mPoints.get(0).latitude,
+                        mPoints.get(0).longitude, 1);
                 address = addresses.get(0).getAddressLine(0);
                 district = addresses.get(0).getAdminArea();
                 locality = addresses.get(0).getLocality();
@@ -608,35 +602,15 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         LatLng pointAddress = new LatLng(lat, lng);
 
         switch (category) {
-            case LIXO:
-                category = "LIXO";
+            case LIMPEZA:
+                category = "LIMPEZA";
                 break;
-            case PESADOS:
-                category = "PESADOS";
+            case COMBUSTIVEL:
+                category = "COMBUSTIVEL";
                 break;
-            case PERIGOSOS:
-                category = "PERIGOSOS";
+            case ELETRICIDADE:
+                category = "ELETRICIDADE";
                 break;
-            case PESSOAS:
-                category = "PESSOAS";
-                break;
-            case TRANSPORTE:
-                category = "TRANSPORTE";
-                break;
-            case MADEIRAS:
-                category = "MADEIRAS";
-                break;
-            case CARCACAS:
-                category = "CARCACAS";
-                break;
-            case BIOLOGICO:
-                category = "BIOLOGICO";
-                break;
-            case JARDINAGEM:
-                category = "JARDINAGEM";
-                break;
-            case MATAS:
-                category = "MATAS";
         }
 
         if (cancel) {

@@ -92,16 +92,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final int REPORT_ACTIVITY = 1;
     public static final int GPS_ACTIVITY = 2;
-    public static final String LIXO = "Limpeza de lixo geral";
-    public static final String PESADOS = "Transportes pesados";
-    public static final String PERIGOSOS = "Transportes perigosos";
-    public static final String PESSOAS = "Transporte de pessoas";
-    public static final String TRANSPORTE = "Transportes gerais";
-    public static final String MADEIRAS = "Madeiras";
-    public static final String CARCACAS = "Carcaças";
-    public static final String BIOLOGICO = "Outros resíduos biológicos";
-    public static final String JARDINAGEM = "Jardinagem";
-    public static final String MATAS = "Limpeza de matas/florestas";
+    public static final String LIMPEZA = "Limpeza de terrenos";
+    public static final String COMBUSTIVEL = "Material combustível";
+    public static final String ELETRICIDADE = "Material elétrico";
     private static final int COLOR_BLACK_ARGB = 0xff000000;
     private static final int COLOR_WHITE_ARGB = 0xffffffff;
     private static final int COLOR_GREEN_ARGB = 0x80388E3C;
@@ -498,35 +491,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String category = jsonobject.getString("category");
 
                 switch (category) {
-                    case "LIXO":
-                        category = LIXO;
+                    case "LIMPEZA":
+                        category = LIMPEZA;
                         break;
-                    case "PESADOS":
-                        category = PESADOS;
+                    case "COMBUSTIVEL":
+                        category = COMBUSTIVEL;
                         break;
-                    case "PERIGOSOS":
-                        category = PERIGOSOS;
+                    case "ELETRICIDADE":
+                        category = ELETRICIDADE;
                         break;
-                    case "PESSOAS":
-                        category = PESSOAS;
-                        break;
-                    case "TRANSPORTE":
-                        category = TRANSPORTE;
-                        break;
-                    case "MADEIRAS":
-                        category = MADEIRAS;
-                        break;
-                    case "CARCACAS":
-                        category = CARCACAS;
-                        break;
-                    case "BIOLOGICO":
-                        category = BIOLOGICO;
-                        break;
-                    case "JARDINAGEM":
-                        category = JARDINAGEM;
-                        break;
-                    case "MATAS":
-                        category = MATAS;
                 }
 
                 double latitude = Double.parseDouble(jsonobject.getString("lat"));
@@ -559,10 +532,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
                         points, category, reportID, isPrivate);
-                
-                System.out.println("METI MARKER");
+
                 if (!userAvatarMap.containsKey(name)) {
-                    System.out.println("METI NO MAPA O " + report.getmCreator_username() + " " + name);
                     RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
                     userAvatarMap.put(name, new byte[1]);
                 } else {

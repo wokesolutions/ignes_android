@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
@@ -87,6 +88,7 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
     private LinearLayout mMediumForm, mSliderForm, mLongForm, mReportForm, mUploadPicture, mAddressLayout;
     private EditText mTitle, mMediumTitle, mAddress, mDescription;
     private ImageView mImageView;
+    private TextView mImageLayout;
     private ArrayList<LatLng> mPoints;
     private Spinner mReportTypeSpinner;
 
@@ -139,6 +141,8 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
 
         mReportTypeSpinner = findViewById(R.id.report_category_spinner);
         mReportTypeSpinner.setOnItemSelectedListener(this);
+
+        mImageLayout = findViewById(R.id.image_layout);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.report_category, android.R.layout.simple_spinner_item);
@@ -499,8 +503,8 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         mTitle.setError(null);
         mMediumTitle.setError(null);
         mAddress.setError(null);
+        mImageLayout.setError(null);
 
-        byte[] thumbnail = byteArray;
         String description = "";
         String title = "";
         String locality = this.locality;
@@ -515,6 +519,12 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
         boolean cancel = false;
         View focusView = null;
 
+
+        if (mImageURI == null) {
+            mImageLayout.setError(getString(R.string.error_field_required));
+            focusView = mImageLayout;
+            cancel = true;
+        }
 
         if (mPoints != null) {
             jsonArray = new JSONArray();
@@ -575,9 +585,8 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                 mTitle.setError(getString(R.string.error_field_required));
                 focusView = mTitle;
                 cancel = true;
-            }
-            else if (!isTitleValid(title)) {
-                mTitle.setError("Máximo de 20 caracteres (Tem "+title.length()+")");
+            } else if (!isTitleValid(title)) {
+                mTitle.setError("Máximo de 20 caracteres (Tem " + title.length() + ")");
                 focusView = mTitle;
                 cancel = true;
             }
@@ -590,9 +599,8 @@ public class ReportFormActivity extends AppCompatActivity implements AdapterView
                 mMediumTitle.setError(getString(R.string.error_field_required));
                 focusView = mMediumTitle;
                 cancel = true;
-            }
-            else if (!isTitleValid(title)) {
-                mMediumTitle.setError("Máximo de 20 caracteres (Tem "+title.length()+")");
+            } else if (!isTitleValid(title)) {
+                mMediumTitle.setError("Máximo de 20 caracteres (Tem " + title.length() + ")");
                 focusView = mMediumTitle;
                 cancel = true;
             }

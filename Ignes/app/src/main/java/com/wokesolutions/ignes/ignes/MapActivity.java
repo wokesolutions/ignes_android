@@ -383,7 +383,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         startActivity(i);
     }
 
-    private void setUpCluster(LatLng latLng, Map<String, MarkerClass> map) {
+    private void setUpCluster(LatLng latLng, final Map<String, MarkerClass> map) {
         // Position the map.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
@@ -428,6 +428,31 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             });
 
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    String markerId = marker.getSnippet().split("#%")[0];
+                    MarkerClass markerClass = map.get(markerId);
+
+                    if (markerClass.mIsArea()) {
+
+                        try {
+                            if (!markerClass.mIsClicked()) {
+                                markerClass.setmIsClicked(true);
+                                Polygon polygon = setAreaReport(new JSONArray(markerClass.getmPoints()));
+                                mapPolygons.put(markerClass.getmId(), polygon);
+                            } else {
+                                markerClass.setmIsClicked(false);
+                                Polygon polygon = mapPolygons.get(markerClass.getmId());
+                                polygon.remove();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return false;
+                }
+            });
 
         } else if (mRole.equals("WORKER")) {
             // Add cluster items (markers) to the cluster manager.
@@ -437,6 +462,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // manager.
             mMap.setOnCameraIdleListener(mWorkerClusterManager);
             mMap.setOnMarkerClickListener(mWorkerClusterManager);
+            mMap.setOnInfoWindowClickListener(mWorkerClusterManager);
+            CustomInfoWindowMarker customInfoWindow = new CustomInfoWindowMarker(mContext);
+            mMap.setInfoWindowAdapter(customInfoWindow);
 
             // Add ten cluster items in close proximity, for purposes of this example.
             Iterator it = mWorkerTaskMap.keySet().iterator();
@@ -449,6 +477,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mWorkerClusterManager.setRenderer(new OwnIconRenderedWorker(mContext, mMap,
                         mWorkerClusterManager));
             }
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    String markerId = marker.getSnippet().split("#%")[0];
+                    TaskClass taskClass = mWorkerTaskMap.get(markerId);
+
+                    if (taskClass.mIsArea()) {
+
+                        try {
+                            if (!taskClass.mIsClicked()) {
+                                taskClass.setmIsClicked(true);
+                                Polygon polygon = setAreaReport(new JSONArray(taskClass.getmPoints()));
+                                mapPolygons.put(taskClass.getmId(), polygon);
+                            } else {
+                                taskClass.setmIsClicked(false);
+                                Polygon polygon = mapPolygons.get(taskClass.getmId());
+                                polygon.remove();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return false;
+                }
+            });
         }
     }
 

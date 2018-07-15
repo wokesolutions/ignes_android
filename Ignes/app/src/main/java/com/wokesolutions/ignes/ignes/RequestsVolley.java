@@ -2211,14 +2211,14 @@ public class RequestsVolley {
 
                         if (currentUser) {
                             activity.startActivity(new Intent(activity, MapActivity.class));
-
+                            activity.finish();
                         }
                         else {
                             Intent intent = new Intent(activity, ProfileActivity.class);
                             intent.putExtra("isCurrentUser", false);
                             activity.startActivity(intent);
                         }
-                        activity.finish();
+
                     }
                 },
                 new Response.ErrorListener() {

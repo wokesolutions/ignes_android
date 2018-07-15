@@ -118,15 +118,22 @@ public class ProfileActivity extends AppCompatActivity {
 
         setSupportActionBar(myToolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_profile);
+        if (userprofile) {
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout_profile);
 
-        mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mMenu);
-        mMenu.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ignesred);
 
-        menuButtons();
+            mMenu = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+            mDrawerLayout.addDrawerListener(mMenu);
+            mMenu.syncState();
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setIcon(R.drawable.ignesred);
+
+            menuButtons();
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setIcon(R.drawable.ignesred);
+        }
+
 
         mConfirmAccountButton = findViewById(R.id.confirm_account_button);
         mConfirmAccountButton.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +202,8 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
     private void checkApplications() {
@@ -360,14 +369,20 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout != null)
+            mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mMenu.onOptionsItemSelected(item))
-            return true;
+        if (mMenu != null) {
+            if (mMenu.onOptionsItemSelected(item))
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected(item);
+        } else {
+            finish();
+            return true;
+        }
     }
 
     private void initializeProfile() {
@@ -720,5 +735,11 @@ public class ProfileActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

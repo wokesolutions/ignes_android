@@ -100,6 +100,36 @@
         android:background="#99000000" />
 
     <LinearLayout
+        android:id="@+id/menu_button_leaderboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginVertical="15dp"
+            android:src="@drawable/leaderboard" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginVertical="15dp"
+            android:fontFamily="@font/quicksand_light"
+            android:text="Leaderboard"
+            android:textColor="@color/backgroundColor"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginVertical="5dp"
+        android:background="#99000000" />
+
+    <LinearLayout
         android:id="@+id/botao_contacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -45,7 +45,7 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mMapButton;
     private TextView mAlertMessage, mOrganization, mUsername;
-    private LinearLayout mProfileButton, mSettingsButton, mContactsButton;
+    private LinearLayout mProfileButton, mSettingsButton, mContactsButton, mLeaderboardButton;
     private Context mContext;
     private Location mCurrentLocation;
     private SharedPreferences sharedPref;
@@ -184,6 +184,15 @@ public class FeedActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FeedActivity.this, ProfileActivity.class));
+                finish();
+            }
+        });
+
+        mLeaderboardButton = (LinearLayout) findViewById(R.id.menu_button_leaderboard);
+        mLeaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FeedActivity.this, LeaderboardActivity.class));
                 finish();
             }
         });

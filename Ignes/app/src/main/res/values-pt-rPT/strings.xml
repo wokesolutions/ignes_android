@@ -50,7 +50,7 @@
     <string name="category">Categoria:&#160;</string>
     <string name="comments">comentários</string>
     <string name="comment">&#160;Comentar...</string>
-    <string name="post">postar</string>
+    <string name="post">publicar</string>
     <string name="person_interacted_with_report"> pessoa interagiu com esta ocorrência</string>
     <string name="change_password">Mudar password</string>
     <string name="logout_everywhere_logged_in">Sair em todos os dispositivos</string>

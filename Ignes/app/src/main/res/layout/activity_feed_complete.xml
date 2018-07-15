@@ -95,12 +95,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/quicksand_light"
-                    android:text=""
                     android:inputType="textCapCharacters"
+                    android:text=""
                     android:textColor="#000000"
                     android:textSize="15dp" />
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -186,11 +185,11 @@
                     android:id="@+id/marker_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:fontFamily="@font/quicksand_light"
-                    android:textSize="15dp"
-                    android:text="" />
+                    android:gravity="right"
+                    android:text=""
+                    android:textSize="15dp" />
 
                 <TextView
                     android:id="@+id/marker_title"
@@ -341,10 +340,10 @@
 
                 </LinearLayout>
 
-                    <ListView
-                        android:id="@+id/listview_comments"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                <ListView
+                    android:id="@+id/listview_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <View
                     android:layout_width="match_parent"
@@ -360,24 +359,14 @@
                     android:focusableInTouchMode="true"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:weightSum="3"
                     android:visibility="gone"
-                    >
-
-                    <ImageView
-                        android:id="@+id/marker_user_profile_pic"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_gravity="bottom"
-                        android:layout_weight=".5"
-                        android:padding="3dp"
-                        android:src="@drawable/userdefaultavatar" />
+                    android:weightSum="2">
 
                     <EditText
                         android:id="@+id/marker_comment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1.5"
                         android:fontFamily="@font/quicksand_light"
                         android:hint="@string/comment"
                         android:inputType="textMultiLine"
@@ -392,8 +381,8 @@
                         android:layout_height="60dp"
                         android:layout_gravity="bottom"
                         android:layout_weight=".5"
-                        android:text="@string/post"
                         android:inputType="textCapCharacters"
+                        android:text="@string/post"
                         android:textColor="@color/colorIgnesPrimary"
                         android:textSize="10dp" />
 

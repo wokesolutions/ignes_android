@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String mRole, mToken;
     private SharedPreferences sharedPref;
     private LinearLayout mLoggoutButton, mFeedButton, mMapButton, mProfileButton, mSettingsButton,
-            mContactsButton;
+            mContactsButton, mLeaderboardButton;
     private List<Address> mAddresses;
     private Geocoder mGeocoder;
     private Switch mEmailNotificationsSwitch;
@@ -346,6 +346,17 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        mLeaderboardButton = (LinearLayout) findViewById(R.id.menu_button_leaderboard);
+        mLeaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, LeaderboardActivity.class));
+                finish();
+            }
+        });
+
+
     }
 
     private void attemptPasswordChange(View view, AlertDialog alert) {

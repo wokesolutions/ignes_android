@@ -64,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mFeedButton, mSettingsButton, mMapButton,
             mContactsButton, mApplicationLayout;
-    private LinearLayout mConfirmLayout;
+    private LinearLayout mConfirmLayout, mLeaderboardButton;
     private String mUsername, mToken, mUserLevel;
     private int mRequestCode;
     private Button mAboutButton, mLessAboutButton, mConfirmAccountButton, mEditButton,
@@ -303,6 +303,15 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
+                finish();
+            }
+        });
+
+        mLeaderboardButton = (LinearLayout) findViewById(R.id.menu_button_leaderboard);
+        mLeaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, LeaderboardActivity.class));
                 finish();
             }
         });

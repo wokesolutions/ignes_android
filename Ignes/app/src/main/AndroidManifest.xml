@@ -82,12 +82,15 @@
         <activity
             android:name=".MarkerActivity"
             android:theme="@style/WelcomeTheme" />
+
         <activity
             android:name=".FeedActivity"
             android:theme="@style/WelcomeTheme" />
+
         <activity
             android:name=".NoteActivity"
             android:theme="@style/WorkerTheme" />
+
         <activity
             android:name=".ReportFormActivity"
             android:parentActivityName=".MapActivity"
@@ -96,6 +99,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBXJ1Cq9UfSxXDnUiZMggJxUsDF8DeFNow" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -103,13 +107,21 @@
         <activity
             android:name=".ProfileActivity"
             android:theme="@style/WelcomeTheme" />
+
         <activity
             android:name=".SettingsActivity"
             android:theme="@style/WelcomeTheme" />
+
         <activity
             android:name=".InformationActivity"
             android:theme="@style/WelcomeTheme" />
-        <activity android:name=".TutorialActivity"></activity>
+
+        <activity android:name=".TutorialActivity" />
+
+        <activity
+            android:name=".LeaderboardActivity"
+            android:theme="@style/WelcomeTheme" />
+
     </application>
 
 </manifest>

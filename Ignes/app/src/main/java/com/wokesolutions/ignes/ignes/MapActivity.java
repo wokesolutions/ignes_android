@@ -359,12 +359,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mUndoDraw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("Counter: "+counter);
-                    System.out.println("Vector: "+vector.size());
-                    System.out.println("Circles: "+currentCirclesArray.size());
+                    System.out.println("Counter: " + counter);
+                    System.out.println("Vector: " + vector.size());
+                    System.out.println("Circles: " + currentCirclesArray.size());
                     if (counter > 0) {
-                        currentCirclesArray.remove(counter-1).remove();
-                        vector.remove(counter-1);
+                        currentCirclesArray.remove(counter - 1).remove();
+                        vector.remove(counter - 1);
                         counter--;
                     }
                 }
@@ -559,18 +559,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 MarkerClass report = new MarkerClass(latitude, longitude, status, address, date, name,
                         description, gravity, title, likes, dislikes, locality, isArea, isClicked,
                         points, category, reportID, isPrivate);
-
-                //TODO - 404 e 403 - AVATAR DA PESSOA PARA POR NO FEED
-                //RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
+                
                 System.out.println("METI MARKER");
-                /*if(!userAvatarMap.containsKey(name)) {
+                if (!userAvatarMap.containsKey(name)) {
                     System.out.println("METI NO MAPA O " + report.getmCreator_username() + " " + name);
                     RequestsVolley.userAvatarRequest(report.getmCreator_username(), report, null, mContext);
-                    userAvatarMap.put(name,new byte[1]);
-                }*/
-                /*else {
+                    userAvatarMap.put(name, new byte[1]);
+                } else {
                     report.makeAvatar(userAvatarMap.get(name));
-                }*/
+                }
 
                 if (!search) {
                     if (!mReportMap.containsKey(reportID)) {
@@ -1151,7 +1148,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void filterTask() {
-      //  startActivity(new Intent(MapActivity.this, TutorialActivity.class));
+        //  startActivity(new Intent(MapActivity.this, TutorialActivity.class));
         final AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle(R.string.search_alert);
         mBuilder.setIcon(R.drawable.lupared);

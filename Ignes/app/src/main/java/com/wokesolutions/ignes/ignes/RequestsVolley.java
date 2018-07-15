@@ -65,7 +65,48 @@ public class RequestsVolley {
     private static JsonArrayRequest arrayRequest;
     private static String url, mIsFinish;
 
-    public static void commentDeleteRequest(String commentId, final MarkerActivity activity, final Context context) {
+    public static void leaderboardRequestfinal(final Context context,
+                                               final LeaderboardActivity activity) {
+
+        final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
+        final String mToken = sharedPref.getString("token", null);
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        url = URL + "/profile/usertop";
+
+        arrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // response
+                        System.out.println("OK LEADERBOARD: " + response);
+                        activity.setLeaderboard(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        if (error.networkResponse != null) {
+                            System.out.println("ERRO DO REPORTLEADERBOARD:: " + error.networkResponse.toString());
+                        } else
+                            System.out.println("REPORT LEADERBOARD: volley -> ERRO Response veio null ");
+
+                        Toast.makeText(context, "Something went wrong on loading leaderboard!", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+
+                return setHeaders(mToken, context);
+            }
+        };
+    }
+
+    public static void commentDeleteRequest(String commentId, final MarkerActivity activity,
+                                            final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mComment = commentId;
@@ -128,7 +169,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportDeleteRequest(final String reportId, final FeedActivity feedActivity,
+    public static void reportDeleteRequest(final String reportId,
+                                           final FeedActivity feedActivity,
                                            final ProfileActivity profileActivity, final Context context,
                                            final android.support.v7.app.AlertDialog alertDialog) {
 
@@ -222,7 +264,8 @@ public class RequestsVolley {
     }
 
 
-    public static void reportAcceptApplicationRequest(String report, String nif, final ApplicationActivity activity, final Context context) {
+    public static void reportAcceptApplicationRequest(String report, String nif,
+                                                      final ApplicationActivity activity, final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mNif = nif;
@@ -376,7 +419,8 @@ public class RequestsVolley {
         queue.add(arrayRequest);
     }
 
-    public static void userFollowLocalityRequest(String locality, String token, final Context context) {
+    public static void userFollowLocalityRequest(String locality, String token,
+                                                 final Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         final String mLocality = locality;
@@ -431,7 +475,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void userLocalitiesRequest(final Context context, final FeedActivity activity) {
+    public static void userLocalitiesRequest(final Context context,
+                                             final FeedActivity activity) {
 
         final SharedPreferences sharedPref = context.getSharedPreferences("Shared", Context.MODE_PRIVATE);
         final String mToken = sharedPref.getString("token", null);
@@ -558,7 +603,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportCommentsRequest(String reportId, String cursor, final Context context,
+    public static void reportCommentsRequest(String reportId, String cursor,
+                                             final Context context,
                                              final MarkerActivity activity) {
 
         final String mReportId = reportId;
@@ -759,7 +805,8 @@ public class RequestsVolley {
 
     }
 
-    public static void mapRequest(double lat, double lng, double radius, String token, String cursor,
+    public static void mapRequest(double lat, double lng, double radius, String token, String
+            cursor,
                                   final Context context, final MapActivity activity) {
 
         final double mLat = lat;
@@ -875,7 +922,8 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void locationReportsRequest(double lat, double lng, String location, String token,
+    public static void locationReportsRequest(double lat, double lng, String location, String
+            token,
                                               String cursor, final Context context, final MapActivity activity) {
 
         final double mLat = lat;
@@ -1222,7 +1270,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void reportRequest(String description, String title, String district, String address,
+    public static void reportRequest(String description, String title, String district, String
+            address,
                                      String locality, String category, int gravity, LatLng latLng,
                                      JSONArray jsonArray, int orientation, final Context context,
                                      final ReportFormActivity activity) {
@@ -1466,7 +1515,8 @@ public class RequestsVolley {
         queue.add(stringRequest);
     }
 
-    public static void postCommentRequest(final String report, String comment, final Context context,
+    public static void postCommentRequest(final String report, String comment,
+                                          final Context context,
                                           final MarkerActivity activity) {
 
         final String mComment = comment;
@@ -1546,7 +1596,8 @@ public class RequestsVolley {
 
     }
 
-    public static void registerRequest(String username, String password, String email, final Context context,
+    public static void registerRequest(String username, String password, String email,
+                                       final Context context,
                                        final RegisterActivity activity) {
 
         final String mUsernameRequest = username;
@@ -1573,7 +1624,7 @@ public class RequestsVolley {
                     public void onResponse(String response) {
                         // response
                         Toast.makeText(context, "User successfully registered!", Toast.LENGTH_LONG).show();
-                        activity. onResponseCorrect();
+                        activity.onResponseCorrect();
                     }
                 },
                 new Response.ErrorListener() {
@@ -1626,7 +1677,8 @@ public class RequestsVolley {
 
     }
 
-    public static void confirmRequest(String code, final Context context, final ProfileActivity activity) {
+    public static void confirmRequest(String code, final Context context,
+                                      final ProfileActivity activity) {
 
         final SharedPreferences sharedPref = context.getApplicationContext().getSharedPreferences("Shared", MODE_PRIVATE);
         final String mCode = code;
@@ -1730,7 +1782,7 @@ public class RequestsVolley {
                     @Override
                     public void onResponse(JSONObject response) {
                         // response
-                        System.out.println("OK AVATAR: "+mUsername + " " + response);
+                        System.out.println("OK AVATAR: " + mUsername + " " + response);
                         try {
                             if (response.has("profpic")) {
                                 String base64 = response.getString("profpic");
@@ -1965,7 +2017,8 @@ public class RequestsVolley {
 
     }
 
-    public static void authRequest(String token, final Context context, final LaunchActivity activity) {
+    public static void authRequest(String token, final Context context,
+                                   final LaunchActivity activity) {
 
         final String mToken = token;
 
@@ -2219,7 +2272,8 @@ public class RequestsVolley {
         queue.add(jsonRequest);
     }
 
-    public static void votesRequest(final String username, final String cursor, final Context context, final MapActivity activity) {
+    public static void votesRequest(final String username, final String cursor,
+                                    final Context context, final MapActivity activity) {
 
         final String mUsername = username;
         final String mCursor = cursor;
@@ -2309,7 +2363,8 @@ public class RequestsVolley {
         activity.queue.add(arrayRequest);
     }
 
-    public static void addNoteRequest(String note, String idTask, final Context context, final NoteActivity activity) {
+    public static void addNoteRequest(String note, String idTask, final Context context,
+                                      final NoteActivity activity) {
 
         final String mNote = note;
         final String mIdTask = idTask;
@@ -2381,7 +2436,8 @@ public class RequestsVolley {
 
     }
 
-    public static void changePasswordRequest(String oldpass, String newpass, final Context context, View view,
+    public static void changePasswordRequest(String oldpass, String newpass,
+                                             final Context context, View view,
                                              EditText oldPass, android.support.v7.app.AlertDialog alert) {
 
         final View mView = view;
@@ -2460,7 +2516,8 @@ public class RequestsVolley {
 
     }
 
-    public static void logoutRequest(String token, final Context context, final Activity activity, int request) {
+    public static void logoutRequest(String token, final Context context,
+                                     final Activity activity, int request) {
 
         final String mToken = token;
 
@@ -2582,7 +2639,8 @@ public class RequestsVolley {
 
     }
 
-    public static void editProfileRequest(String phone, String name, String gender, String address,
+    public static void editProfileRequest(String phone, String name, String gender, String
+            address,
                                           String locality, String zip, String day, String month, String year, String job,
                                           String skills, String username, final Context context,
                                           final ProfileActivity activity) {

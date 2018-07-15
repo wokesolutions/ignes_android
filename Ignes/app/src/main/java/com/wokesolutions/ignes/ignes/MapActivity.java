@@ -162,7 +162,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mMenu;
     private LinearLayout mLoggoutButton, mProfileButton, mFeedButton, mSettingsButton;
-    private LinearLayout mContactsButton, mTeste, mFinishDrawLayout, mUndoDrawLayout, mNextDrawLayout;
+    private LinearLayout mContactsButton, mTeste, mFinishDrawLayout, mUndoDrawLayout, mNextDrawLayout,
+            mLeaderboardButton;
     private SharedPreferences sharedPref;
     private String mToken, mCurrentLocality;
     private int counter;
@@ -916,6 +917,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MapActivity.this, ProfileActivity.class));
+            }
+        });
+
+        mLeaderboardButton = (LinearLayout) findViewById(R.id.menu_button_leaderboard);
+        mLeaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, LeaderboardActivity.class));
             }
         });
 

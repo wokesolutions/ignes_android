@@ -115,6 +115,22 @@
                 android:textColor="@color/colorIgnesPrimary"
                 android:textSize="17dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:autoLink="web"
+                android:text="@string/civil_protection_prociv_pt" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:autoLink="web"
+                android:text="@string/safe_village_aldeiasegura_pt" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -134,15 +150,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
                 android:autoLink="web"
-                android:text="@string/civil_protection_prociv_pt" />
+                android:text="Ignes Website - wokesolutionsignes.com " />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp"
-                android:autoLink="web"
-                android:text="@string/safe_village_aldeiasegura_pt" />
 
         </LinearLayout>
 
